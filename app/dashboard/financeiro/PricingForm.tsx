@@ -36,8 +36,13 @@ export function PricingForm({ study, existing, onClose, onSaved }: Props) {
   );
   const [equityPct, setEquityPct] = useState(String(existing?.equity_pct ?? ""));
   const [cost, setCost] = useState(String(existing?.estimated_cost_brl ?? ""));
-  const [paid, setPaid] = useState(String(existing?.paid_amount_brl ?? ""));
   const [status, setStatus] = useState<PaymentStatus>(existing?.payment_status || "pending");
+  const [installmentsCount, setInstallmentsCount] = useState<number>(
+    Number(existing?.installments_count) || 1
+  );
+  const [firstInstallmentDate, setFirstInstallmentDate] = useState(
+    existing?.first_installment_date || existing?.start_date || new Date().toISOString().slice(0, 10)
+  );
   const [startDate, setStartDate] = useState(existing?.start_date || "");
   const [endDate, setEndDate] = useState(existing?.end_date || "");
   const [notes, setNotes] = useState(existing?.notes || "");
@@ -69,7 +74,8 @@ export function PricingForm({ study, existing, onClose, onSaved }: Props) {
       equity_pct: parseN(equityPct),
       estimated_cost_brl: costN,
       payment_status: status,
-      paid_amount_brl: parseN(paid),
+      installments_count: installmentsCount,
+      first_installment_date: firstInstallmentDate || null,
       start_date: startDate || null,
       end_date: endDate || null,
       notes: notes || null,
@@ -248,14 +254,52 @@ export function PricingForm({ study, existing, onClose, onSaved }: Props) {
             )}
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+            <Field label="Parcelas">
+              <select
+                value={installmentsCount}
+                onChange={(e) => setInstallmentsCount(Number(e.target.value))}
+                style={inputStyle}
+              >
+                <option value={1}>À vista</option>
+                {[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 18, 24, 36].map((n) => (
+                  <option key={n} value={n}>
+                    {n}x
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label="1ª parcela em">
+              <input
+                type="date"
+                value={firstInstallmentDate}
+                onChange={(e) => setFirstInstallmentDate(e.target.value)}
+                style={inputStyle}
+              />
+            </Field>
             <Field label="Custo estimado (R$)">
               <input value={cost} onChange={(e) => setCost(e.target.value)} style={inputStyle} />
             </Field>
-            <Field label="Valor já recebido (R$)">
-              <input value={paid} onChange={(e) => setPaid(e.target.value)} style={inputStyle} />
-            </Field>
           </div>
+          {installmentsCount > 1 && fixedN > 0 && (
+            <div
+              style={{
+                fontSize: 12,
+                color: "var(--ink-soft)",
+                padding: "8px 12px",
+                background: "#f1f5f9",
+                borderRadius: 8,
+                fontFamily: "var(--font-mono)",
+              }}
+            >
+              {installmentsCount}x de aprox. {formatBRL(fixedN / installmentsCount)} (mensais, a
+              partir de{" "}
+              {firstInstallmentDate
+                ? new Date(firstInstallmentDate + "T00:00:00").toLocaleDateString("pt-BR")
+                : "—"}
+              )
+            </div>
+          )}
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
             <Field label="Status">

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServiceClient } from "@/lib/supabase";
+import { regenerateInstallments, type StudyPricing } from "@/lib/finance";
 
 function apiError(error: unknown, status = 500) {
   return NextResponse.json(
@@ -33,8 +34,12 @@ export async function PUT(req: Request, ctx: { params: Promise<{ id: string }> }
       "payment_status",
       "start_date",
       "end_date",
+      "first_installment_date",
       "notes",
     ].forEach(str);
+    if (input.installments_count !== undefined) {
+      patch.installments_count = Math.max(1, Math.min(36, Number(input.installments_count) || 1));
+    }
 
     const supabase = createSupabaseServiceClient();
     const { data, error } = await supabase
@@ -44,6 +49,20 @@ export async function PUT(req: Request, ctx: { params: Promise<{ id: string }> }
       .select("*")
       .single();
     if (error) throw error;
+
+    // Regenera parcelas se mudou valor, parcelas ou data
+    const triggersRegen =
+      input.fixed_amount_brl !== undefined ||
+      input.installments_count !== undefined ||
+      input.first_installment_date !== undefined ||
+      input.start_date !== undefined;
+    if (triggersRegen) {
+      try {
+        await regenerateInstallments(data as StudyPricing);
+      } catch (e) {
+        console.error("Falha ao regenerar parcelas:", e);
+      }
+    }
     return NextResponse.json({ pricing: data });
   } catch (e) {
     return apiError(e);

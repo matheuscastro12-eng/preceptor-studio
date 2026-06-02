@@ -8,9 +8,7 @@ import {
   STATUS_COLORS,
   STATUS_LABELS,
   formatBRL,
-  monthlyRecurringValue,
   pricingExpectedMargin,
-  pricingOpenReceivable,
   pricingTotalContractValue,
   type Archetype,
   type FinanceCategory,
@@ -95,7 +93,7 @@ export function FinanceView({
         </p>
       </header>
 
-      <KpiGrid summary={summary} />
+      <KpiGroups summary={summary} />
 
       <nav
         style={{
@@ -138,7 +136,20 @@ export function FinanceView({
         })}
       </nav>
 
-      {tab === "overview" && <Overview summary={summary} pricings={pricings} />}
+      {tab === "overview" && (
+        <Overview
+          summary={summary}
+          pricings={pricings}
+          onPayInstallment={async (id) => {
+            const res = await fetch(`/api/finance/installments/${id}/pay`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({}),
+            });
+            if (res.ok) refresh();
+          }}
+        />
+      )}
       {tab === "transactions" && (
         <TransactionsTab
           transactions={transactions}
@@ -163,6 +174,19 @@ export function FinanceView({
           pricings={pricings}
           studies={studies}
           onOpen={(study, existing) => setShowPricingFor({ study, existing })}
+          onDelete={async (pricingId) => {
+            if (
+              !confirm(
+                "Excluir a precificação deste estudo? As parcelas pendentes serão removidas (as já pagas e a transação ficam preservadas no histórico)."
+              )
+            )
+              return;
+            const res = await fetch(`/api/finance/pricing/${pricingId}`, { method: "DELETE" });
+            if (res.ok) {
+              setPricings((prev) => prev.filter((p) => p.id !== pricingId));
+              refresh();
+            }
+          }}
         />
       )}
       {tab === "categories" && <CategoriesTab categories={categories} onChanged={refresh} />}
@@ -213,62 +237,144 @@ export function FinanceView({
   );
 }
 
-function KpiGrid({ summary }: { summary: FinanceSummary }) {
-  const items = [
-    { label: "Receita YTD", value: summary.revenue_ytd_brl, color: "#10b981" },
-    { label: "Despesa YTD", value: summary.expense_ytd_brl, color: "#ef4444" },
-    {
-      label: "Net YTD",
-      value: summary.net_ytd_brl,
-      color: summary.net_ytd_brl >= 0 ? "#5d57eb" : "#ef4444",
-    },
-    { label: "MRR estimado", value: summary.mrr_brl, color: "#52e1e7" },
-    { label: "A receber (AR)", value: summary.ar_open_brl, color: "#f59e0b" },
-    {
-      label: "Net 30 dias",
-      value: summary.net_30d_brl,
-      color: summary.net_30d_brl >= 0 ? "#5d57eb" : "#ef4444",
-    },
-  ];
+function KpiGroups({ summary }: { summary: FinanceSummary }) {
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-        gap: 12,
-      }}
-    >
-      {items.map((it) => (
-        <div
-          key={it.label}
-          className="surface"
-          style={{ padding: 16, borderRadius: 12 }}
-        >
-          <div
-            style={{
-              fontSize: 10,
-              fontWeight: 800,
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              color: "var(--ink-mute)",
-            }}
-          >
-            {it.label}
+    <div style={{ display: "grid", gap: 12 }}>
+      {/* Linha 1: Caixa realizado (entrou/saiu de fato) */}
+      <KpiRow
+        title="Caixa realizado (transações no período)"
+        items={[
+          {
+            label: "Receita YTD",
+            value: summary.revenue_ytd_brl,
+            color: "#10b981",
+            help: "Soma de todas as entradas registradas neste ano.",
+          },
+          {
+            label: "Despesa YTD",
+            value: summary.expense_ytd_brl,
+            color: "#ef4444",
+            help: "Soma de todas as saídas registradas neste ano.",
+          },
+          {
+            label: "Net YTD",
+            value: summary.net_ytd_brl,
+            color: summary.net_ytd_brl >= 0 ? "#5d57eb" : "#ef4444",
+            help: "Receita YTD menos Despesa YTD.",
+          },
+          {
+            label: "Net 30 dias",
+            value: summary.net_30d_brl,
+            color: summary.net_30d_brl >= 0 ? "#5d57eb" : "#ef4444",
+            help: "Entradas menos saídas nos últimos 30 dias.",
+          },
+        ]}
+      />
+      {/* Linha 2: Pipeline contratado e a receber */}
+      <KpiRow
+        title="Pipeline (estudos precificados, parcelas em aberto)"
+        items={[
+          {
+            label: "Contratado total",
+            value: summary.contracted_total_brl,
+            color: "#5d57eb",
+            help: "TCV: soma de fixo + 12m de recorrente de todos os estudos precificados.",
+          },
+          {
+            label: "Contratado YTD",
+            value: summary.contracted_ytd_brl,
+            color: "#5d57eb",
+            help: "TCV dos estudos precificados neste ano.",
+          },
+          {
+            label: "MRR estimado",
+            value: summary.mrr_brl,
+            color: "#52e1e7",
+            help: "Soma mensal das receitas recorrentes dos estudos ativos.",
+          },
+          {
+            label: "A receber (AR)",
+            value: summary.ar_open_brl,
+            color: "#f59e0b",
+            help: "Soma das parcelas pendentes ou atrasadas.",
+          },
+          {
+            label: "A receber 30d",
+            value: summary.ar_next_30d_brl,
+            color: "#0ea5e9",
+            help: "Parcelas com vencimento nos próximos 30 dias.",
+          },
+          {
+            label: "Atrasado",
+            value: summary.ar_overdue_brl,
+            color: "#dc2626",
+            help: "Parcelas pendentes com vencimento já passado.",
+          },
+        ]}
+      />
+    </div>
+  );
+}
+
+function KpiRow({
+  title,
+  items,
+}: {
+  title: string;
+  items: Array<{ label: string; value: number; color: string; help: string }>;
+}) {
+  return (
+    <div className="surface" style={{ padding: 14, borderRadius: 14 }}>
+      <div
+        style={{
+          fontSize: 10,
+          fontWeight: 800,
+          letterSpacing: "0.22em",
+          textTransform: "uppercase",
+          color: "var(--ink-mute)",
+          marginBottom: 10,
+        }}
+      >
+        {title}
+      </div>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: `repeat(${items.length}, 1fr)`,
+          gap: 12,
+        }}
+      >
+        {items.map((it) => (
+          <div key={it.label} title={it.help} style={{ minWidth: 0 }}>
+            <div
+              style={{
+                fontSize: 10,
+                fontWeight: 700,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color: "var(--ink-mute)",
+              }}
+            >
+              {it.label}
+            </div>
+            <div
+              style={{
+                fontSize: 20,
+                fontWeight: 900,
+                marginTop: 4,
+                color: it.color,
+                letterSpacing: "-0.02em",
+                fontFamily: "var(--font-sans)",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {formatBRL(it.value)}
+            </div>
           </div>
-          <div
-            style={{
-              fontSize: 22,
-              fontWeight: 900,
-              marginTop: 6,
-              color: it.color,
-              letterSpacing: "-0.02em",
-              fontFamily: "var(--font-sans)",
-            }}
-          >
-            {formatBRL(it.value)}
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
@@ -276,9 +382,11 @@ function KpiGrid({ summary }: { summary: FinanceSummary }) {
 function Overview({
   summary,
   pricings,
+  onPayInstallment,
 }: {
   summary: FinanceSummary;
   pricings: StudyPricingWithJoins[];
+  onPayInstallment: (id: string) => void;
 }) {
   const maxBar = Math.max(
     1,
@@ -290,6 +398,99 @@ function Overview({
 
   return (
     <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 16 }}>
+      <div className="surface" style={{ padding: 20, borderRadius: 14, gridColumn: "span 2" }}>
+        <SectionTitle>Próximas parcelas a receber</SectionTitle>
+        {summary.upcoming_installments.length === 0 ? (
+          <Empty>
+            Nenhuma parcela pendente. Quando você precificar um estudo com parcelas, elas aparecem
+            aqui.
+          </Empty>
+        ) : (
+          <div style={{ marginTop: 12, display: "grid", gap: 6 }}>
+            {summary.upcoming_installments.map((i) => (
+              <div
+                key={i.id}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "auto 1fr auto auto auto",
+                  alignItems: "center",
+                  gap: 12,
+                  padding: "10px 12px",
+                  border: "1px solid var(--line)",
+                  borderRadius: 8,
+                  background: i.due_date < new Date().toISOString().slice(0, 10) ? "#fef2f2" : "white",
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: 11,
+                    color: "var(--ink-mute)",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {new Date(i.due_date + "T00:00:00").toLocaleDateString("pt-BR", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "2-digit",
+                  })}
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <div
+                    style={{
+                      fontSize: 13,
+                      fontWeight: 700,
+                      color: "var(--navy)",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {i.study?.title || "—"}
+                  </div>
+                  <div style={{ fontSize: 11, color: "var(--ink-mute)" }}>
+                    {i.study?.client_name ? `${i.study.client_name} · ` : ""}Parcela{" "}
+                    {i.installment_number}/{i.total_installments}
+                  </div>
+                </div>
+                <div
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 800,
+                    fontFamily: "var(--font-mono)",
+                    color: "var(--navy)",
+                  }}
+                >
+                  {formatBRL(i.amount_brl)}
+                </div>
+                <span
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 800,
+                    letterSpacing: 1,
+                    padding: "2px 8px",
+                    borderRadius: 999,
+                    background: i.due_date < new Date().toISOString().slice(0, 10) ? "#fee2e2" : "#dbeafe",
+                    color: i.due_date < new Date().toISOString().slice(0, 10) ? "#dc2626" : "#1e40af",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  {i.due_date < new Date().toISOString().slice(0, 10) ? "Atrasada" : "Pendente"}
+                </span>
+                <button
+                  type="button"
+                  className="btn-primary"
+                  onClick={() => onPayInstallment(i.id)}
+                  style={{ fontSize: 11, padding: "6px 10px" }}
+                >
+                  Marcar paga
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
       <div className="surface" style={{ padding: 20, borderRadius: 14 }}>
         <SectionTitle>Fluxo mensal (últimos 12 meses)</SectionTitle>
         <div style={{ display: "flex", gap: 6, alignItems: "flex-end", height: 200, marginTop: 16 }}>
@@ -350,60 +551,72 @@ function Overview({
         {summary.archetype_breakdown.length === 0 ? (
           <Empty>Nenhum estudo precificado ainda.</Empty>
         ) : (
-          <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 10 }}>
-            {summary.archetype_breakdown.map((a) => (
-              <div key={a.archetype}>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    fontSize: 12,
-                    color: "var(--ink-soft)",
-                    marginBottom: 4,
-                  }}
-                >
-                  <span>
-                    <span
-                      style={{
-                        display: "inline-block",
-                        width: 8,
-                        height: 8,
-                        borderRadius: 2,
-                        background: ARCHETYPE_COLORS[a.archetype],
-                        marginRight: 6,
-                      }}
-                    />
-                    {ARCHETYPE_LABELS[a.archetype]} · {a.count}
-                  </span>
-                  <strong style={{ color: "var(--navy)" }}>{formatBRL(a.revenue_brl)}</strong>
-                </div>
-                <div
-                  style={{
-                    height: 6,
-                    background: "var(--line)",
-                    borderRadius: 999,
-                    overflow: "hidden",
-                  }}
-                >
+          <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 12 }}>
+            {summary.archetype_breakdown.map((a) => {
+              const maxContracted = Math.max(
+                1,
+                ...summary.archetype_breakdown.map((x) => x.contracted_brl)
+              );
+              return (
+                <div key={a.archetype}>
                   <div
                     style={{
-                      width: `${
-                        summary.archetype_breakdown.reduce((m, x) => Math.max(m, x.revenue_brl), 1) > 0
-                          ? (a.revenue_brl /
-                              summary.archetype_breakdown.reduce(
-                                (m, x) => Math.max(m, x.revenue_brl),
-                                1
-                              )) *
-                            100
-                          : 0
-                      }%`,
-                      height: "100%",
-                      background: ARCHETYPE_COLORS[a.archetype],
+                      display: "flex",
+                      justifyContent: "space-between",
+                      fontSize: 12,
+                      color: "var(--ink-soft)",
+                      marginBottom: 4,
                     }}
-                  />
+                  >
+                    <span>
+                      <span
+                        style={{
+                          display: "inline-block",
+                          width: 8,
+                          height: 8,
+                          borderRadius: 2,
+                          background: ARCHETYPE_COLORS[a.archetype],
+                          marginRight: 6,
+                        }}
+                      />
+                      {ARCHETYPE_LABELS[a.archetype]} · {a.count} estudo{a.count !== 1 ? "s" : ""}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      height: 6,
+                      background: "var(--line)",
+                      borderRadius: 999,
+                      overflow: "hidden",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: `${(a.contracted_brl / maxContracted) * 100}%`,
+                        height: "100%",
+                        background: ARCHETYPE_COLORS[a.archetype],
+                      }}
+                    />
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      fontSize: 11,
+                      marginTop: 4,
+                      fontFamily: "var(--font-mono)",
+                    }}
+                  >
+                    <span style={{ color: "var(--ink-mute)" }}>
+                      contratado: <strong style={{ color: "var(--navy)" }}>{formatBRL(a.contracted_brl)}</strong>
+                    </span>
+                    <span style={{ color: "var(--ink-mute)" }}>
+                      realizado: <strong style={{ color: "#10b981" }}>{formatBRL(a.realized_brl)}</strong>
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
         <div style={{ marginTop: 18, paddingTop: 14, borderTop: "1px solid var(--line)" }}>
@@ -690,10 +903,12 @@ function PricingTab({
   pricings,
   studies,
   onOpen,
+  onDelete,
 }: {
   pricings: StudyPricingWithJoins[];
   studies: StudyOption[];
   onOpen: (study: StudyOption, existing: StudyPricingWithJoins | null) => void;
+  onDelete: (pricingId: string) => void;
 }) {
   const priceMap = useMemo(() => {
     const m = new Map<string, StudyPricingWithJoins>();
@@ -758,14 +973,27 @@ function PricingTab({
                   <span style={{ fontSize: 11, color: "var(--ink-mute)" }}>—</span>
                 )}
               </div>
-              <button
-                type="button"
-                className={pricing ? "btn-ghost" : "btn-primary"}
-                onClick={() => onOpen(study, pricing)}
-                style={{ fontSize: 12 }}
-              >
-                {pricing ? "Editar" : "Precificar"}
-              </button>
+              <div style={{ display: "flex", gap: 4 }}>
+                <button
+                  type="button"
+                  className={pricing ? "btn-ghost" : "btn-primary"}
+                  onClick={() => onOpen(study, pricing)}
+                  style={{ fontSize: 12 }}
+                >
+                  {pricing ? "Editar" : "Precificar"}
+                </button>
+                {pricing && (
+                  <button
+                    type="button"
+                    className="btn-ghost"
+                    onClick={() => onDelete(pricing.id)}
+                    style={{ fontSize: 12, color: "var(--danger)" }}
+                    title="Excluir precificação e parcelas pendentes"
+                  >
+                    Excluir
+                  </button>
+                )}
+              </div>
             </div>
           ))}
         </div>

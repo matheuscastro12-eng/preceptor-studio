@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServiceClient } from "@/lib/supabase";
-import { fetchPricings } from "@/lib/finance";
+import { fetchPricings, regenerateInstallments, type StudyPricing } from "@/lib/finance";
 
 function apiError(error: unknown, status = 500) {
   return NextResponse.json(
@@ -24,6 +24,7 @@ export async function POST(req: Request) {
     if (!input.study_id) return apiError(new Error("study_id obrigatório"), 400);
 
     const supabase = createSupabaseServiceClient();
+    const installmentsCount = Math.max(1, Math.min(36, Number(input.installments_count) || 1));
     const payload = {
       study_id: String(input.study_id),
       archetype: input.archetype || "empreendimento",
@@ -35,6 +36,8 @@ export async function POST(req: Request) {
       estimated_cost_brl: Number(input.estimated_cost_brl) || 0,
       payment_status: input.payment_status || "pending",
       paid_amount_brl: Number(input.paid_amount_brl) || 0,
+      installments_count: installmentsCount,
+      first_installment_date: input.first_installment_date || input.start_date || null,
       start_date: input.start_date || null,
       end_date: input.end_date || null,
       notes: input.notes || null,
@@ -47,6 +50,14 @@ export async function POST(req: Request) {
       .select("*")
       .single();
     if (error) throw error;
+
+    // Regenera parcelas (mantém pagas, recria pendentes)
+    try {
+      await regenerateInstallments(data as StudyPricing);
+    } catch (e) {
+      console.error("Falha ao regenerar parcelas:", e);
+    }
+
     return NextResponse.json({ pricing: data });
   } catch (e) {
     return apiError(e);

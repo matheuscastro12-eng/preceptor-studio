@@ -29,11 +29,36 @@ export interface StudyPricing {
   estimated_cost_brl: number;
   payment_status: PaymentStatus;
   paid_amount_brl: number;
+  installments_count: number;
+  first_installment_date: string | null;
   start_date: string | null;
   end_date: string | null;
   notes: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export type InstallmentStatus = "pending" | "paid" | "overdue" | "cancelled";
+
+export interface PricingInstallment {
+  id: string;
+  pricing_id: string;
+  study_id: string;
+  installment_number: number;
+  total_installments: number;
+  due_date: string;
+  amount_brl: number;
+  status: InstallmentStatus;
+  paid_at: string | null;
+  transaction_id: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface InstallmentWithJoins extends PricingInstallment {
+  pricing?: StudyPricing | null;
+  study?: { id: string; title: string; client_name?: string | null } | null;
 }
 
 export interface Transaction {
@@ -73,20 +98,49 @@ export interface StudyPricingWithJoins extends StudyPricing {
 }
 
 export interface FinanceSummary {
+  // Receita realizada (transações de entrada)
   revenue_total_brl: number;
-  expense_total_brl: number;
-  net_total_brl: number;
   revenue_ytd_brl: number;
-  expense_ytd_brl: number;
-  net_ytd_brl: number;
   revenue_30d_brl: number;
+
+  // Despesa realizada (transações de saída)
+  expense_total_brl: number;
+  expense_ytd_brl: number;
   expense_30d_brl: number;
+
+  // Resultado líquido
+  net_total_brl: number;
+  net_ytd_brl: number;
   net_30d_brl: number;
+
+  // Receita contratada (soma dos pricings)
+  contracted_total_brl: number;
+  contracted_ytd_brl: number;
+
+  // MRR estimado
   mrr_brl: number;
+
+  // Parcelas em aberto (a receber)
   ar_open_brl: number;
-  archetype_breakdown: Array<{ archetype: Archetype; revenue_brl: number; count: number }>;
+  ar_next_30d_brl: number;
+  ar_overdue_brl: number;
+
+  // Breakdowns
+  archetype_breakdown: Array<{
+    archetype: Archetype;
+    contracted_brl: number;
+    realized_brl: number;
+    count: number;
+  }>;
   monthly_series: Array<{ month: string; revenue_brl: number; expense_brl: number }>;
-  by_category: Array<{ category_id: string | null; name: string; kind: CategoryKind; total_brl: number; color: string }>;
+  by_category: Array<{
+    category_id: string | null;
+    name: string;
+    kind: CategoryKind;
+    total_brl: number;
+    color: string;
+  }>;
+  upcoming_installments: InstallmentWithJoins[];
 }
 
 // ─── Helpers de cálculo ─────────────────────────────────────────────────────
@@ -164,6 +218,106 @@ export async function fetchTransactions(opts?: {
   }
 }
 
+export async function fetchInstallments(opts?: {
+  pricingId?: string;
+  studyId?: string;
+  status?: InstallmentStatus | InstallmentStatus[];
+  dueBefore?: string;
+  dueAfter?: string;
+  limit?: number;
+}): Promise<InstallmentWithJoins[]> {
+  try {
+    const sb = createSupabaseServiceClient();
+    let q = sb
+      .from("pricing_installments")
+      .select("*, pricing:study_pricing(*), study:studies(id,title,client:clients(id,name))")
+      .order("due_date", { ascending: true })
+      .order("installment_number", { ascending: true });
+    if (opts?.pricingId) q = q.eq("pricing_id", opts.pricingId);
+    if (opts?.studyId) q = q.eq("study_id", opts.studyId);
+    if (opts?.status) {
+      if (Array.isArray(opts.status)) q = q.in("status", opts.status);
+      else q = q.eq("status", opts.status);
+    }
+    if (opts?.dueBefore) q = q.lte("due_date", opts.dueBefore);
+    if (opts?.dueAfter) q = q.gte("due_date", opts.dueAfter);
+    if (opts?.limit) q = q.limit(opts.limit);
+    const { data, error } = await q;
+    if (error) throw error;
+    const rows = (data as any[]) || [];
+    return rows.map((r) => ({
+      ...r,
+      study: r.study
+        ? {
+            id: r.study.id,
+            title: r.study.title,
+            client_name: r.study.client?.name ?? null,
+          }
+        : null,
+    })) as InstallmentWithJoins[];
+  } catch {
+    return [];
+  }
+}
+
+// Gera o cronograma de parcelas a partir do pricing.
+// Atomicamente: apaga parcelas existentes não-pagas e cria novas.
+// Mantém parcelas já pagas (não regenera o histórico).
+export async function regenerateInstallments(pricing: StudyPricing): Promise<void> {
+  const sb = createSupabaseServiceClient();
+
+  // Busca parcelas existentes
+  const { data: existing } = await sb
+    .from("pricing_installments")
+    .select("*")
+    .eq("pricing_id", pricing.id);
+  const paid = ((existing as PricingInstallment[]) || []).filter((i) => i.status === "paid");
+  const paidSum = paid.reduce((acc, i) => acc + Number(i.amount_brl), 0);
+
+  // Apaga as não-pagas
+  await sb
+    .from("pricing_installments")
+    .delete()
+    .eq("pricing_id", pricing.id)
+    .neq("status", "paid");
+
+  const total = Number(pricing.fixed_amount_brl) || 0;
+  const count = Math.max(1, Number(pricing.installments_count) || 1);
+  const remaining = Math.max(0, total - paidSum);
+
+  if (remaining <= 0) return;
+
+  const remainingCount = count - paid.length;
+  if (remainingCount <= 0) return;
+
+  const baseAmount = Math.floor((remaining / remainingCount) * 100) / 100;
+  // Última parcela ajusta a sobra de centavos
+  const totals: number[] = Array(remainingCount).fill(baseAmount);
+  const usedSum = baseAmount * remainingCount;
+  totals[totals.length - 1] = Number((remaining - baseAmount * (remainingCount - 1)).toFixed(2));
+
+  const startISO = pricing.first_installment_date || pricing.start_date || new Date().toISOString().slice(0, 10);
+  const start = new Date(startISO + "T00:00:00");
+
+  const rows = totals.map((amt, idx) => {
+    const d = new Date(start);
+    d.setMonth(d.getMonth() + (paid.length + idx));
+    return {
+      pricing_id: pricing.id,
+      study_id: pricing.study_id,
+      installment_number: paid.length + idx + 1,
+      total_installments: count,
+      due_date: d.toISOString().slice(0, 10),
+      amount_brl: amt,
+      status: "pending" as const,
+    };
+  });
+
+  if (rows.length > 0) {
+    await sb.from("pricing_installments").insert(rows);
+  }
+}
+
 export async function fetchPricings(): Promise<StudyPricingWithJoins[]> {
   try {
     const sb = createSupabaseServiceClient();
@@ -206,14 +360,21 @@ function nDaysAgoISO(n: number): string {
 }
 
 export async function fetchSummary(): Promise<FinanceSummary> {
-  const [txs, pricings, cats] = await Promise.all([
+  const [txs, pricings, cats, allInstallments] = await Promise.all([
     fetchTransactions({}),
     fetchPricings(),
     fetchCategories(),
+    fetchInstallments({}),
   ]);
 
+  const today = new Date().toISOString().slice(0, 10);
   const ytdFrom = startOfYearISO();
   const d30From = nDaysAgoISO(30);
+  const in30Days = (() => {
+    const d = new Date();
+    d.setUTCDate(d.getUTCDate() + 30);
+    return d.toISOString().slice(0, 10);
+  })();
   const num = (v: any) => Number(v) || 0;
 
   const sum = (rows: TransactionWithJoins[], kind: TransactionKind, fromISO?: string) =>
@@ -228,40 +389,69 @@ export async function fetchSummary(): Promise<FinanceSummary> {
   const revenue_30d_brl = sum(txs, "inflow", d30From);
   const expense_30d_brl = sum(txs, "outflow", d30From);
 
+  // Receita contratada: soma do TCV de todos pricings
+  const contracted_total_brl = pricings.reduce((acc, p) => acc + pricingTotalContractValue(p), 0);
+  const contracted_ytd_brl = pricings
+    .filter((p) => p.created_at >= ytdFrom)
+    .reduce((acc, p) => acc + pricingTotalContractValue(p), 0);
+
   // MRR: soma das recurrings ativas
   const mrr_brl = pricings.reduce((acc, p) => acc + monthlyRecurringValue(p), 0);
 
-  // AR aberto: open receivables
-  const ar_open_brl = pricings.reduce((acc, p) => acc + pricingOpenReceivable(p), 0);
+  // AR aberto: soma das parcelas pendentes ou atrasadas
+  const openInstallments = allInstallments.filter(
+    (i) => i.status === "pending" || i.status === "overdue"
+  );
+  const ar_open_brl = openInstallments.reduce((acc, i) => acc + num(i.amount_brl), 0);
+  const ar_overdue_brl = allInstallments
+    .filter((i) => (i.status === "pending" || i.status === "overdue") && i.due_date < today)
+    .reduce((acc, i) => acc + num(i.amount_brl), 0);
+  const ar_next_30d_brl = allInstallments
+    .filter(
+      (i) =>
+        (i.status === "pending" || i.status === "overdue") &&
+        i.due_date >= today &&
+        i.due_date <= in30Days
+    )
+    .reduce((acc, i) => acc + num(i.amount_brl), 0);
 
-  // Breakdown por arquétipo (receita realizada via transações vinculadas a estudos)
+  // Próximas 10 parcelas (não pagas, ordenadas por vencimento)
+  const upcoming_installments = openInstallments
+    .filter((i) => i.due_date >= today)
+    .sort((a, b) => a.due_date.localeCompare(b.due_date))
+    .slice(0, 10);
+
+  // Breakdown por arquétipo: contratado vs realizado
   const studyToArchetype: Record<string, Archetype> = {};
   for (const p of pricings) studyToArchetype[p.study_id] = p.archetype;
-  const archMap = new Map<Archetype, { revenue_brl: number; count: number }>();
+
+  const archMap = new Map<Archetype, { contracted_brl: number; realized_brl: number; count: number }>();
   for (const p of pricings) {
     const a = p.archetype;
-    if (!archMap.has(a)) archMap.set(a, { revenue_brl: 0, count: 0 });
-    archMap.get(a)!.count += 1;
+    if (!archMap.has(a)) archMap.set(a, { contracted_brl: 0, realized_brl: 0, count: 0 });
+    const e = archMap.get(a)!;
+    e.count += 1;
+    e.contracted_brl += pricingTotalContractValue(p);
   }
   for (const t of txs) {
     if (t.kind !== "inflow" || !t.study_id) continue;
     const arche = studyToArchetype[t.study_id];
     if (!arche) continue;
-    const e = archMap.get(arche) || { revenue_brl: 0, count: 0 };
-    e.revenue_brl += num(t.amount_brl);
-    archMap.set(arche, e);
+    const e = archMap.get(arche);
+    if (e) e.realized_brl += num(t.amount_brl);
   }
   const archetype_breakdown = Array.from(archMap.entries()).map(([archetype, v]) => ({
     archetype,
-    revenue_brl: v.revenue_brl,
+    contracted_brl: v.contracted_brl,
+    realized_brl: v.realized_brl,
     count: v.count,
   }));
 
   // Série mensal (12 meses)
   const monthBuckets: Record<string, { revenue_brl: number; expense_brl: number }> = {};
-  const today = new Date();
+  const nowDate = new Date();
   for (let i = 11; i >= 0; i--) {
-    const d = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - i, 1));
+    const d = new Date(Date.UTC(nowDate.getUTCFullYear(), nowDate.getUTCMonth() - i, 1));
     const k = d.toISOString().slice(0, 7);
     monthBuckets[k] = { revenue_brl: 0, expense_brl: 0 };
   }
@@ -318,19 +508,24 @@ export async function fetchSummary(): Promise<FinanceSummary> {
 
   return {
     revenue_total_brl,
-    expense_total_brl,
-    net_total_brl: revenue_total_brl - expense_total_brl,
     revenue_ytd_brl,
-    expense_ytd_brl,
-    net_ytd_brl: revenue_ytd_brl - expense_ytd_brl,
     revenue_30d_brl,
+    expense_total_brl,
+    expense_ytd_brl,
     expense_30d_brl,
+    net_total_brl: revenue_total_brl - expense_total_brl,
+    net_ytd_brl: revenue_ytd_brl - expense_ytd_brl,
     net_30d_brl: revenue_30d_brl - expense_30d_brl,
+    contracted_total_brl,
+    contracted_ytd_brl,
     mrr_brl,
     ar_open_brl,
+    ar_next_30d_brl,
+    ar_overdue_brl,
     archetype_breakdown,
     monthly_series,
     by_category,
+    upcoming_installments,
   };
 }
 
