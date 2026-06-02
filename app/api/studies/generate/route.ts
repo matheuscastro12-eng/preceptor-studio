@@ -18,7 +18,7 @@ export const maxDuration = 60;
 // As demais etapas (brand, comercial, tese, cronograma) viram chamadas separadas.
 export async function POST(req: NextRequest) {
   try {
-    const { category, answers, clientName } = await req.json();
+    const { category, answers, clientName, sectorContext } = await req.json();
 
     if (!category || !answers) {
       return NextResponse.json(
@@ -37,9 +37,29 @@ export async function POST(req: NextRequest) {
 
     const questions = getQuestions(category);
 
+    // Contexto setorial vindo do template. Aceita do body (sectorContext) ou,
+    // como fallback, embutido nas respostas (answers.__sector_context) para não
+    // depender de mudança no fluxo do questionário.
+    const sector =
+      (sectorContext as Record<string, unknown> | null | undefined) ||
+      (answers && typeof answers.__sector_context === "object"
+        ? (answers.__sector_context as Record<string, unknown>)
+        : null);
+
     const clientResult = await callGemini(
       buildClientStudySystemPrompt(category),
-      buildClientStudyUserPrompt(questions, answers, clientName),
+      buildClientStudyUserPrompt(
+        questions,
+        answers,
+        clientName,
+        sector as
+          | {
+              context_notes?: string;
+              suggested_questions?: string[];
+              common_risks?: string[];
+            }
+          | null
+      ),
       apiKey,
       { thinking: false }
     );

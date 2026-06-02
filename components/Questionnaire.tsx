@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { updateStudy, replaceStudyTasks, StudyWithClient, Assignee, TaskStatus } from "@/lib/store";
+import { StudyWithClient, Assignee, TaskStatus } from "@/lib/store";
+import { replaceStudyTasksRemote, updateStudyRemote } from "@/lib/storeApi";
 import { getQuestions, Question, LIKERT_OPTIONS, OTHER_PREFIX } from "@/lib/questions";
 
 interface Props {
@@ -44,8 +45,8 @@ export function Questionnaire({ study, onUpdate }: Props) {
     });
   }
 
-  function saveAnswers() {
-    updateStudy(study.id, { answers });
+  async function saveAnswers() {
+    await updateStudyRemote(study.id, { answers });
   }
 
   async function handleNext() {
@@ -54,7 +55,7 @@ export function Questionnaire({ study, onUpdate }: Props) {
       return;
     }
     setError(null);
-    saveAnswers();
+    await saveAnswers();
     if (!isLastSection) {
       setCurrentSection(currentSection + 1);
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -63,9 +64,9 @@ export function Questionnaire({ study, onUpdate }: Props) {
     }
   }
 
-  function handlePrev() {
+  async function handlePrev() {
     setError(null);
-    saveAnswers();
+    await saveAnswers();
     if (currentSection > 0) {
       setCurrentSection(currentSection - 1);
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -101,7 +102,7 @@ export function Questionnaire({ study, onUpdate }: Props) {
     setError(null);
     setStage("estudo");
     try {
-      updateStudy(study.id, { answers, status: "generating" });
+      await updateStudyRemote(study.id, { answers, status: "generating" });
 
       // ETAPA 1 — Estudo do Cliente (com scores e insights)
       const stage1 = await safeFetchJson("/api/studies/generate", {
@@ -111,7 +112,7 @@ export function Questionnaire({ study, onUpdate }: Props) {
       });
 
       // Salva resultado intermediário (já dá pra ver o estudo + diagnóstico)
-      updateStudy(study.id, {
+      await updateStudyRemote(study.id, {
         status: "generating",
         output_md: stage1.output_md,
         insights_chave: stage1.insights_chave || [],
@@ -134,7 +135,7 @@ export function Questionnaire({ study, onUpdate }: Props) {
         internal: stage2.internal_scores || null,
       };
 
-      updateStudy(study.id, {
+      await updateStudyRemote(study.id, {
         status: "generating",
         brand_brief_md: stage2.brand_brief_md || null,
         commercial_plan_md: stage2.commercial_plan_md || null,
@@ -167,10 +168,10 @@ export function Questionnaire({ study, onUpdate }: Props) {
             milestone: !!t.milestone,
           }))
         );
-        replaceStudyTasks(study.id, flat);
+        await replaceStudyTasksRemote(study.id, flat);
       }
 
-      updateStudy(study.id, {
+      await updateStudyRemote(study.id, {
         status: "completed",
         completed_at: new Date().toISOString(),
         generation_metadata: {
@@ -186,7 +187,7 @@ export function Questionnaire({ study, onUpdate }: Props) {
       setError(err.message);
       setGenerating(false);
       setStage(null);
-      updateStudy(study.id, { status: "questionnaire" });
+      await updateStudyRemote(study.id, { status: "questionnaire" });
     }
   }
 

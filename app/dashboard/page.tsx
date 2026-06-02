@@ -1,268 +1,816 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { listStudies, StudyWithClient } from "@/lib/store";
-import { CATEGORIES } from "@/lib/questions";
-import { scoreColor } from "@/components/ScoreCard";
+import {
+  fetchStudies,
+  fetchLeads,
+  summarize,
+  studyOverall,
+  getRevenueMetrics,
+  getHotLeads,
+  formatBRL,
+  type RevenueMetrics,
+  type HotLead,
+} from "@/lib/dashboardData";
+import { Kpi } from "@/components/dashboard/Kpi";
+import {
+  CategoryIcon,
+  StatusPill,
+  ScoreChip,
+  getStage,
+  lookupStageForLead,
+} from "@/components/dashboard/Shared";
+import { priorityColor } from "@/lib/leadScore";
 
-export default function Dashboard() {
-  const [studies, setStudies] = useState<StudyWithClient[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [filterCategory, setFilterCategory] = useState<string>("all");
-  const [filterClient, setFilterClient] = useState("");
-  const [filterDateFrom, setFilterDateFrom] = useState("");
-  const [filterDateTo, setFilterDateTo] = useState("");
-  const [minScore, setMinScore] = useState(0);
+export const dynamic = "force-dynamic";
 
-  useEffect(() => {
-    loadStudies();
-  }, [filterCategory, filterClient, filterDateFrom, filterDateTo, minScore]);
+export default async function HomePage() {
+  const [studies, leads, revenue, hotLeads] = await Promise.all([
+    fetchStudies(),
+    fetchLeads(),
+    getRevenueMetrics(),
+    getHotLeads(5),
+  ]);
+  const c = summarize(studies, leads);
 
-  function loadStudies() {
-    setLoading(true);
-    let result = listStudies().sort((a, b) =>
-      b.created_at.localeCompare(a.created_at)
-    );
-
-    if (filterCategory !== "all")
-      result = result.filter((s) => s.category === filterCategory);
-    if (filterDateFrom)
-      result = result.filter((s) => s.created_at >= filterDateFrom);
-    if (filterDateTo)
-      result = result.filter((s) => s.created_at <= filterDateTo + "T23:59:59");
-    if (filterClient.trim()) {
-      const term = filterClient.toLowerCase();
-      result = result.filter((s) =>
-        s.client?.name.toLowerCase().includes(term)
-      );
-    }
-    if (minScore > 0) {
-      result = result.filter((s) => (s.scores?.client_facing?.overall ?? 0) >= minScore);
-    }
-
-    setStudies(result);
-    setLoading(false);
-  }
-
-  const totalStudies = listStudies().length;
+  // weekly synthetic activity for the chart (last 12 weeks).
+  const leadsByWeek = bucketByWeek(leads.map((l) => l.created_at), 12);
+  const studiesByWeek = bucketByWeek(
+    studies.map((s) => s.created_at),
+    12
+  );
 
   return (
-    <div>
-      {/* Hero */}
-      <div className="mb-10 flex items-end justify-between gap-6 flex-wrap">
+    <div className="page" data-screen-label="Home">
+      <div className="page-head">
         <div>
-          <div className="eyebrow mb-2">Dashboard</div>
-          <h1 className="text-4xl font-black text-navy tracking-tight">
-            Estudos Estratégicos
+          <h1 className="h-page">
+            Bom dia, Luciano{" "}
+            <span style={{ color: "var(--ink-mute)", fontWeight: 500 }}>
+              · {formatToday()}
+            </span>
           </h1>
-          <p className="text-ink-soft mt-1.5 max-w-xl">
-            Histórico completo de diagnósticos gerados pela plataforma.
+          <p className="sub">
+            {c.newLeads} leads novos aguardando triagem · {c.generating} estudo
+            {c.generating === 1 ? "" : "s"} gerando · {studies.filter((s) => s.status === "questionnaire").length} em questionário.
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Stat label="Total" value={totalStudies} />
-          <Stat label="Filtrados" value={studies.length} accent />
+        <div style={{ display: "flex", gap: 8 }}>
+          <button className="ds-btn ds-btn-ghost">▾ Esta semana</button>
+          <Link className="ds-btn ds-btn-primary" href="/dashboard/new">
+            + Novo estudo
+          </Link>
         </div>
       </div>
 
-      {/* Filtros */}
-      <div className="surface rounded-2xl p-5 mb-8 grid grid-cols-1 md:grid-cols-5 gap-4">
-        <FilterField label="Categoria">
-          <select
-            value={filterCategory}
-            onChange={(e) => setFilterCategory(e.target.value)}
-            className="input-field appearance-none cursor-pointer pr-9 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2394A3B8%22 stroke-width=%222%22><polyline points=%226 9 12 15 18 9%22/></svg>')] bg-no-repeat bg-[right_0.75rem_center] bg-[length:1rem]"
-          >
-            <option value="all">Todas</option>
-            {CATEGORIES.map((c) => (
-              <option key={c.value} value={c.value}>
-                {c.label}
-              </option>
-            ))}
-          </select>
-        </FilterField>
-        <FilterField label="Cliente">
-          <input
-            type="text"
-            placeholder="Buscar por nome..."
-            value={filterClient}
-            onChange={(e) => setFilterClient(e.target.value)}
-            className="input-field"
-          />
-        </FilterField>
-        <FilterField label="De">
-          <input
-            type="date"
-            value={filterDateFrom}
-            onChange={(e) => setFilterDateFrom(e.target.value)}
-            className="input-field"
-          />
-        </FilterField>
-        <FilterField label="Até">
-          <input
-            type="date"
-            value={filterDateTo}
-            onChange={(e) => setFilterDateTo(e.target.value)}
-            className="input-field"
-          />
-        </FilterField>
-        <FilterField label={`Score mín. ${minScore}`}>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            step="5"
-            value={minScore}
-            onChange={(e) => setMinScore(Number(e.target.value))}
-            className="w-full accent-cyan-deep"
-          />
-        </FilterField>
-      </div>
-
-      {/* Lista */}
-      {loading ? (
-        <div className="grid gap-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="surface rounded-2xl h-24 shimmer" />
-          ))}
-        </div>
-      ) : studies.length === 0 ? (
-        <EmptyState />
-      ) : (
-        <div className="grid gap-3">
-          {studies.map((study) => (
-            <StudyRow key={study.id} study={study} />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ─── Components ──────────────────────────────────────────────────────────
-function Stat({ label, value, accent }: { label: string; value: number; accent?: boolean }) {
-  return (
-    <div className={`surface rounded-xl px-4 py-2.5 min-w-[88px] ${accent ? "ring-1 ring-cyan/40" : ""}`}>
-      <div className="text-[10px] uppercase tracking-widest text-ink-mute font-bold">{label}</div>
-      <div className={`text-2xl font-black tracking-tight ${accent ? "text-blue" : "text-navy"}`}>{value}</div>
-    </div>
-  );
-}
-
-function FilterField({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <label className="block text-[10px] font-bold uppercase tracking-widest text-ink-mute mb-1.5">
-        {label}
-      </label>
-      {children}
-    </div>
-  );
-}
-
-function StudyRow({ study }: { study: StudyWithClient }) {
-  const cat = CATEGORIES.find((c) => c.value === study.category);
-  const overall = study.scores?.client_facing?.overall;
-  return (
-    <Link
-      href={`/dashboard/study/${study.id}`}
-      className="surface surface-hover rounded-2xl p-5 flex items-center gap-5 group"
-    >
-      <CategoryIcon category={study.category} />
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-blue">
-            {cat?.label || study.category}
-          </span>
-          <span className="w-1 h-1 rounded-full bg-ink-mute" />
-          <StatusBadge status={study.status} />
-        </div>
-        <h3 className="text-lg font-bold text-navy mb-0.5 truncate group-hover:text-blue transition-colors">
-          {study.title}
-        </h3>
-        <p className="text-sm text-ink-soft truncate">
-          {study.client?.name || "Sem cliente"} ·{" "}
-          {new Date(study.created_at).toLocaleDateString("pt-BR")}
-        </p>
-      </div>
-      {typeof overall === "number" && <ScoreMini value={overall} />}
-      <div className="text-ink-mute group-hover:text-cyan group-hover:translate-x-1 transition text-2xl shrink-0">
-        →
-      </div>
-    </Link>
-  );
-}
-
-function ScoreMini({ value }: { value: number }) {
-  const c = scoreColor(value);
-  return (
-    <div className="hidden sm:flex items-center gap-2 shrink-0">
-      <div className="text-right">
-        <div className="text-[9px] uppercase tracking-widest text-ink-mute font-bold">Score</div>
-        <div className="text-xl font-black tabular-nums" style={{ color: c.bg }}>{value}</div>
-      </div>
-      <div className="w-1 h-10 rounded-full bg-slate-200 overflow-hidden">
-        <div
-          className="w-full"
-          style={{ background: c.bg, height: `${value}%`, marginTop: `${100 - value}%` }}
+      <div className="kpis">
+        <Kpi
+          label="Pipeline ponderado"
+          value={formatBRL(revenue.weightedPipeline)}
+          delta="por probabilidade de estágio"
+          deltaDir="up"
+          icon="◆"
+          spark={[3, 5, 4, 7, 6, 8, 9]}
+        />
+        <Kpi
+          label="MRR projetado"
+          value={formatBRL(revenue.projectedMrr)}
+          delta="ganhos / 12 meses"
+          deltaDir="up"
+          icon="↑"
+          spark={[2, 3, 3, 4, 5, 6, 7]}
+        />
+        <Kpi
+          label="Ticket médio"
+          value={formatBRL(revenue.averageTicket)}
+          delta={
+            revenue.averageTicket > 0 ? "estimado por deal" : "sem dados ainda"
+          }
+          deltaDir="up"
+          icon="◇"
+          spark={[4, 4, 5, 5, 6, 6, 7]}
+        />
+        <Kpi
+          label="Taxa de conversão"
+          value={`${revenue.conversionRate}%`}
+          delta="ganhos / (ganhos + perdidos)"
+          deltaDir="up"
+          icon="◐"
+          spark={[28, 29, 30, 31, 32, 33, 34]}
         />
       </div>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1.4fr 1fr",
+          gap: 14,
+          marginBottom: 14,
+        }}
+      >
+        <RevenueFunnel revenue={revenue} />
+        <HotLeadsPanel leads={hotLeads} />
+      </div>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "2fr 1fr",
+          gap: 14,
+          marginBottom: 14,
+        }}
+      >
+        <ActivityChart leads={leadsByWeek} studies={studiesByWeek} />
+        <PipelineMini leads={leads} />
+      </div>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1.4fr 1fr",
+          gap: 14,
+        }}
+      >
+        <RecentStudiesPanel studies={studies.slice(0, 5)} />
+        <RecentLeadsPanel leads={leads.slice(0, 5)} />
+      </div>
     </div>
   );
 }
 
-function CategoryIcon({ category }: { category: string }) {
-  const map: Record<string, { bg: string; ring: string; letter: string }> = {
-    saude: { bg: "from-emerald-400 to-emerald-600", ring: "ring-emerald-200", letter: "S" },
-    educacao: { bg: "from-blue-400 to-blue-600", ring: "ring-blue-200", letter: "E" },
-    juridico: { bg: "from-purple to-blue", ring: "ring-purple/30", letter: "J" },
-    tech: { bg: "from-cyan to-blue", ring: "ring-cyan/30", letter: "T" },
-    outro: { bg: "from-slate-400 to-slate-600", ring: "ring-slate-200", letter: "O" },
-  };
-  const m = map[category] || map.outro;
-  return (
-    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${m.bg} ring-4 ${m.ring} flex items-center justify-center text-white font-black text-lg shrink-0`}>
-      {m.letter}
-    </div>
-  );
+function formatToday() {
+  return new Date().toLocaleDateString("pt-BR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
 }
 
-function StatusBadge({ status }: { status: string }) {
-  const map: Record<string, { c: string; label: string; dot: string }> = {
-    draft: { c: "bg-slate-100 text-slate-700", label: "Rascunho", dot: "bg-slate-400" },
-    questionnaire: { c: "bg-blue-50 text-blue", label: "Questionário", dot: "bg-blue" },
-    generating: { c: "bg-purple/10 text-purple", label: "Gerando", dot: "bg-purple animate-pulse" },
-    completed: { c: "bg-success-soft text-success", label: "Concluído", dot: "bg-success" },
-    archived: { c: "bg-slate-100 text-slate-500", label: "Arquivado", dot: "bg-slate-300" },
-  };
-  const m = map[status] || map.draft;
-  return (
-    <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${m.c}`}>
-      <span className={`w-1.5 h-1.5 rounded-full ${m.dot}`} />
-      {m.label}
-    </span>
-  );
+function bucketByWeek(dates: string[], weeks: number): number[] {
+  const buckets = Array.from({ length: weeks }, () => 0);
+  const now = Date.now();
+  const weekMs = 7 * 86400000;
+  for (const d of dates) {
+    if (!d) continue;
+    const t = new Date(d).getTime();
+    const diff = Math.floor((now - t) / weekMs);
+    const idx = weeks - 1 - diff;
+    if (idx >= 0 && idx < weeks) buckets[idx]++;
+  }
+  return buckets;
 }
 
-function EmptyState() {
+function RevenueFunnel({ revenue }: { revenue: RevenueMetrics }) {
+  const max = Math.max(...revenue.funnel.map((f) => f.value), 1);
   return (
-    <div className="surface rounded-3xl p-16 text-center relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-cyan/5 via-transparent to-purple/5 pointer-events-none" />
-      <div className="relative">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-navy-gradient mb-5 shadow-cardLg">
-          <span className="text-cyan text-3xl font-black">+</span>
+    <div className="ds-card" style={{ padding: 16 }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 14,
+        }}
+      >
+        <div>
+          <h3 className="h-section">Funil de receita</h3>
+          <p
+            style={{
+              margin: "4px 0 0",
+              fontSize: 11.5,
+              color: "var(--ink-soft)",
+            }}
+          >
+            Valor R$ acumulado por estágio do pipeline
+          </p>
         </div>
-        <h3 className="text-2xl font-black text-navy mb-2 tracking-tight">
-          Nenhum estudo ainda
-        </h3>
-        <p className="text-ink-soft mb-6 max-w-sm mx-auto">
-          Crie o primeiro diagnóstico estratégico para começar a usar a plataforma.
-        </p>
-        <Link href="/dashboard/new" className="btn-primary inline-flex items-center gap-2">
-          Criar Primeiro Estudo →
+        <Link
+          href="/dashboard/crm"
+          style={{ fontSize: 11.5, color: "var(--blue)", fontWeight: 700 }}
+        >
+          Abrir CRM →
         </Link>
       </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {revenue.funnel.map((f) => {
+          const s = getStage(f.stage);
+          return (
+            <div
+              key={f.stage}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "auto 1fr auto",
+                gap: 10,
+                alignItems: "center",
+              }}
+            >
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  fontSize: 11.5,
+                  color: "var(--ink-soft)",
+                  minWidth: 130,
+                }}
+              >
+                <span
+                  style={{
+                    width: 7,
+                    height: 7,
+                    background: s.color,
+                    borderRadius: 2,
+                  }}
+                />
+                {s.label}
+              </span>
+              <div
+                style={{
+                  height: 8,
+                  background: "var(--slate-100)",
+                  borderRadius: 999,
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    height: "100%",
+                    width: `${Math.max((f.value / max) * 100, f.value > 0 ? 4 : 0)}%`,
+                    background: s.color,
+                  }}
+                />
+              </div>
+              <span
+                className="tabular"
+                style={{
+                  fontSize: 12,
+                  fontWeight: 800,
+                  color: s.color,
+                  minWidth: 64,
+                  textAlign: "right",
+                }}
+              >
+                {formatBRL(f.value)}
+              </span>
+            </div>
+          );
+        })}
+        {revenue.funnel.every((f) => f.value === 0) && (
+          <p
+            style={{
+              margin: 0,
+              fontSize: 12,
+              color: "var(--ink-mute)",
+              textAlign: "center",
+              padding: "8px 0",
+            }}
+          >
+            Sem valor estimado no pipeline ainda.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function HotLeadsPanel({ leads }: { leads: HotLead[] }) {
+  return (
+    <div className="ds-card" style={{ padding: 0 }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "14px 16px",
+        }}
+      >
+        <h3 className="h-section">Leads quentes</h3>
+        <Link
+          href="/dashboard/leads"
+          style={{ fontSize: 11.5, color: "var(--blue)", fontWeight: 700 }}
+        >
+          Ver todos →
+        </Link>
+      </div>
+      {leads.length === 0 && (
+        <div
+          style={{
+            padding: 32,
+            textAlign: "center",
+            color: "var(--ink-mute)",
+            fontSize: 13,
+            borderTop: "1px solid var(--slate-100)",
+          }}
+        >
+          Sem leads pontuados ainda.
+        </div>
+      )}
+      {leads.map((l) => (
+        <Link
+          key={l.id}
+          href={`/dashboard/leads/${l.id}`}
+          style={{
+            display: "grid",
+            gridTemplateColumns: "auto 1fr",
+            gap: 12,
+            alignItems: "center",
+            padding: "11px 16px",
+            borderTop: "1px solid var(--slate-100)",
+          }}
+        >
+          <span
+            className="tabular"
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: 16,
+              fontWeight: 800,
+              color: priorityColor(l.priority_score),
+              minWidth: 32,
+              textAlign: "center",
+            }}
+          >
+            {l.priority_score ?? "-"}
+          </span>
+          <div style={{ minWidth: 0 }}>
+            <div
+              style={{
+                fontWeight: 700,
+                color: "var(--navy)",
+                fontSize: 13,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {l.name}
+              {l.company && (
+                <span style={{ color: "var(--ink-mute)", fontWeight: 500 }}>
+                  {" "}
+                  · {l.company}
+                </span>
+              )}
+            </div>
+            <div
+              style={{
+                fontSize: 11,
+                color: "var(--ink-soft)",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {l.summary_line || "Sem resumo gerado."}
+            </div>
+          </div>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+function ActivityChart({
+  leads,
+  studies,
+}: {
+  leads: number[];
+  studies: number[];
+}) {
+  const W = 720;
+  const H = 220;
+  const PAD = { l: 40, r: 16, t: 16, b: 28 };
+  const max = Math.max(...leads, ...studies, 4) + 4;
+  const innerW = W - PAD.l - PAD.r;
+  const innerH = H - PAD.t - PAD.b;
+  const step = innerW / Math.max(leads.length - 1, 1);
+  const pts = (arr: number[]) =>
+    arr
+      .map(
+        (v, i) =>
+          `${PAD.l + i * step},${PAD.t + innerH - (v / max) * innerH}`
+      )
+      .join(" ");
+  return (
+    <div className="ds-card" style={{ padding: 16 }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          marginBottom: 10,
+          gap: 14,
+        }}
+      >
+        <div style={{ minWidth: 0 }}>
+          <h3 className="h-section" style={{ whiteSpace: "nowrap" }}>
+            Atividade do estúdio
+          </h3>
+          <p
+            style={{
+              margin: "4px 0 0",
+              fontSize: 11.5,
+              color: "var(--ink-soft)",
+            }}
+          >
+            Últimas 12 semanas
+          </p>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            gap: 14,
+            fontSize: 11.5,
+            color: "var(--ink-soft)",
+            flexShrink: 0,
+          }}
+        >
+          <span>
+            <span
+              style={{
+                width: 8,
+                height: 8,
+                background: "var(--cyan-deep)",
+                borderRadius: 2,
+                display: "inline-block",
+                marginRight: 6,
+                verticalAlign: "middle",
+              }}
+            />{" "}
+            Leads
+          </span>
+          <span>
+            <span
+              style={{
+                width: 8,
+                height: 8,
+                background: "var(--blue)",
+                borderRadius: 2,
+                display: "inline-block",
+                marginRight: 6,
+                verticalAlign: "middle",
+              }}
+            />{" "}
+            Estudos
+          </span>
+        </div>
+      </div>
+      <svg
+        width="100%"
+        height={H}
+        viewBox={`0 0 ${W} ${H}`}
+        style={{ display: "block" }}
+      >
+        {[0, 0.25, 0.5, 0.75, 1].map((p, i) => {
+          const y = PAD.t + innerH * (1 - p);
+          return (
+            <g key={i}>
+              <line
+                x1={PAD.l}
+                y1={y}
+                x2={W - PAD.r}
+                y2={y}
+                stroke="#E2E8F0"
+                strokeDasharray={i === 0 || i === 4 ? "" : "3 3"}
+                strokeWidth="1"
+              />
+              <text
+                x={PAD.l - 8}
+                y={y + 3}
+                fontSize="10"
+                fill="#94A3B8"
+                textAnchor="end"
+                fontFamily="JetBrains Mono"
+              >
+                {Math.round(max * p)}
+              </text>
+            </g>
+          );
+        })}
+        {leads.map((_, i) => (
+          <text
+            key={i}
+            x={PAD.l + i * step}
+            y={H - 8}
+            fontSize="10"
+            fill="#94A3B8"
+            textAnchor="middle"
+            fontFamily="JetBrains Mono"
+          >
+            S{i + 1}
+          </text>
+        ))}
+        <defs>
+          <linearGradient id="g-leads" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#3BC8CF" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="#3BC8CF" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <polygon
+          fill="url(#g-leads)"
+          points={`${PAD.l},${PAD.t + innerH} ${pts(leads)} ${W - PAD.r},${PAD.t + innerH}`}
+        />
+        <polyline
+          fill="none"
+          stroke="#3BC8CF"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          points={pts(leads)}
+        />
+        <polyline
+          fill="none"
+          stroke="#5D57EB"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          points={pts(studies)}
+        />
+        {leads.map((v, i) => (
+          <circle
+            key={`l${i}`}
+            cx={PAD.l + i * step}
+            cy={PAD.t + innerH - (v / max) * innerH}
+            r="2.5"
+            fill="#3BC8CF"
+          />
+        ))}
+        {studies.map((v, i) => (
+          <circle
+            key={`s${i}`}
+            cx={PAD.l + i * step}
+            cy={PAD.t + innerH - (v / max) * innerH}
+            r="2.5"
+            fill="#5D57EB"
+          />
+        ))}
+      </svg>
+    </div>
+  );
+}
+
+function PipelineMini({ leads }: { leads: { status: string }[] }) {
+  const order = ["contatado", "qualificado", "proposta", "ganho"];
+  const counts: Record<string, number> = {};
+  for (const k of order) counts[k] = leads.filter((l) => l.status === k).length;
+  const max = Math.max(...Object.values(counts), 1);
+  return (
+    <div
+      className="ds-card"
+      style={{ padding: 16, display: "flex", flexDirection: "column", gap: 12 }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <h3 className="h-section">Funil esta semana</h3>
+        <Link
+          href="/dashboard/crm"
+          style={{ fontSize: 11.5, color: "var(--blue)", fontWeight: 700 }}
+        >
+          Abrir CRM →
+        </Link>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        {order.map((k) => {
+          const s = getStage(k);
+          return (
+            <div
+              key={k}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "auto 1fr auto",
+                gap: 10,
+                alignItems: "center",
+              }}
+            >
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  fontSize: 11.5,
+                  color: "var(--ink-soft)",
+                  minWidth: 130,
+                }}
+              >
+                <span
+                  style={{
+                    width: 7,
+                    height: 7,
+                    background: s.color,
+                    borderRadius: 2,
+                  }}
+                />
+                {s.label}
+              </span>
+              <div
+                style={{
+                  height: 6,
+                  background: "var(--slate-100)",
+                  borderRadius: 999,
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    height: "100%",
+                    width: `${(counts[k] / max) * 100}%`,
+                    background: s.color,
+                  }}
+                />
+              </div>
+              <span
+                className="tabular"
+                style={{
+                  fontSize: 12,
+                  fontWeight: 800,
+                  color: s.color,
+                  minWidth: 24,
+                  textAlign: "right",
+                }}
+              >
+                {counts[k]}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function RecentStudiesPanel({ studies }: { studies: Awaited<ReturnType<typeof fetchStudies>> }) {
+  return (
+    <div className="ds-card" style={{ padding: 0 }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "14px 16px",
+        }}
+      >
+        <h3 className="h-section">Estudos recentes</h3>
+        <Link
+          href="/dashboard/estudos"
+          style={{ fontSize: 11.5, color: "var(--blue)", fontWeight: 700 }}
+        >
+          Ver todos →
+        </Link>
+      </div>
+      <div>
+        {studies.length === 0 && (
+          <div
+            style={{
+              padding: 32,
+              textAlign: "center",
+              color: "var(--ink-mute)",
+              fontSize: 13,
+            }}
+          >
+            Nenhum estudo ainda.
+          </div>
+        )}
+        {studies.map((s) => {
+          const overall = studyOverall(s);
+          return (
+            <Link
+              key={s.id}
+              href={`/dashboard/study/${s.id}`}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "auto 1fr auto auto",
+                gap: 14,
+                alignItems: "center",
+                padding: "11px 16px",
+                borderTop: "1px solid var(--slate-100)",
+              }}
+            >
+              <CategoryIcon category={s.category} size={32} />
+              <div style={{ minWidth: 0 }}>
+                <div
+                  style={{
+                    fontWeight: 700,
+                    color: "var(--navy)",
+                    fontSize: 13,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {s.title}
+                </div>
+                <div style={{ fontSize: 11.5, color: "var(--ink-soft)" }}>
+                  {s.client?.name || "Sem cliente"}
+                  <span style={{ margin: "0 6px", color: "var(--ink-mute)" }}>·</span>
+                  <span className="tabular">
+                    {new Date(s.created_at).toLocaleDateString("pt-BR")}
+                  </span>
+                </div>
+              </div>
+              <StatusPill status={s.status} />
+              {typeof overall === "number" ? (
+                <ScoreChip value={overall} />
+              ) : (
+                <span style={{ width: 56 }} />
+              )}
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function RecentLeadsPanel({ leads }: { leads: Awaited<ReturnType<typeof fetchLeads>> }) {
+  return (
+    <div className="ds-card" style={{ padding: 0 }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "14px 16px",
+        }}
+      >
+        <h3 className="h-section">Leads recentes</h3>
+        <Link
+          href="/dashboard/leads"
+          style={{ fontSize: 11.5, color: "var(--blue)", fontWeight: 700 }}
+        >
+          Ver todos →
+        </Link>
+      </div>
+      {leads.length === 0 && (
+        <div
+          style={{
+            padding: 32,
+            textAlign: "center",
+            color: "var(--ink-mute)",
+            fontSize: 13,
+            borderTop: "1px solid var(--slate-100)",
+          }}
+        >
+          Sem leads ainda.
+        </div>
+      )}
+      {leads.map((l) => {
+        const stage = lookupStageForLead(l.status);
+        return (
+          <div
+            key={l.id}
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr auto auto",
+              gap: 12,
+              alignItems: "center",
+              padding: "11px 16px",
+              borderTop: "1px solid var(--slate-100)",
+            }}
+          >
+            <div style={{ minWidth: 0 }}>
+              <div
+                style={{
+                  fontWeight: 700,
+                  color: "var(--navy)",
+                  fontSize: 13,
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {l.name}{" "}
+                {l.company && (
+                  <span style={{ color: "var(--ink-mute)", fontWeight: 500 }}>
+                    · {l.company}
+                  </span>
+                )}
+              </div>
+              <div
+                style={{
+                  fontSize: 11,
+                  color: "var(--ink-soft)",
+                  fontFamily: "var(--font-mono)",
+                }}
+              >
+                {l.email}
+              </div>
+            </div>
+            <span
+              className="pill"
+              style={{ background: stage.soft, color: stage.color }}
+            >
+              <span className="dot" style={{ background: stage.color }} />
+              {stage.label}
+            </span>
+            {typeof l.diagnostic_score === "number" ? (
+              <ScoreChip value={l.diagnostic_score} />
+            ) : (
+              <span style={{ width: 56 }} />
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

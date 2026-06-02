@@ -1,6 +1,7 @@
 "use client";
 
-import { StudyWithClient, listTasks } from "./store";
+import { StudyWithClient } from "./store";
+import { listTasksRemote } from "./storeApi";
 
 export type PDFKind =
   | "study"
@@ -29,7 +30,7 @@ export async function downloadStudyPDF(study: StudyWithClient, kind: PDFKind) {
     payload.scores = study.scores;
     payload.insights = study.insights_chave || [];
   } else if (kind === "execution") {
-    const tasks = listTasks(study.id);
+    const tasks = await listTasksRemote(study.id);
     const sprints = [1, 2, 3].map((n) => ({
       number: n,
       name: ["Setup e Fundação", "Construção", "Lançamento"][n - 1],

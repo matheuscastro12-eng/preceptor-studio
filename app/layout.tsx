@@ -1,9 +1,22 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Preceptor! Studio",
-  description: "Plataforma interna de geração de Estudos Estratégicos",
+  metadataBase: new URL("https://preceptor-studio.vercel.app"),
+  title: {
+    default: "PRECEPTOR! Venture Studio",
+    template: "%s · PRECEPTOR!",
+  },
+  description:
+    "Venture Studio brasileiro que constrói produtos digitais e soluções de IA com engenharia humana, em camadas. Faça o diagnóstico técnico e empreendedor grátis.",
+  applicationName: "PRECEPTOR! Studio",
+  robots: { index: true, follow: true },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#06122A",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

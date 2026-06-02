@@ -15,22 +15,54 @@ import {
 import { callGemini, extractScores } from "@/lib/gemini";
 import { recommendationFromScore } from "@/lib/scoreColors";
 
-export const maxDuration = 60;
+export const maxDuration = 120;
 
-// ETAPA 2 — Brand + Commercial + Tese em paralelo, usando o estudo como contexto.
+const INTERNAL_RECOMMENDATION = {
+  ENTRAR: "entrar",
+  OBSERVAR: "observar",
+  NAO_ENTRAR: "nao_entrar",
+} as const;
+
+function normalizeInternalRecommendation(value: unknown, overall?: number) {
+  const fallback =
+    typeof overall === "number"
+      ? recommendationFromScore(overall)
+      : "OBSERVAR";
+  const raw = String(value || fallback)
+    .toUpperCase()
+    .replace(/\s+/g, "_")
+    .replace("NÃO", "NAO");
+
+  if (raw === "ENTRAR" || raw === "OBSERVAR" || raw === "NAO_ENTRAR") {
+    return INTERNAL_RECOMMENDATION[raw];
+  }
+
+  return INTERNAL_RECOMMENDATION[fallback];
+}
+
+function normalizeInternalScores(scores: any) {
+  if (!scores || typeof scores !== "object") return null;
+  const overall = typeof scores.overall === "number" ? scores.overall : undefined;
+  return {
+    ...scores,
+    recommendation: normalizeInternalRecommendation(scores.recommendation, overall),
+  };
+}
+
+// ETAPA 2: Brand + Commercial + Tese em paralelo, usando o estudo como contexto.
 export async function POST(req: NextRequest) {
   try {
     const { category, answers, clientName, title, studyMd } = await req.json();
     if (!category || !studyMd) {
       return NextResponse.json(
-        { error: "category e studyMd são obrigatórios" },
+        { error: "category e studyMd sao obrigatorios" },
         { status: 400 }
       );
     }
     const apiKey = process.env.GOOGLE_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
-        { error: "GOOGLE_API_KEY não configurada" },
+        { error: "GOOGLE_API_KEY nao configurada" },
         { status: 500 }
       );
     }
@@ -59,24 +91,23 @@ export async function POST(req: NextRequest) {
     ]);
 
     const thesis = extractScores(thesisResult.content || "");
-    if (
-      thesis.scores &&
-      typeof thesis.scores === "object" &&
-      typeof thesis.scores.overall === "number"
-    ) {
-      thesis.scores.recommendation = recommendationFromScore(thesis.scores.overall);
-    }
+    const internalScores = normalizeInternalScores(thesis.scores);
 
     return NextResponse.json({
       success: true,
       brand_brief_md: brandResult.content || null,
       commercial_plan_md: commercialResult.content || null,
-      internal_thesis_md: thesis.md,
-      internal_scores: thesis.scores || null,
+      internal_thesis_md: thesis.md || null,
+      internal_scores: internalScores,
       metadata: {
         brand_usage: brandResult.usage,
         commercial_usage: commercialResult.usage,
         thesis_usage: thesisResult.usage,
+        errors: {
+          brand: brandResult.error || null,
+          commercial: commercialResult.error || null,
+          thesis: thesisResult.error || null,
+        },
         generated_at: new Date().toISOString(),
       },
     });

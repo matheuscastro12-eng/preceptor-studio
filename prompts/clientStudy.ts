@@ -1,5 +1,6 @@
 import { Category } from "@/lib/store";
 import { Question } from "@/lib/questions";
+import { VISUAL_BLOCK_RULES } from "./visualBlocks";
 
 const CATEGORY_CONTEXT: Record<Category, string> = {
   saude: `Setor de saúde no Brasil — particularidades obrigatórias na análise:
@@ -71,18 +72,6 @@ EXEMPLOS DE REESCRITA:
 ✅ "O setor digitalizou 30% das consultas pós-pandemia. Quem não tiver agendamento online em 12 meses vai perder espaço pra apps integrados (Cuidas, Conexa)."`;
 
 const STYLE_RULES = `═══════════════════════════════════════════
-FORMATO OBRIGATÓRIO DE TABELAS:
-
-Quando o template diz "TABELA: **A | B | C**. N linhas." você DEVE gerar markdown REAL com quebras de linha entre header, separador e cada row. NUNCA escreva tudo em uma linha. NUNCA escreva o literal "TABELA:" no output.
-
-Formato correto (sempre com \\n entre linhas):
-
-| Header A | Header B | Header C |
-|---|---|---|
-| linha 1 col A | linha 1 col B | linha 1 col C |
-| linha 2 col A | linha 2 col B | linha 2 col C |
-
-═══════════════════════════════════════════
 ESTILO OBRIGATÓRIO:
 
 Voz:
@@ -111,9 +100,14 @@ Este é um documento PAGO (R$3-5k) entregue ao cliente. Ele JÁ assinou contrato
 PRINCÍPIO ABSOLUTO — NÃO VIOLAR:
 Nunca escreva "vai/não vai", "desista", "não recomendo seguir", "cancele a ideia". Se o diagnóstico é fraco, seja honesto sobre as fragilidades e prescreva mitigação. O cliente já decidiu seguir; você ajuda ele a executar bem.
 
+PRINCÍPIO DE PRIVACIDADE DO CLIENTE:
+Não transforme características pessoais do cliente/fundador em fragilidade pública. Não escreva sobre experiência individual, perfil pessoal, resiliência, dedicação, compromisso, capital pessoal, histórico individual ou "nenhuma experiência direta" como julgamento da pessoa. Quando isso afetar a estratégia, traduza para risco do projeto ou lacuna operacional, sem nomear nem avaliar a pessoa.
+
 ${ANTI_PATTERNS}
 
 ${STYLE_RULES}
+
+${VISUAL_BLOCK_RULES}
 
 ═══════════════════════════════════════════
 FRAMEWORK ANALÍTICO OBRIGATÓRIO:
@@ -129,6 +123,12 @@ Antes de escrever qualquer seção, mentalmente aplique:
 ESTRUTURA OBRIGATÓRIA (Markdown):
 
 # Estudo Estratégico — [título do projeto]
+
+:::summary
+- Leitura principal com score, mercado e risco dominante.
+- Decisão estratégica recomendada para os próximos 30 dias.
+- 2 a 3 evidências das respostas que sustentam a leitura.
+:::
 
 ## Diagnóstico em Números
 *Sumário de uma linha contextualizando o resultado dos scores.*
@@ -248,6 +248,7 @@ BLOCO DE INSIGHTS-CHAVE (obrigatório, ANTES dos scores):
 INSIGHTS_JSON -->
 
 3 a 5 itens. Mínimo 1 force, 1 fragility, 1 insight. Cada body cita explicitamente dado das respostas.
+Não use o nome do cliente nos insights. Não crie insight sobre pessoalidades do fundador. Fragilidades devem ser do negócio, mercado, produto, canal, oferta, regulação, validação ou operação.
 
 ═══════════════════════════════════════════
 BLOCO DE SCORES (obrigatório, AO FINAL):
@@ -273,7 +274,7 @@ SCORES_JSON -->
 
 REGRAS DOS SCORES:
 - mercado: tamanho × demanda × urgência × tendência. Use 0-25 muito fraco, 25-50 fraco, 50-75 promissor, 75-100 forte.
-- execucao: capital + tempo + experiência + validação prévia. PESO NOVO: ferramentas de IA (Claude, Cursor, vibe coding, Lovable, v0) reduzem em 40-60% o gap de "experiência técnica direta" pra MVPs digitais. Um fundador sem stack tradicional, mas com R$15k+, 25h+/sem e disposição de usar IA como copiloto, consegue MVP funcional em 6-12 semanas — não trate isso como execução fraca automática. Reserve scores <40 pra casos com gap de capital OU tempo OU validação simultâneos. Para projetos digitais (SaaS, app, web), considere "tem capital + tempo + IA disponível" como base 55-65; experiência prévia no setor empurra pra 70-80.
+- execucao: capital + tempo + experiência + validação prévia. Use os números das respostas (ex: cliente com R$5-15k e 25-40h/sem e validação 'Pouca' não passa de 50).
 - diferenciacao: força do diferencial × defensabilidade × clareza do posicionamento.
 - modelo_receita: clareza × recorrência × margem × escalabilidade.
 - risco_regulatorio: ESCALA INVERTIDA. 100 = sem risco regulatório (negócio totalmente livre). 20 = risco alto (precisa de aprovação ANVISA, registro CFM, autorização BACEN). Quanto MAIOR o risco, MENOR o número.
@@ -302,19 +303,53 @@ CHECKLIST DE QUALIDADE (auto-avalie ANTES de retornar):
 Comece direto pelo "# Estudo Estratégico" sem preâmbulo.`;
 }
 
+export interface SectorContextInput {
+  context_notes?: string;
+  suggested_questions?: string[];
+  common_risks?: string[];
+}
+
+function buildSectorContextBlock(sector?: SectorContextInput | null): string {
+  if (!sector) return "";
+  const notes = (sector.context_notes || "").trim();
+  const questions = Array.isArray(sector.suggested_questions)
+    ? sector.suggested_questions.filter((q) => typeof q === "string" && q.trim())
+    : [];
+  const risks = Array.isArray(sector.common_risks)
+    ? sector.common_risks.filter((r) => typeof r === "string" && r.trim())
+    : [];
+  if (!notes && questions.length === 0 && risks.length === 0) return "";
+
+  let block = `\n═══ CONTEXTO SETORIAL (template) ═══\n`;
+  block += `Este estudo usa um template do setor. Incorpore as exigências abaixo na análise, principalmente nas seções de Mercado, Riscos e Regulatório.\n\n`;
+  if (notes) block += `${notes}\n\n`;
+  if (questions.length > 0) {
+    block += `Perguntas-chave do setor que a análise deve cobrir:\n`;
+    block += questions.map((q) => `- ${q}`).join("\n") + "\n\n";
+  }
+  if (risks.length > 0) {
+    block += `Riscos típicos do setor a endereçar na seção 6 (Riscos):\n`;
+    block += risks.map((r) => `- ${r}`).join("\n") + "\n\n";
+  }
+  block += `═══ FIM DO CONTEXTO SETORIAL ═══\n\n`;
+  return block;
+}
+
 export function buildClientStudyUserPrompt(
   questions: Question[],
   answers: Record<string, any>,
-  clientName?: string | null
+  clientName?: string | null,
+  sectorContext?: SectorContextInput | null
 ): string {
-  return buildAnswersBlock(questions, answers, clientName) +
+  return buildAnswersBlock(questions, answers, clientName, sectorContext) +
     `\n\nProduza o Estudo Estratégico completo seguindo a estrutura obrigatória do prompt do sistema. Densidade alta. Específico ao negócio acima. Bloco INSIGHTS_JSON e bloco SCORES_JSON ao final.`;
 }
 
 export function buildAnswersBlock(
   questions: Question[],
   answers: Record<string, any>,
-  clientName?: string | null
+  clientName?: string | null,
+  sectorContext?: SectorContextInput | null
 ): string {
   const sections: Record<string, Question[]> = {};
   for (const q of questions) {
@@ -336,6 +371,8 @@ export function buildAnswersBlock(
     prompt += pdfContext + "\n\n";
     prompt += `═══ FIM DO CONTEXTO ADICIONAL ═══\n\n`;
   }
+
+  prompt += buildSectorContextBlock(sectorContext);
 
   for (const [section, qs] of Object.entries(sections)) {
     prompt += `\n═══ ${section} ═══\n\n`;

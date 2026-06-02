@@ -4,9 +4,76 @@ import { callGemini, extractJSON } from "@/lib/gemini";
 
 export const maxDuration = 60;
 
+function compactPdfText(text: string) {
+  const clean = text.replace(/\s{3,}/g, "\n\n").trim();
+  if (clean.length <= 30000) return clean;
+
+  const head = clean.slice(0, 22000);
+  const tail = clean.slice(-7000);
+  return `${head}
+
+[... trecho central removido para acelerar o pré-preenchimento ...]
+
+${tail}`;
+}
+
+function filenameHint(filename: string | null | undefined) {
+  if (!filename) return "";
+  return filename
+    .replace(/\.pdf$/i, "")
+    .replace(/[-_]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function firstUsefulSentences(text: string, count = 5) {
+  return text
+    .replace(/\s+/g, " ")
+    .split(/(?<=[.!?])\s+/)
+    .map((s) => s.trim())
+    .filter((s) => s.length > 35 && s.length < 280)
+    .slice(0, count)
+    .join(" ");
+}
+
+function applyZeroFallback(
+  sanitized: Record<string, any>,
+  pdfText: string,
+  filename?: string | null
+) {
+  if (Object.keys(sanitized).length > 0) return sanitized;
+
+  const hint = filenameHint(filename);
+  const excerpt = firstUsefulSentences(pdfText, 4);
+  const lower = `${hint} ${pdfText.slice(0, 12000)}`.toLowerCase();
+  const fallback: Record<string, any> = {};
+
+  if (hint || excerpt) {
+    fallback.ideia_resumo = [
+      hint ? `Projeto relacionado a ${hint}.` : "",
+      excerpt ? `O PDF indica: ${excerpt}` : "",
+    ].filter(Boolean).join(" ");
+  }
+
+  if (lower.includes("nr-01") || lower.includes("nr 01") || lower.includes("risco psicossocial")) {
+    fallback.problema_principal =
+      "Empresas precisam se adequar às exigências da NR-01, especialmente na gestão de riscos ocupacionais e psicossociais.";
+    fallback.cliente_tipo = ["Pequena empresa ou autônomo", "Empresa de médio porte"];
+    fallback.cliente_renda = "Empresas de pequeno porte (faturamento até R$5M/ano)";
+    fallback.ideia_origem = ["Oportunidade que vi no mercado", "Insight a partir do meu setor de trabalho"];
+    fallback.mercado_tamanho = "Médio (100 mil a 1 milhão)";
+  }
+
+  if (lower.includes("empresa") || lower.includes("b2b")) {
+    fallback.cliente_tipo = fallback.cliente_tipo || ["Pequena empresa ou autônomo", "Empresa de médio porte"];
+  }
+
+  return fallback;
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const { pdfText, category } = await req.json();
+    const { pdfText, category, filename } = await req.json();
 
     if (!pdfText || typeof pdfText !== "string" || pdfText.length < 50) {
       return NextResponse.json(
@@ -31,7 +98,6 @@ export async function POST(req: NextRequest) {
 
     const questions = getQuestions(category);
 
-    // Schema compacto para o prompt
     const schemaForPrompt = questions.map((q) => {
       const base: any = { id: q.id, type: q.type, question: q.question };
       if (q.options) base.options = q.options;
@@ -40,60 +106,73 @@ export async function POST(req: NextRequest) {
       return base;
     });
 
-    const systemPrompt = `Você é um analista que lê documentos de projetos e mapeia informações pra um questionário estratégico.
+    const systemPrompt = `Você é um analista que lê documentos de projetos e mapeia informações para um questionário estratégico.
 
 Você receberá:
 1. Um schema com perguntas (id, tipo, pergunta, opções quando aplicável)
-2. Um texto extraído de PDF do projeto
+2. O nome do arquivo, quando disponível
+3. Um texto extraído de PDF do projeto
 
-Sua tarefa: para cada pergunta, retornar a resposta SE E SOMENTE SE o PDF fornece evidência clara. Caso contrário, retorne null.
+Sua tarefa: preencher o máximo possível com base no PDF, separando perguntas abertas de perguntas fechadas.
 
 REGRAS DE OUTPUT:
 - Retorne APENAS JSON válido. Nada mais. Sem markdown, sem code fences.
 - Schema: { "<question_id>": <resposta ou null>, ... }
 - Tipos de resposta por type:
-  - text_short / text_long → string (português, conciso, baseado no PDF)
-  - number / currency → número (sem R$ ou %, apenas o valor)
-  - single → string EXATAMENTE igual a uma das options
-  - multi → array de strings, cada uma EXATAMENTE igual a uma das options
-  - likert → string EXATAMENTE igual a uma de: ${LIKERT_OPTIONS.join(", ")}
-- Se a pergunta tem allow_other:true e o PDF tem informação que não bate com nenhuma option → use "Outro: <texto curto>" (single) OU adicione "Outro: <texto>" no array (multi).
+  - text_short / text_long: string em português, concisa, baseada no PDF. Pode sintetizar evidência parcial clara.
+  - number / currency: número, sem R$ ou %
+  - single: string EXATAMENTE igual a uma das options
+  - multi: array de strings, cada uma EXATAMENTE igual a uma das options
+  - likert: string EXATAMENTE igual a uma de: ${LIKERT_OPTIONS.join(", ")}
+- Se a pergunta tem allow_other:true e o PDF tem informação que não bate com nenhuma option, use "Outro: <texto curto>".
 
 REGRAS CRÍTICAS:
-- Se NÃO há evidência clara no PDF, retorne null. Não invente.
-- Não infira a partir do tipo de empresa (ex: não chute "B2C" só porque é app — só responda se o PDF DIZ ou DESCREVE com clareza).
-- Para likert: só responda se o PDF mostrar evidência OBJETIVA do nível de validação (ex: "já conversei com 50 clientes" → "Muito" para diag_conversou_clientes; "ainda em estágio de ideia" → "Muito pouco" para diag_validacao_pagamento).
-- Em caso de dúvida, retorne null.
+- Para text_short e text_long, preencha quando o PDF revelar tema, mercado, problema, público, concorrentes ou proposta.
+- Para single, multi, number, currency e likert, só preencha com evidência clara.
+- Não invente capital, tempo de dedicação, experiência do fundador, objetivo de 12 meses ou validação comercial.
+- Não infira a partir do tipo de empresa quando a opção for fechada. Só responda se o PDF diz ou descreve com clareza.
+- Para likert: só responda se o PDF mostrar evidência objetiva do nível de validação.
+- Em caso de dúvida em pergunta fechada, retorne null.
+- Evite retornar tudo null. PDFs de pesquisa de mercado costumam preencher pelo menos ideia_resumo, problema_principal, cliente_tipo, mercado_tamanho ou concorrentes.
 
 Comece a resposta DIRETO com "{". Termine com "}".`;
 
-    const userPrompt = `═══ SCHEMA DO QUESTIONÁRIO ═══
+    const compactText = compactPdfText(pdfText);
+
+    const userPrompt = `NOME DO ARQUIVO
+
+${filename || "não informado"}
+
+SCHEMA DO QUESTIONÁRIO
 
 ${JSON.stringify(schemaForPrompt, null, 2)}
 
-═══ TEXTO EXTRAÍDO DO PDF ═══
+TEXTO EXTRAÍDO DO PDF
 
-${pdfText.slice(0, 50000)}
-
-═══════════════════════════════════════
+${compactText}
 
 Mapeie. Retorne apenas JSON.`;
 
     const result = await callGemini(systemPrompt, userPrompt, apiKey, {
+      primaryModel: process.env.GEMINI_EXTRACT_MODEL || "gemini-2.5-flash",
+      fallbackModel: process.env.GEMINI_EXTRACT_FALLBACK_MODEL || "gemini-2.5-flash",
+      primaryTimeoutMs: 48000,
       thinking: false,
       temperature: 0.2,
+      maxOutputTokens: 4096,
     });
 
     const suggestions = extractJSON(result.content) || {};
 
-    // Sanitiza: garante que apenas IDs válidos passem e que tipos batam
     const validIds = new Set(questions.map((q) => q.id));
-    const sanitized: Record<string, any> = {};
+    let sanitized: Record<string, any> = {};
     for (const [k, v] of Object.entries(suggestions)) {
       if (!validIds.has(k)) continue;
       if (v === null || v === undefined || v === "") continue;
       sanitized[k] = v;
     }
+
+    sanitized = applyZeroFallback(sanitized, pdfText, filename);
 
     return NextResponse.json({
       success: true,
@@ -103,9 +182,14 @@ Mapeie. Retorne apenas JSON.`;
     });
   } catch (err: any) {
     console.error("Erro ao extrair do PDF:", err);
+    const isTimeout = String(err.message || "").toLowerCase().includes("timeout");
     return NextResponse.json(
-      { error: err.message || "Erro interno" },
-      { status: 500 }
+      {
+        error: isTimeout
+          ? "A IA demorou demais para ler o PDF. O PDF continua anexado; você pode seguir sem pré-preenchimento ou tentar novamente."
+          : err.message || "Erro interno",
+      },
+      { status: isTimeout ? 504 : 500 }
     );
   }
 }

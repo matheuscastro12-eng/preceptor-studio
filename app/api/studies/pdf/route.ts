@@ -367,6 +367,27 @@ function buildPDFTemplate(opts: {
   .callout-warning { background: #FEF3C7; border-left-color: #F59E0B; color: #78350F; }
   .callout-warning .callout-label { background: #F59E0B; color: white; }
 
+  .md-block { border: 0.3mm solid #e2e8f0; border-left: 1mm solid #0a1f44; border-radius: 2.5mm; padding: 3.5mm 4mm; margin: 4mm 0; page-break-inside: avoid; background: #fff; }
+  .md-block-label { display: inline-block; font-size: 7pt; font-weight: 900; letter-spacing: 1.2px; text-transform: uppercase; padding: 0.5mm 2mm; border-radius: 1mm; margin-bottom: 1.8mm; }
+  .md-block h4 { font-size: 11pt; color: #0a1f44; margin: 0 0 1.5mm; }
+  .md-block p:last-child { margin-bottom: 0; }
+  .md-block-decision { border-left-color: #5D57EB; background: #F7F7FF; }
+  .md-block-decision .md-block-label { background: #5D57EB; color: white; }
+  .md-block-evidence { border-left-color: #52E1E7; background: #F0FDFF; }
+  .md-block-evidence .md-block-label { background: #52E1E7; color: #06122A; }
+  .md-block-risk { border-left-color: #EF4444; background: #FFF7F7; }
+  .md-block-risk .md-block-label { background: #EF4444; color: white; }
+  .md-block-summary { border-left-color: #0A1F44; background: #F8FAFC; }
+  .md-block-summary .md-block-label { background: #0A1F44; color: white; }
+  .md-block-actions { border-left-color: #10B981; background: #F0FDF8; }
+  .md-block-actions .md-block-label { background: #10B981; color: white; }
+
+  .metric-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3mm; margin: 4mm 0; page-break-inside: avoid; }
+  .metric-card { border: 0.3mm solid #e2e8f0; border-radius: 2.5mm; padding: 3mm; background: #F8FAFC; }
+  .metric-label { font-size: 7pt; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 1mm; }
+  .metric-value { font-size: 16pt; line-height: 1.05; font-weight: 900; color: #0a1f44; }
+  .metric-note { font-size: 8pt; color: #64748b; margin-top: 1mm; font-weight: 600; }
+
   /* Diagnostic */
   .diagnostic-overall { display: flex; gap: 8mm; align-items: center; padding: 6mm; background: linear-gradient(135deg, #f0f9ff 0%, #fdf4ff 100%); border-radius: 3mm; margin-bottom: 6mm; }
   .diagnostic-overall-info { flex: 1; }

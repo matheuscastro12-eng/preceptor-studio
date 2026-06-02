@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { Download, Loader2 } from "lucide-react";
 import { downloadStudyPDF, PDFKind } from "@/lib/pdfClient";
 import { StudyWithClient } from "@/lib/store";
+import { useState } from "react";
 
 export function PDFButton({
   study,
@@ -16,6 +17,7 @@ export function PDFButton({
   label?: string;
 }) {
   const [loading, setLoading] = useState(false);
+
   async function go() {
     setLoading(true);
     try {
@@ -26,13 +28,17 @@ export function PDFButton({
       setLoading(false);
     }
   }
+
+  const Icon = loading ? Loader2 : Download;
+
   return (
     <button
       onClick={go}
       disabled={loading}
-      className={`${variant === "primary" ? "btn-primary" : "btn-ghost"} text-xs disabled:opacity-50`}
+      className={`${variant === "primary" ? "btn-primary" : "btn-ghost"} inline-flex items-center gap-2 text-xs disabled:opacity-50`}
     >
-      {loading ? "Gerando..." : label || "↓ Baixar PDF"}
+      <Icon className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+      {loading ? "Gerando..." : label || "Baixar PDF"}
     </button>
   );
 }
