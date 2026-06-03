@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServiceClient } from "@/lib/supabase";
-import { sendEmail, emailLayout, SITE_URL } from "@/lib/email";
 
 function apiError(error: unknown, status = 500) {
   const raw = error instanceof Error ? error.message : "Erro interno";
@@ -40,7 +39,6 @@ export async function POST(
     const body = (await req.json().catch(() => ({}))) as {
       client_email?: string;
       expires_in_days?: number;
-      send_email?: boolean;
     };
     const email = (body.client_email || "").trim().toLowerCase();
     if (!email) {
@@ -60,42 +58,9 @@ export async function POST(
       .select("*")
       .single();
     if (error) throw error;
-    const origin = req.headers.get("origin") || SITE_URL;
-    const url = `${origin}/portal/${data.token}`;
-
-    // ─── Envio do link por email (opt-in, best-effort) ────────────────────
-    let emailSent = false;
-    if (body.send_email) {
-      try {
-        const html = emailLayout({
-          heading: "Seu acesso ao estudo",
-          bodyHtml: `
-            <p style="margin:0 0 12px 0;">Este e o seu portal de acompanhamento do estudo PRECEPTOR!.</p>
-            <p style="margin:0 0 12px 0;">Acompanhe o progresso, os entregaveis e as proximas etapas em um so lugar.</p>
-            <p style="margin:0;">O link e pessoal e expira em 90 dias.</p>
-          `,
-          ctaLabel: "Acessar meu estudo",
-          ctaUrl: url,
-          footerNote: "Se voce nao reconhece este acesso, ignore este email.",
-        });
-
-        const result = await sendEmail({
-          to: email,
-          subject: "Seu acesso ao estudo PRECEPTOR!",
-          html,
-        });
-        emailSent = result.ok;
-      } catch {
-        // Silencioso: email e best-effort, nunca derruba a criacao do token.
-      }
-    }
-
-    return NextResponse.json({
-      token: data.token,
-      record: data,
-      url,
-      email_sent: emailSent,
-    });
+    const { buildPublicUrl } = await import("@/lib/publicUrl");
+    const url = buildPublicUrl(req, `/portal/${data.token}`);
+    return NextResponse.json({ token: data.token, record: data, url });
   } catch (e) {
     return apiError(e);
   }

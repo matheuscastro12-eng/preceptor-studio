@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServiceClient } from "@/lib/supabase";
 import { getServerSupabase } from "@/lib/supabase/server";
+import { buildPublicUrl } from "@/lib/publicUrl";
 
 const VALID_ROLES = ["owner", "admin", "member"] as const;
 const VALID_TEAM_KEYS = [
@@ -105,11 +106,7 @@ export async function POST(req: Request) {
     if (error) throw error;
 
     const invite = data as InviteRow;
-    const origin =
-      req.headers.get("origin") ||
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      "https://preceptor.studio";
-    const url = `${origin}/signup?token=${invite.token}`;
+    const url = buildPublicUrl(req, `/signup?token=${invite.token}`);
     return NextResponse.json({ invite, url });
   } catch (err) {
     return apiError(err);
