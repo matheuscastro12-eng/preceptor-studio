@@ -31,6 +31,21 @@ const ADMIN_API_PATTERNS = [
   /^\/api\/extract-from-pdf/,
   /^\/api\/clients(\/|$)/,
   /^\/api\/portal-tokens(\/|$)/,
+  /^\/api\/finance(\/|$)/,
+  /^\/api\/workspace(\/|$)/,
+  /^\/api\/invites(\/|$)/,
+  /^\/api\/profiles(\/|$)/,
+];
+
+// Rotas cujo acesso (incluindo GET) exige autenticação, não só mutações.
+const FULLY_GATED_API_PREFIXES = [
+  "/api/studies",
+  "/api/upload-pdf",
+  "/api/extract-from-pdf",
+  "/api/finance",
+  "/api/workspace",
+  "/api/invites",
+  "/api/profiles",
 ];
 
 const MUTATION_METHODS = new Set(["POST", "PATCH", "PUT", "DELETE"]);
@@ -68,12 +83,9 @@ export async function middleware(req: NextRequest) {
   const matchesAdminApi = ADMIN_API_PATTERNS.some((re) => re.test(pathname));
   if (matchesAdminApi) {
     const isMutation = MUTATION_METHODS.has(method);
-    // Studies: every method is gated. Leads/tasks/clients/etc: only mutations.
-    const requiresAuth =
-      pathname.startsWith("/api/studies") ||
-      pathname.startsWith("/api/upload-pdf") ||
-      pathname.startsWith("/api/extract-from-pdf") ||
-      isMutation;
+    // Fully gated routes: every method (GET incluído). Demais: só mutações.
+    const isFullyGated = FULLY_GATED_API_PREFIXES.some((p) => pathname.startsWith(p));
+    const requiresAuth = isFullyGated || isMutation;
     if (requiresAuth && !user) {
       return NextResponse.json(
         { error: "Não autenticado" },

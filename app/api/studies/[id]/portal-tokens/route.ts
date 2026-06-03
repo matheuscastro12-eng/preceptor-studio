@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServiceClient } from "@/lib/supabase";
+import { getAuthedUser } from "@/lib/apiAuth";
 
 function apiError(error: unknown, status = 500) {
   const raw = error instanceof Error ? error.message : "Erro interno";
@@ -13,13 +14,35 @@ function apiError(error: unknown, status = 500) {
   return NextResponse.json({ error: message }, { status: finalStatus });
 }
 
+// Confirma que o usuário está autenticado E que o estudo existe.
+// (Modelo single-tenant: todos os membros do estúdio acessam todos os estudos.
+//  Hook pronto para validação de workspace/ownership quando virar multi-tenant.)
+async function guardStudyAccess(studyId: string) {
+  const user = await getAuthedUser();
+  if (!user) {
+    return { ok: false as const, res: apiError("Não autenticado", 401) };
+  }
+  const admin = createSupabaseServiceClient();
+  const { data: study, error } = await admin
+    .from("studies")
+    .select("id")
+    .eq("id", studyId)
+    .maybeSingle();
+  if (error) return { ok: false as const, res: apiError(error) };
+  if (!study) {
+    return { ok: false as const, res: apiError("Estudo não encontrado", 404) };
+  }
+  return { ok: true as const, admin };
+}
+
 export async function GET(
   _req: Request,
   { params }: { params: { id: string } }
 ) {
+  const guard = await guardStudyAccess(params.id);
+  if (!guard.ok) return guard.res;
   try {
-    const supabase = createSupabaseServiceClient();
-    const { data, error } = await supabase
+    const { data, error } = await guard.admin
       .from("client_portal_tokens")
       .select("*")
       .eq("study_id", params.id)
@@ -35,6 +58,8 @@ export async function POST(
   req: Request,
   { params }: { params: { id: string } }
 ) {
+  const guard = await guardStudyAccess(params.id);
+  if (!guard.ok) return guard.res;
   try {
     const body = (await req.json().catch(() => ({}))) as {
       client_email?: string;
@@ -44,11 +69,10 @@ export async function POST(
     if (!email) {
       return apiError(new Error("client_email é obrigatório"), 400);
     }
-    const supabase = createSupabaseServiceClient();
     const expiresAt = new Date(
       Date.now() + (body.expires_in_days ?? 90) * 24 * 60 * 60 * 1000
     ).toISOString();
-    const { data, error } = await supabase
+    const { data, error } = await guard.admin
       .from("client_portal_tokens")
       .insert({
         study_id: params.id,

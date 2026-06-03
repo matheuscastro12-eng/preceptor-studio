@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { fetchInstallments } from "@/lib/finance";
+import { requireUser } from "@/lib/apiAuth";
 
 function apiError(error: unknown, status = 500) {
   return NextResponse.json(
@@ -9,6 +10,8 @@ function apiError(error: unknown, status = 500) {
 }
 
 export async function GET(req: Request) {
+  const guard = await requireUser();
+  if (guard) return guard;
   try {
     const url = new URL(req.url);
     const status = url.searchParams.get("status");

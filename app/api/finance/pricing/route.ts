@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServiceClient } from "@/lib/supabase";
 import { fetchPricings, regenerateInstallments, type StudyPricing } from "@/lib/finance";
+import { requireUser } from "@/lib/apiAuth";
 
 function apiError(error: unknown, status = 500) {
   return NextResponse.json(
@@ -10,6 +11,8 @@ function apiError(error: unknown, status = 500) {
 }
 
 export async function GET() {
+  const guard = await requireUser();
+  if (guard) return guard;
   try {
     const data = await fetchPricings();
     return NextResponse.json({ pricings: data });
@@ -19,6 +22,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const guard = await requireUser();
+  if (guard) return guard;
   try {
     const input = await req.json();
     if (!input.study_id) return apiError(new Error("study_id obrigatório"), 400);

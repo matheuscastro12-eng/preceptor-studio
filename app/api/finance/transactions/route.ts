@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServiceClient } from "@/lib/supabase";
 import { fetchTransactions } from "@/lib/finance";
+import { requireUser } from "@/lib/apiAuth";
 
 function apiError(error: unknown, status = 500) {
   return NextResponse.json(
@@ -10,6 +11,8 @@ function apiError(error: unknown, status = 500) {
 }
 
 export async function GET(req: Request) {
+  const guard = await requireUser();
+  if (guard) return guard;
   try {
     const url = new URL(req.url);
     const data = await fetchTransactions({
@@ -26,6 +29,8 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  const guard = await requireUser();
+  if (guard) return guard;
   try {
     const input = await req.json();
     const kind = input.kind === "outflow" ? "outflow" : "inflow";

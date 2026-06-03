@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServiceClient } from "@/lib/supabase";
+import { requireUser } from "@/lib/apiAuth";
 
 function apiError(error: unknown, status = 500) {
   return NextResponse.json(
@@ -11,6 +12,8 @@ function apiError(error: unknown, status = 500) {
 // POST /api/finance/installments/[id]/pay
 // Marca parcela como paga, cria uma transaction inflow e atualiza paid_amount do pricing.
 export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
+  const guard = await requireUser();
+  if (guard) return guard;
   try {
     const { id } = await ctx.params;
     const input = await req.json().catch(() => ({} as any));
@@ -92,6 +95,8 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
 // DELETE /api/finance/installments/[id]/pay
 // Reverte: marca como pending e remove a transação criada.
 export async function DELETE(_req: Request, ctx: { params: Promise<{ id: string }> }) {
+  const guard = await requireUser();
+  if (guard) return guard;
   try {
     const { id } = await ctx.params;
     const sb = createSupabaseServiceClient();

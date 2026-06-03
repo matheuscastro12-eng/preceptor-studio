@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServiceClient } from "@/lib/supabase";
 import { regenerateInstallments, type StudyPricing } from "@/lib/finance";
+import { requireUser } from "@/lib/apiAuth";
 
 function apiError(error: unknown, status = 500) {
   return NextResponse.json(
@@ -10,6 +11,8 @@ function apiError(error: unknown, status = 500) {
 }
 
 export async function PUT(req: Request, ctx: { params: Promise<{ id: string }> }) {
+  const guard = await requireUser();
+  if (guard) return guard;
   try {
     const { id } = await ctx.params;
     const input = await req.json();
@@ -70,6 +73,8 @@ export async function PUT(req: Request, ctx: { params: Promise<{ id: string }> }
 }
 
 export async function DELETE(_req: Request, ctx: { params: Promise<{ id: string }> }) {
+  const guard = await requireUser();
+  if (guard) return guard;
   try {
     const { id } = await ctx.params;
     const supabase = createSupabaseServiceClient();
