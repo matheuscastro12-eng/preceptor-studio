@@ -38,6 +38,7 @@ interface SubmitPayload {
     empresa?: string;
   };
   category?: string;
+  consent?: boolean;
 }
 
 export async function POST(req: NextRequest) {
@@ -59,6 +60,12 @@ export async function POST(req: NextRequest) {
   if (!name) return NextResponse.json({ error: "Nome é obrigatório." }, { status: 400 });
   if (!EMAIL_RE.test(email))
     return NextResponse.json({ error: "Email inválido." }, { status: 400 });
+  if (payload.consent !== true)
+    return NextResponse.json(
+      { error: "É necessário aceitar a política de privacidade para continuar." },
+      { status: 400 }
+    );
+  const consentAt = new Date().toISOString();
 
   const categoryRaw = payload.category ? String(payload.category) : null;
   const category =
@@ -170,12 +177,17 @@ export async function POST(req: NextRequest) {
       diagnostic_insights: result.insights,
       ip_address: ip !== "unknown" ? ip : null,
       user_agent: userAgent,
+      consent_given_at: consentAt,
     })
     .select("id")
     .single();
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("[diagnostic] erro ao inserir lead:", error);
+    return NextResponse.json(
+      { error: "Não conseguimos salvar sua resposta. Tente novamente." },
+      { status: 500 }
+    );
   }
 
   // ─── Enriquecimento comercial (best-effort) ───────────────────────────

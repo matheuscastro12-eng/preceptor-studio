@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Mark } from "./MarketingShared";
 
@@ -18,6 +19,12 @@ const ANCHOR_LINKS = [
 
 export function Nav() {
   const pathname = usePathname() || "/";
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Fecha o menu mobile ao trocar de rota.
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
 
   function isActive(href: string) {
     if (href === "/") return pathname === "/";
@@ -82,17 +89,74 @@ export function Nav() {
             </a>
           ))}
         </div>
-        <Link
-          href="/diagnostico?start=1"
-          className="mkt-nav__cta"
-          aria-label="Fazer diagnóstico grátis"
-        >
-          Diagnóstico grátis
-          <span className="ic" aria-hidden="true">
-            →
-          </span>
-        </Link>
+        <div className="mkt-nav__actions">
+          <Link
+            href="/diagnostico?start=1"
+            className="mkt-nav__cta"
+            aria-label="Fazer diagnóstico grátis"
+          >
+            Diagnóstico grátis
+            <span className="ic" aria-hidden="true">
+              →
+            </span>
+          </Link>
+          <button
+            type="button"
+            className="mkt-nav__burger"
+            aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((o) => !o)}
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
+              {menuOpen ? (
+                <>
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                  <line x1="6" y1="18" x2="18" y2="6" />
+                </>
+              ) : (
+                <>
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                  <line x1="3" y1="18" x2="21" y2="18" />
+                </>
+              )}
+            </svg>
+          </button>
+        </div>
       </nav>
+      {menuOpen && (
+        <div className="mkt-nav__mobile" role="menu">
+          {ROUTED_LINKS.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              role="menuitem"
+              aria-current={isActive(l.href) ? "page" : undefined}
+              onClick={() => setMenuOpen(false)}
+            >
+              {l.label}
+            </Link>
+          ))}
+          {ANCHOR_LINKS.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              role="menuitem"
+              onClick={() => setMenuOpen(false)}
+            >
+              {l.label}
+            </a>
+          ))}
+        </div>
+      )}
     </>
   );
 }

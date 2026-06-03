@@ -204,6 +204,7 @@ export function KanbanGlobal({ initial }: { initial: TaskWithStudy[] }) {
 
       {/* Columns */}
       <div
+        className="ds-board"
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(4, minmax(0, 1fr))",

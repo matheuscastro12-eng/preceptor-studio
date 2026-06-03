@@ -137,6 +137,28 @@ export function TopBar({ sub }: { sub?: string }) {
   return (
     <header className="tb">
       <div className="tb__crumb">
+        <button
+          type="button"
+          className="tb__menu"
+          aria-label="Abrir menu"
+          onClick={() =>
+            window.dispatchEvent(new CustomEvent("ps:toggle-sidebar"))
+          }
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+          >
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
         {isDetail && (
           <button
             type="button"
@@ -219,7 +241,7 @@ export function TopBar({ sub }: { sub?: string }) {
               position: "fixed",
               top: 56,
               right: 16,
-              width: 380,
+              width: "min(380px, calc(100vw - 24px))",
               maxHeight: 480,
               overflowY: "auto",
               background: "#fff",

@@ -190,8 +190,30 @@ export function Sidebar({
     return pathname === href || pathname.startsWith(href + "/");
   }
 
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Abre/fecha o drawer ao receber evento do hambúrguer (TopBar).
+  useEffect(() => {
+    const toggle = () => setMobileOpen((o) => !o);
+    window.addEventListener("ps:toggle-sidebar", toggle);
+    return () => window.removeEventListener("ps:toggle-sidebar", toggle);
+  }, []);
+
+  // Fecha o drawer ao navegar para outra rota.
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
   return (
-    <aside className="sb">
+    <>
+      {mobileOpen && (
+        <div
+          className="sb-overlay"
+          onClick={() => setMobileOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+    <aside className={"sb" + (mobileOpen ? " sb--open" : "")}>
       <div className="sb__top">
         <Link href="/dashboard" className="sb__brand">
           <span className="mark" />
@@ -273,6 +295,7 @@ export function Sidebar({
         <UserMenu profile={profile} />
       </div>
     </aside>
+    </>
   );
 }
 

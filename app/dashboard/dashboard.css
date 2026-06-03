@@ -677,3 +677,127 @@
   background: var(--navy-deep);
 }
 
+/* ─── Hambúrguer mobile (TopBar) + overlay do drawer ──────────────────── */
+.dashboard-shell .tb__menu {
+  display: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 7px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--navy);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+.dashboard-shell .tb__menu:hover { background: var(--slate-100); }
+.dashboard-shell .sb-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 18, 42, 0.45);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 55;
+}
+
+/* ─── Tablet ──────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .dashboard-shell { --sidebar-w: 200px; }
+  .dashboard-shell .kpis { grid-template-columns: repeat(2, 1fr); }
+  .dashboard-shell .page [style*="repeat(3, 1fr)"],
+  .dashboard-shell .page [style*="repeat(4, 1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* ─── Mobile (drawer + colapso de colunas) ────────────────────────────── */
+@media (max-width: 860px) {
+  .dashboard-shell {
+    grid-template-columns: 1fr;
+    height: 100dvh;
+  }
+
+  /* Sidebar vira drawer deslizante */
+  .dashboard-shell .sb {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 264px;
+    max-width: 84vw;
+    z-index: 60;
+    transform: translateX(-100%);
+    transition: transform 0.26s var(--ease-out, ease);
+    will-change: transform;
+  }
+  .dashboard-shell .sb.sb--open { transform: translateX(0); }
+  .dashboard-shell .sb-overlay { display: block; }
+
+  /* TopBar */
+  .dashboard-shell .tb { padding: 0 12px; }
+  .dashboard-shell .tb__menu { display: inline-flex; }
+  .dashboard-shell .tb__crumb { min-width: 0; overflow: hidden; }
+  .dashboard-shell .tb__crumb > span:not(.current):not(.pill-tag) { display: none; }
+  .dashboard-shell .tb__crumb .sep:last-of-type { display: none; }
+
+  /* Conteúdo */
+  .dashboard-shell .page { padding: 14px 14px 32px; }
+  .dashboard-shell .page-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .dashboard-shell .page-head > div:last-child { display: flex; gap: 8px; }
+  .dashboard-shell .kpis {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .dashboard-shell .kpi__value { font-size: 22px; }
+
+  /* Toolbar de tabelas empilha */
+  .dashboard-shell .toolbar { flex-wrap: wrap; }
+  .dashboard-shell .toolbar__search { min-width: 0; width: 100%; }
+  .dashboard-shell .toolbar .divider { display: none; }
+
+  /* Tabelas rolam horizontalmente em vez de estourar */
+  .dashboard-shell .tablewrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .dashboard-shell .tablewrap .table { min-width: 680px; }
+
+  /* Colapsa grids inline de 2+ colunas para 1 coluna no celular */
+  .dashboard-shell .page [style*="1.4fr 1fr"],
+  .dashboard-shell .page [style*="1.05fr 1fr"],
+  .dashboard-shell .page [style*="2fr 1fr"],
+  .dashboard-shell .page [style*="1fr 1fr 1fr"],
+  .dashboard-shell .page [style*="1fr 1fr"],
+  .dashboard-shell .page [style*="repeat(3, 1fr)"],
+  .dashboard-shell .page [style*="repeat(4, 1fr)"],
+  .dashboard-shell .page [style*="minmax(0, 1fr) 376px"],
+  .dashboard-shell .page [style*="1fr 320px"],
+  .dashboard-shell .page [style*="1fr 240px"],
+  .dashboard-shell [style*="minmax(0, 1fr) 376px"],
+  .dashboard-shell [style*="1fr 320px"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Board Kanban: rola horizontalmente como cartões deslizáveis */
+  .dashboard-shell .ds-board {
+    grid-template-columns: none !important;
+    grid-auto-flow: column;
+    grid-auto-columns: 80%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 6px;
+  }
+  .dashboard-shell .ds-board > * { scroll-snap-align: start; }
+}
+
+/* ─── Telas bem estreitas ─────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .dashboard-shell .kpis { grid-template-columns: 1fr; }
+}
+

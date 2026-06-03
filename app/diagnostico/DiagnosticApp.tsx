@@ -39,6 +39,7 @@ export function DiagnosticApp({ calcomUrl }: { calcomUrl?: string | null } = {})
     telefone: "",
   });
   const [category, setCategory] = useState<LeadCategory | "">("");
+  const [consent, setConsent] = useState(false);
   const [result, setResult] = useState<DiagnosticResult | null>(null);
   const [leadId, setLeadId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -90,6 +91,7 @@ export function DiagnosticApp({ calcomUrl }: { calcomUrl?: string | null } = {})
         body: JSON.stringify({
           answers,
           contact,
+          consent,
           category: category || null,
         }),
       });
@@ -148,6 +150,8 @@ export function DiagnosticApp({ calcomUrl }: { calcomUrl?: string | null } = {})
           setContact={setContact}
           category={category}
           setCategory={setCategory}
+          consent={consent}
+          setConsent={setConsent}
           onContinue={submit}
           onBack={() => setStep("quiz")}
           onHome={home}

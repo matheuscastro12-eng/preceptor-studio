@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Chrome } from "./Chrome";
 import { Sparkle, CircleRing, MeshTexture, MiniDiamond } from "@/components/Ornaments";
 import { LEAD_CATEGORIES, type LeadCategory } from "@/lib/leads";
@@ -17,6 +16,8 @@ interface CaptureScreenProps {
   setContact: (c: CaptureContact) => void;
   category: LeadCategory | "";
   setCategory: (c: LeadCategory | "") => void;
+  consent: boolean;
+  setConsent: (v: boolean) => void;
   onContinue: () => void;
   onBack: () => void;
   onHome: () => void;
@@ -29,13 +30,14 @@ export function CaptureScreen({
   setContact,
   category,
   setCategory,
+  consent,
+  setConsent,
   onContinue,
   onBack,
   onHome,
   submitting,
   errorMessage,
 }: CaptureScreenProps) {
-  const [consent, setConsent] = useState(false);
   const valid =
     contact.nome.trim() &&
     /.+@.+\..+/.test(contact.email) &&
