@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { getBrowserSupabase } from "@/lib/supabase/client";
@@ -230,11 +231,26 @@ export function Sidebar({
             key={it.k}
             href={it.href}
             className={"sb__item" + (isActive(it.href) ? " active" : "")}
+            style={isActive(it.href) ? { background: "transparent" } : undefined}
           >
-            <span className="ic">{it.icon}</span>
-            {it.label}
-            {it.badgeNew && <span className="badge new">{it.badgeNew}</span>}
-            {it.badge && !it.badgeNew && <span className="badge">{it.badge}</span>}
+            {isActive(it.href) && (
+              <motion.span
+                layoutId="sidebar-active-pill"
+                aria-hidden
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  borderRadius: 10,
+                  background: "rgba(82, 225, 231, 0.10)",
+                  zIndex: 0,
+                }}
+                transition={{ type: "spring", stiffness: 480, damping: 40 }}
+              />
+            )}
+            <span className="ic" style={{ position: "relative", zIndex: 1 }}>{it.icon}</span>
+            <span style={{ position: "relative", zIndex: 1 }}>{it.label}</span>
+            {it.badgeNew && <span className="badge new" style={{ position: "relative", zIndex: 1 }}>{it.badgeNew}</span>}
+            {it.badge && !it.badgeNew && <span className="badge" style={{ position: "relative", zIndex: 1 }}>{it.badge}</span>}
           </Link>
         ))}
       </div>

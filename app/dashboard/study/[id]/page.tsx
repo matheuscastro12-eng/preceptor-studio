@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { StudyWithClient } from "@/lib/store";
 import { getStudyRemote } from "@/lib/storeApi";
@@ -64,8 +65,20 @@ export default function StudyPage() {
   const [study, setStudy] = useState<StudyWithClient | null>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<TabKey>("diagnostico");
+  const [tabDir, setTabDir] = useState(1);
+  const tabPrevRef = useRef<TabKey>("diagnostico");
   const [regenerating, setRegenerating] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  // Troca de aba: calcula direção (+1 = avançou, -1 = voltou) pro slide do conteúdo.
+  function selectTab(next: TabKey) {
+    if (next === tab) return;
+    const prev = TABS.findIndex((t) => t.key === tabPrevRef.current);
+    const target = TABS.findIndex((t) => t.key === next);
+    setTabDir(target >= prev ? 1 : -1);
+    tabPrevRef.current = next;
+    setTab(next);
+  }
 
   // Sincroniza data-present no shell do dashboard para esconder sb/tb via CSS.
   useEffect(() => {
@@ -638,12 +651,10 @@ export default function StudyPage() {
               key={t.key}
               type="button"
               data-tab={t.key}
-              onClick={() => setTab(t.key)}
+              onClick={() => selectTab(t.key)}
               style={{
                 border: 0,
-                background: active
-                  ? "linear-gradient(180deg,#0A1F44,#06122A)"
-                  : "transparent",
+                background: "transparent",
                 color: active ? "#fff" : "var(--ink-soft)",
                 padding: "10px 16px",
                 borderRadius: 8,
@@ -654,21 +665,41 @@ export default function StudyPage() {
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 8,
-                transition: "all 160ms var(--ease-out)",
+                transition: "color 200ms var(--ease-out), font-weight 0ms",
                 position: "relative",
+                isolation: "isolate",
               }}
             >
+              {/* Pill que desliza entre as tabs (shared layout animation). */}
+              {active && (
+                <motion.span
+                  layoutId="study-tab-pill"
+                  aria-hidden
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    borderRadius: 8,
+                    background: "linear-gradient(180deg,#0A1F44,#06122A)",
+                    boxShadow: "0 6px 18px -10px rgba(10,31,68,0.55)",
+                    zIndex: -1,
+                  }}
+                  transition={{ type: "spring", stiffness: 480, damping: 40 }}
+                />
+              )}
               <span
                 style={{
+                  position: "relative",
                   color: active ? "var(--cyan)" : "var(--ink-mute)",
+                  transition: "color 200ms var(--ease-out)",
                 }}
               >
                 {t.icon}
               </span>
-              {t.label}
+              <span style={{ position: "relative" }}>{t.label}</span>
               {t.confidential && (
                 <span
                   style={{
+                    position: "relative",
                     fontSize: 9,
                     fontWeight: 800,
                     letterSpacing: "0.16em",
@@ -729,14 +760,32 @@ export default function StudyPage() {
         style={{ marginTop: 28 }}
         className={isPresenting ? "present-scale" : undefined}
       >
-        {tab === "estudo" && <EstudoTab study={study} />}
-        {tab === "diagnostico" && <DiagnosticoTab study={study} />}
-        {tab === "tese" && <TeseTab study={study} onUpdate={loadStudy} />}
-        {tab === "marca" && <MarcaTab study={study} onUpdate={loadStudy} />}
-        {tab === "comercial" && (
-          <ComercialTab study={study} onUpdate={loadStudy} />
-        )}
-        {tab === "execucao" && <ExecucaoTab study={study} />}
+        {/* Conteúdo das tabs com slide direcional (easeOutQuint estilo iOS/Material 3). */}
+        <AnimatePresence mode="wait" custom={tabDir} initial={false}>
+          <motion.div
+            key={tab}
+            custom={tabDir}
+            variants={{
+              enter: (d: number) => ({ opacity: 0, x: d >= 0 ? 26 : -26 }),
+              center: { opacity: 1, x: 0 },
+              exit: (d: number) => ({ opacity: 0, x: d >= 0 ? -26 : 26 }),
+            }}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            style={{ willChange: "transform, opacity" }}
+          >
+            {tab === "estudo" && <EstudoTab study={study} />}
+            {tab === "diagnostico" && <DiagnosticoTab study={study} />}
+            {tab === "tese" && <TeseTab study={study} onUpdate={loadStudy} />}
+            {tab === "marca" && <MarcaTab study={study} onUpdate={loadStudy} />}
+            {tab === "comercial" && (
+              <ComercialTab study={study} onUpdate={loadStudy} />
+            )}
+            {tab === "execucao" && <ExecucaoTab study={study} />}
+          </motion.div>
+        </AnimatePresence>
       </div>
       </div>
       {sidebarOpen && !isPresenting && (
