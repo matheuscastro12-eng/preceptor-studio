@@ -266,13 +266,13 @@ BLOCO DE INSIGHTS-CHAVE (obrigatório, ANTES dos scores):
 
 <!-- INSIGHTS_JSON
 [
-  { "type": "force", "title": "<até 8 palavras>", "body": "<2 frases citando dado concreto>" },
-  { "type": "fragility", "title": "<até 8 palavras>", "body": "<2 frases citando dado concreto>" },
-  { "type": "insight", "title": "<até 8 palavras>", "body": "<2 frases sobre oportunidade não-óbvia>" }
+  { "type": "force", "title": "<até 8 palavras>", "body": "<2 frases. Traga dado de mercado real (TAM, benchmark setorial, ciclo de venda típico). PROIBIDO citar entre aspas a opção do formulário ou frases tipo 'o cliente marcou', 'conforme respondeu'.>" },
+  { "type": "fragility", "title": "<até 8 palavras>", "body": "<2 frases. Risco silencioso fundamentado no padrão observado no setor. PROIBIDO citar opção do form entre aspas ou 'marcado como'.>" },
+  { "type": "insight", "title": "<até 8 palavras>", "body": "<2 frases sobre alavanca ou oportunidade não-óbvia, trazida do seu conhecimento de setor, não do que o cliente já te contou.>" }
 ]
 INSIGHTS_JSON -->
 
-3 a 5 itens. Mínimo 1 force, 1 fragility, 1 insight. Cada body cita explicitamente dado das respostas.
+3 a 5 itens. Mínimo 1 force, 1 fragility, 1 insight. Cada body deve trazer DADO DE FORA do questionário (benchmark setorial, número de mercado, padrão de teses parecidas, custo real de operar) — nunca o dado já marcado pelo cliente.
 Não use o nome do cliente nos insights. Não crie insight sobre pessoalidades do fundador. Fragilidades devem ser do negócio, mercado, produto, canal, oferta, regulação, validação ou operação.
 
 ═══════════════════════════════════════════
@@ -287,15 +287,19 @@ BLOCO DE SCORES (obrigatório, AO FINAL):
   "risco_regulatorio": <0-100>,
   "overall": <0-100>,
   "rationale": {
-    "mercado": "<3-5 frases ESPECÍFICAS ao negócio, citando dados>",
-    "execucao": "<3-5 frases ESPECÍFICAS>",
-    "diferenciacao": "<3-5 frases ESPECÍFICAS>",
-    "modelo_receita": "<3-5 frases ESPECÍFICAS>",
-    "risco_regulatorio": "<3-5 frases ESPECÍFICAS>",
-    "overall": "<síntese 2-3 frases mencionando o número>"
+    "mercado": "<3-5 frases. ANÁLISE DE MERCADO trazendo número/benchmark real (TAM BR estimado, número de players nesse porte, ciclo de venda típico do setor). PROIBIDO citar entre aspas a opção marcada (ex: '(R$15-50k)', '(10-25 horas/semana)', 'marcado como aplicável', 'Nicho (menos de 10 mil)'). PROIBIDO escrever 'o cliente marcou', 'conforme respondeu', 'segundo o questionário'. O cliente já sabe o que ele marcou. Você está aqui pra trazer o que ele NÃO sabe.>",
+    "execucao": "<3-5 frases. Trate execução como leitura do gargalo real do setor (custo de conformidade, prazo de integração regulada, padrão de churn em equipes pequenas). Mesmas proibições do mercado.>",
+    "diferenciacao": "<3-5 frases. Análise da defensibilidade real à luz do padrão competitivo do setor, não do diferencial declarado pelo cliente. Mesmas proibições.>",
+    "modelo_receita": "<3-5 frases. Leitura da economia do modelo (recorrência típica, margem média do tipo de receita, padrão de retenção do segmento). Mesmas proibições.>",
+    "risco_regulatorio": "<3-5 frases. Dinâmica regulatória real do setor (custo médio de conformidade em meses, jurisprudência recente, órgão fiscalizador típico). Mesmas proibições.>",
+    "overall": "<síntese 2-3 frases mencionando o número e o cenário 6-12 meses, sem listar respostas marcadas.>"
   }
 }
 SCORES_JSON -->
+
+EXEMPLO RUIM vs BOM pro rationale.mercado (não copie, absorva o método):
+Ruim: "O mercado de operadoras de médio porte e clínicas de medicina do trabalho é um nicho (~20-50 clientes potenciais diretos), com alta dor (problema 'Muito' urgente). O cliente marcou 'Nicho (menos de 10 mil clientes potenciais)' para o tamanho do mercado."
+Bom: "Existem ~120 operadoras de saúde nesse porte no Brasil e ~3.500 clínicas de medicina do trabalho ativas. Ciclo de venda B2B típico no setor é 6 a 9 meses por causa de comitê médico. O jogo é vencer 8 a 12 contas pra construir um negócio relevante, e o TAM concentra demais pra justificar canal de marketing de massa."
 
 REGRAS DOS SCORES:
 - mercado: tamanho × demanda × urgência × tendência. Use 0-25 muito fraco, 25-50 fraco, 50-75 promissor, 75-100 forte.
