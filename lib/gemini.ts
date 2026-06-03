@@ -40,7 +40,7 @@ async function callOnce(
   userPrompt: string,
   apiKey: string,
   config: { temperature?: number; maxOutputTokens?: number; thinking?: boolean; timeoutMs?: number }
-): Promise<{ content: string; usage: any; status: number }> {
+): Promise<{ content: string; usage: any; status: number; finishReason?: string }> {
   const body: any = {
     systemInstruction: { parts: [{ text: systemPrompt }] },
     contents: [{ role: "user", parts: [{ text: userPrompt }] }],
@@ -88,12 +88,35 @@ async function callOnce(
   }
 
   const data = await res.json();
+  const candidate = data?.candidates?.[0];
+  const finishReason: string | undefined = candidate?.finishReason;
   const content =
-    data?.candidates?.[0]?.content?.parts
-      ?.map((p: any) => p.text || "")
-      .join("\n") || "";
+    candidate?.content?.parts?.map((p: any) => p.text || "").join("\n") || "";
 
-  return { content, usage: data?.usageMetadata || null, status: res.status };
+  // Bloqueio por segurança/política: erro terminal, não adianta retry.
+  if (finishReason === "SAFETY" || finishReason === "RECITATION" || finishReason === "BLOCKLIST") {
+    const err: any = new Error(`Gemini bloqueou a resposta (${finishReason}).`);
+    err.retryable = false;
+    throw err;
+  }
+
+  // Resposta truncada por limite de tokens: marca como retryable (o fallback
+  // pode ter mais espaço) e nunca entrega estudo cortado como se fosse completo.
+  if (finishReason === "MAX_TOKENS" || finishReason === "LENGTH") {
+    const err: any = new Error(
+      `Gemini ${model} truncou a resposta (${finishReason}). Conteúdo incompleto.`
+    );
+    err.retryable = true;
+    err.truncated = true;
+    throw err;
+  }
+
+  return {
+    content,
+    usage: data?.usageMetadata || null,
+    status: res.status,
+    finishReason,
+  };
 }
 
 export async function callGemini(

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServiceClient } from "@/lib/supabase";
+import { enforceRateLimit } from "@/lib/rateLimit";
 
 function apiError(error: unknown, status = 500) {
   return NextResponse.json(
@@ -12,6 +13,9 @@ export async function POST(
   req: Request,
   { params }: { params: { token: string } }
 ) {
+  // Protege contra brute force de tokens de portal.
+  const limited = await enforceRateLimit(req, "sign_nda", 10, 1);
+  if (limited) return limited;
   try {
     const body = (await req.json().catch(() => ({}))) as {
       signed_by_name?: string;

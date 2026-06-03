@@ -229,7 +229,13 @@ async function runDigest(): Promise<NextResponse> {
 
 function isAuthorizedCron(req: Request): boolean {
   const secret = process.env.CRON_SECRET;
-  if (!secret) return true;
+  // Fail-closed: sem secret configurado, ninguém dispara o cron.
+  if (!secret) {
+    console.error(
+      "[cron] CRON_SECRET não configurado. Defina no Vercel (openssl rand -base64 32) para habilitar o cron."
+    );
+    return false;
+  }
   const header = req.headers.get("authorization") || "";
   return header === `Bearer ${secret}`;
 }

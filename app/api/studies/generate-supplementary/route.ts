@@ -93,6 +93,25 @@ export async function POST(req: NextRequest) {
     const thesis = extractScores(thesisResult.content || "");
     const internalScores = normalizeInternalScores(thesis.scores);
 
+    // Se as TRÊS gerações falharam, não finja sucesso: o cliente recebeu nada.
+    const allFailed =
+      !brandResult.content && !commercialResult.content && !thesisResult.content;
+    if (allFailed) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Não foi possível gerar Marca, Comercial nem Tese. Tente regenerar em alguns instantes.",
+          errors: {
+            brand: brandResult.error || null,
+            commercial: commercialResult.error || null,
+            thesis: thesisResult.error || null,
+          },
+        },
+        { status: 502 }
+      );
+    }
+
     return NextResponse.json({
       success: true,
       brand_brief_md: brandResult.content || null,

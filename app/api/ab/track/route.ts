@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createSupabaseServiceClient } from "@/lib/supabase";
+import { enforceRateLimit } from "@/lib/rateLimit";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +18,8 @@ function clean(value: unknown): string {
 }
 
 export async function POST(req: NextRequest) {
+  const limited = await enforceRateLimit(req, "ab_track", 60, 1);
+  if (limited) return limited;
   try {
     const body = (await req.json()) as Record<string, unknown>;
 

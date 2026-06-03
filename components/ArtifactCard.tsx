@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { marked } from "marked";
+import { sanitizeHtml } from "@/lib/markdownExtensions";
 
 interface ArtifactData {
   md: string;
@@ -30,7 +31,7 @@ export function ArtifactCard({
   const md = data?.md || "";
   const preview = md.split("\n").slice(0, 4).join(" ").replace(/[#*]/g, "").slice(0, 220);
 
-  const html = open ? marked.parse(md) : "";
+  const html = open ? sanitizeHtml(marked.parse(md, { async: false }) as string) : "";
 
   async function copy() {
     if (!md) return;

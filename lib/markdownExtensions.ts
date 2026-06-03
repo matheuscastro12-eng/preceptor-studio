@@ -1,5 +1,18 @@
 import { marked, Renderer } from "marked";
 import type { Tokens } from "marked";
+import DOMPurify from "isomorphic-dompurify";
+
+// Configuração de sanitização: permite o HTML rico que nossos renderers geram
+// (callouts, tabelas, headings com id) mas remove scripts, handlers on*, etc.
+const SANITIZE_CONFIG = {
+  ADD_ATTR: ["id", "target", "colspan", "rowspan"],
+  ALLOWED_URI_REGEXP:
+    /^(?:(?:https?|mailto|tel):|[^a-z]|[a-z+.-]+(?:[^a-z+.\-:]|$))/i,
+};
+
+export function sanitizeHtml(html: string): string {
+  return DOMPurify.sanitize(html, SANITIZE_CONFIG) as unknown as string;
+}
 
 export interface MarkdownHeading {
   depth: number;
@@ -161,10 +174,11 @@ export function extractMarkdownHeadings(
 export function renderRichMarkdown(md: string | null | undefined): string {
   if (!md) return "";
   const processed = preprocessCallouts(md);
-  return marked.parse(processed, {
+  const html = marked.parse(processed, {
     async: false,
     gfm: true,
     breaks: false,
     renderer: createRenderer(),
   }) as string;
+  return sanitizeHtml(html);
 }

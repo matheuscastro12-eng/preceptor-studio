@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getQuestions, LIKERT_OPTIONS } from "@/lib/questions";
 import { callGemini, extractJSON } from "@/lib/gemini";
+import { enforceRateLimit } from "@/lib/rateLimit";
 
 export const maxDuration = 60;
 
@@ -72,6 +73,9 @@ function applyZeroFallback(
 }
 
 export async function POST(req: NextRequest) {
+  // Cap de custo: extração via Gemini é cara.
+  const limited = await enforceRateLimit(req, "extract_pdf", 20, 1);
+  if (limited) return limited;
   try {
     const { pdfText, category, filename } = await req.json();
 

@@ -11,12 +11,16 @@ import {
   GEMINI_MODEL_NAME,
 } from "@/lib/gemini";
 import { computeOverall } from "@/lib/scoreColors";
+import { enforceRateLimit } from "@/lib/rateLimit";
 
 export const maxDuration = 60;
 
 // ETAPA 1 — Apenas o Estudo do Cliente (com scores e insights).
 // As demais etapas (brand, comercial, tese, cronograma) viram chamadas separadas.
 export async function POST(req: NextRequest) {
+  // Cap de custo da geração por IA (rota já exige auth via middleware).
+  const limited = await enforceRateLimit(req, "generate_study", 30, 1);
+  if (limited) return limited;
   try {
     const { category, answers, clientName, sectorContext } = await req.json();
 
