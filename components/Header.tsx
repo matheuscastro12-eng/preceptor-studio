@@ -6,6 +6,9 @@ import { usePathname } from "next/navigation";
 export function Header() {
   const pathname = usePathname();
   const isNew = pathname?.startsWith("/dashboard/new");
+  const isLeads = pathname?.startsWith("/dashboard/leads") && !pathname.includes("/kanban");
+  const isKanban = pathname?.startsWith("/dashboard/leads/kanban");
+  const isStudies = !isNew && !isLeads && !isKanban;
 
   return (
     <header className="sticky top-0 z-30 bg-navy-deep border-b border-cyan/30">
@@ -28,13 +31,39 @@ export function Header() {
           <Link
             href="/dashboard"
             className={`relative px-4 py-2 text-sm rounded-lg transition ${
-              !isNew
+              isStudies
                 ? "text-white font-bold bg-white/5"
                 : "text-white/80 hover:text-white font-semibold"
             }`}
           >
             Estudos
-            {!isNew && (
+            {isStudies && (
+              <span className="absolute inset-x-3 -bottom-px h-0.5 bg-cyan rounded-full" />
+            )}
+          </Link>
+          <Link
+            href="/dashboard/leads"
+            className={`relative px-4 py-2 text-sm rounded-lg transition ${
+              isLeads
+                ? "text-white font-bold bg-white/5"
+                : "text-white/80 hover:text-white font-semibold"
+            }`}
+          >
+            Leads
+            {isLeads && (
+              <span className="absolute inset-x-3 -bottom-px h-0.5 bg-cyan rounded-full" />
+            )}
+          </Link>
+          <Link
+            href="/dashboard/leads/kanban"
+            className={`relative px-4 py-2 text-sm rounded-lg transition ${
+              isKanban
+                ? "text-white font-bold bg-white/5"
+                : "text-white/80 hover:text-white font-semibold"
+            }`}
+          >
+            Pipeline
+            {isKanban && (
               <span className="absolute inset-x-3 -bottom-px h-0.5 bg-cyan rounded-full" />
             )}
           </Link>

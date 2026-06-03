@@ -1,0 +1,42 @@
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { cookies } from "next/headers";
+
+const ONE_YEAR = 60 * 60 * 24 * 365;
+
+function withDefaults(options: CookieOptions): CookieOptions {
+  return {
+    sameSite: "lax",
+    path: "/",
+    ...options,
+    maxAge: options.maxAge ?? ONE_YEAR,
+  };
+}
+
+export function getServerSupabase() {
+  const cookieStore = cookies();
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          try {
+            cookieStore.set({ name, value, ...withDefaults(options) });
+          } catch {
+            // Server Component: ignore (middleware refreshes cookies).
+          }
+        },
+        remove(name: string, options: CookieOptions) {
+          try {
+            cookieStore.set({ name, value: "", ...options });
+          } catch {
+            // Server Component: ignore.
+          }
+        },
+      },
+    }
+  );
+}

@@ -22,6 +22,16 @@ export interface GeminiResult {
   model_used?: string;
 }
 
+export interface GeminiCallConfig {
+  temperature?: number;
+  maxOutputTokens?: number;
+  thinking?: boolean;
+  primaryModel?: string;
+  fallbackModel?: string;
+  primaryTimeoutMs?: number;
+  fallbackTimeoutMs?: number;
+}
+
 const RETRYABLE_STATUSES = new Set([429, 500, 502, 503, 504]);
 
 async function callOnce(
@@ -90,15 +100,15 @@ export async function callGemini(
   systemPrompt: string,
   userPrompt: string,
   apiKey: string,
-  config: { temperature?: number; maxOutputTokens?: number; thinking?: boolean } = {}
+  config: GeminiCallConfig = {}
 ): Promise<GeminiResult> {
-  const primary = getModel();
-  const fallback = getFallbackModel();
+  const primary = config.primaryModel || getModel();
+  const fallback = config.fallbackModel || getFallbackModel();
 
   try {
     const r = await callOnce(primary, systemPrompt, userPrompt, apiKey, {
       ...config,
-      timeoutMs: 55000,
+      timeoutMs: config.primaryTimeoutMs ?? 55000,
     });
     return { content: r.content, usage: r.usage, model_used: primary };
   } catch (e: any) {
@@ -109,7 +119,7 @@ export async function callGemini(
       const r = await callOnce(fallback, systemPrompt, userPrompt, apiKey, {
         ...config,
         thinking: false,
-        timeoutMs: 55000,
+        timeoutMs: config.fallbackTimeoutMs ?? 55000,
       });
       return { content: r.content, usage: r.usage, model_used: fallback };
     } catch (e2: any) {

@@ -1,11 +1,15 @@
 "use client";
 
+import { useState } from "react";
+import { Lock, RefreshCw, ShieldAlert } from "lucide-react";
 import { InternalScores, StudyWithClient } from "@/lib/store";
+import { updateStudyRemote } from "@/lib/storeApi";
 import { ScoreCard } from "./ScoreCard";
 import { ScoreRadar } from "./ScoreRadar";
 import { RecommendationBadge } from "./RecommendationBadge";
 import { MarkdownView } from "./MarkdownView";
 import { PDFButton } from "./PDFButton";
+import { OutputHeader, OutputMetric } from "./OutputHeader";
 
 interface ScoreSpec {
   key: keyof Omit<InternalScores, "overall" | "recommendation" | "rationale">;
@@ -21,15 +25,117 @@ const SPECS: ScoreSpec[] = [
   { key: "risco_reputacional", label: "Risco Reputacional", inverse: true },
 ];
 
-export function ThesisView({ study }: { study: StudyWithClient }) {
+const recommendationLabel: Record<InternalScores["recommendation"], string> = {
+  entrar: "Entrar",
+  observar: "Observar",
+  nao_entrar: "Não entrar",
+};
+
+function normalizeRecommendation(value: unknown): InternalScores["recommendation"] | null {
+  const raw = String(value || "")
+    .toUpperCase()
+    .replace(/\s+/g, "_")
+    .replace("NÃO", "NAO");
+
+  if (raw === "ENTRAR") return "entrar";
+  if (raw === "OBSERVAR") return "observar";
+  if (raw === "NAO_ENTRAR") return "nao_entrar";
+  return null;
+}
+
+export function ThesisView({
+  study,
+  onUpdate,
+}: {
+  study: StudyWithClient;
+  onUpdate: () => void;
+}) {
+  const [generating, setGenerating] = useState(false);
   const s = study.scores?.internal;
   const md = study.internal_thesis_md;
+  const recommendation = normalizeRecommendation(s?.recommendation);
+
+  async function generateThesis() {
+    if (!study.output_md) {
+      alert("O estudo do cliente precisa existir antes de gerar a tese interna.");
+      return;
+    }
+
+    setGenerating(true);
+    try {
+      const res = await fetch("/api/studies/regenerate-output", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          outputType: "thesis",
+          category: study.category,
+          studyMd: study.output_md,
+          clientName: study.client?.name || null,
+          title: study.title,
+          answers: study.answers || {},
+        }),
+      });
+
+      if (!res.ok) {
+        const e = await res.json();
+        throw new Error(e.error || "Erro ao gerar a tese interna.");
+      }
+
+      const data = await res.json();
+      await updateStudyRemote(study.id, {
+        internal_thesis_md: data.md || null,
+        scores: {
+          ...(study.scores || {}),
+          internal: data.internal_scores || study.scores?.internal,
+        },
+        generation_metadata: {
+          ...(study.generation_metadata || {}),
+          ...(data.metadata || {}),
+          thesis_generated_manually_at: new Date().toISOString(),
+        },
+      });
+      onUpdate();
+    } catch (e: any) {
+      alert(`Erro: ${e.message}`);
+    } finally {
+      setGenerating(false);
+    }
+  }
+
+  const generatePrimaryButton = (
+    <button
+      onClick={generateThesis}
+      disabled={generating}
+      className="btn-primary inline-flex items-center gap-2 text-xs"
+    >
+      <RefreshCw className={`w-3.5 h-3.5 ${generating ? "animate-spin" : ""}`} />
+      {generating ? "Gerando..." : "Gerar tese"}
+    </button>
+  );
 
   if (!md && !s) {
     return (
-      <div className="surface rounded-2xl p-12 text-center">
-        <div className="eyebrow mb-2">Tese Interna</div>
-        <p className="text-ink-soft">A tese interna ainda não foi gerada.</p>
+      <div>
+        <OutputHeader
+          kind="thesis"
+          study={study}
+          metrics={[{ label: "Status", value: "Pendente", tone: "warning" }]}
+          actions={generatePrimaryButton}
+        />
+        <div className="surface rounded-2xl p-12 text-center">
+          <div className="eyebrow mb-2">Tese Interna</div>
+          <p className="text-ink-soft mb-5">
+            A tese interna ainda não foi gerada. Gere somente este documento sem refazer o estudo inteiro.
+          </p>
+          <button
+            onClick={generateThesis}
+            disabled={generating}
+            className="btn-primary inline-flex items-center gap-2"
+          >
+            <RefreshCw className={`w-4 h-4 ${generating ? "animate-spin" : ""}`} />
+            {generating ? "Gerando tese..." : "Gerar tese interna"}
+          </button>
+        </div>
       </div>
     );
   }
@@ -41,11 +147,56 @@ export function ThesisView({ study }: { study: StudyWithClient }) {
       }))
     : [];
 
+  const metrics: OutputMetric[] = [
+    {
+      label: "Recomendação",
+      value: recommendation ? recommendationLabel[recommendation] : "N/A",
+      tone: recommendation === "entrar" ? "success" : recommendation === "nao_entrar" ? "danger" : "warning",
+    },
+    {
+      label: "Score interno",
+      value: s?.overall ?? "N/A",
+      hint: "potencial agregado",
+      tone: "accent",
+    },
+    {
+      label: "Risco reputacional",
+      value: s?.risco_reputacional ?? "N/A",
+      hint: "maior = pior",
+      tone: s && s.risco_reputacional >= 65 ? "danger" : "default",
+    },
+    {
+      label: "Acesso",
+      value: "Sócios",
+      hint: "não enviar ao cliente",
+      tone: "danger",
+    },
+  ];
+
   return (
     <div className="space-y-6">
-      <div className="bg-warning-soft border border-warning/40 text-warning rounded-xl px-4 py-2.5 text-xs font-bold uppercase tracking-wider flex items-center justify-between gap-3">
-        <span>⚠ Documento confidencial — uso interno Preceptor!. Não compartilhar com o cliente.</span>
-        <PDFButton study={study} kind="thesis" variant="ghost" label="↓ PDF (confidencial)" />
+      <OutputHeader
+        kind="thesis"
+        study={study}
+        metrics={metrics}
+        actions={
+          <>
+            <PDFButton study={study} kind="thesis" variant="ghost" label="PDF confidencial" />
+            <button
+              onClick={generateThesis}
+              disabled={generating}
+              className="btn-ghost inline-flex items-center gap-2 text-xs"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${generating ? "animate-spin" : ""}`} />
+              {generating ? "Regenerando..." : "Regenerar"}
+            </button>
+          </>
+        }
+      />
+
+      <div className="bg-danger-soft border border-danger/30 text-danger rounded-xl px-4 py-3 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+        <ShieldAlert className="w-4 h-4 shrink-0" />
+        Documento confidencial, uso interno Preceptor!. Não compartilhar com o cliente.
       </div>
 
       {s && <RecommendationBadge recommendation={s.recommendation} />}
@@ -96,8 +247,12 @@ export function ThesisView({ study }: { study: StudyWithClient }) {
       )}
 
       {md && (
-        <div className="surface rounded-2xl p-8 md:p-12">
-          <MarkdownView md={md} />
+        <div className="surface rounded-2xl p-6 md:p-10 lg:p-12">
+          <div className="flex items-center gap-2 mb-6 text-danger">
+            <Lock className="w-4 h-4" />
+            <span className="text-xs font-black uppercase tracking-widest">Corpo da tese</span>
+          </div>
+          <MarkdownView md={md} withNav />
         </div>
       )}
     </div>

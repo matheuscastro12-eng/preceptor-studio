@@ -5,6 +5,7 @@ import { ScoreCard } from "./ScoreCard";
 import { ScoreOverall } from "./ScoreOverall";
 import { ScoreRadar } from "./ScoreRadar";
 import { PDFButton } from "./PDFButton";
+import { OutputHeader, OutputMetric } from "./OutputHeader";
 
 interface ScoreSpec {
   key: keyof Omit<ClientFacingScores, "overall" | "rationale">;
@@ -17,7 +18,7 @@ const SPECS: ScoreSpec[] = [
   { key: "execucao", label: "Execução", description: "Capital, tempo, experiência, time." },
   { key: "diferenciacao", label: "Diferenciação", description: "Vantagem competitiva real e defensabilidade." },
   { key: "modelo_receita", label: "Modelo de Receita", description: "Recorrência, margem, escalabilidade." },
-  { key: "risco_regulatorio", label: "Risco Regulatório", description: "Barreiras legais (ANVISA, OAB, BACEN, LGPD). Maior número = menor risco." },
+  { key: "risco_regulatorio", label: "Risco Regulatório", description: "Barreiras legais. Maior número significa menor risco." },
 ];
 
 const INSIGHT_META: Record<InsightItem["type"], { label: string; chip: string; border: string; bg: string }> = {
@@ -33,67 +34,62 @@ export function DiagnosticView({ study }: { study: StudyWithClient }) {
 
   if (!s) {
     return (
-      <div className="surface rounded-2xl p-12 text-center">
-        <div className="eyebrow mb-2">Diagnóstico</div>
-        <p className="text-ink-soft">
-          Os scores ainda não foram calculados. Regenere o estudo para extrair os scores.
-        </p>
+      <div>
+        <OutputHeader
+          kind="diagnostic"
+          study={study}
+          metrics={[{ label: "Status", value: "Pendente", tone: "warning" }]}
+        />
+        <div className="surface rounded-2xl p-12 text-center">
+          <div className="eyebrow mb-2">Diagnóstico</div>
+          <p className="text-ink-soft">
+            Os scores ainda não foram calculados. Regenere o estudo para extrair os scores.
+          </p>
+        </div>
       </div>
     );
   }
 
   const radarData = SPECS.map((sp) => ({ label: sp.label, value: s[sp.key] }));
+  const metrics: OutputMetric[] = [
+    { label: "Score geral", value: s.overall, hint: "ponderado", tone: "accent" },
+    { label: "Dimensões", value: SPECS.length, hint: "avaliadas" },
+    { label: "Insights", value: insights.length, hint: "chave", tone: "success" },
+    {
+      label: "Risco regulatório",
+      value: s.risco_regulatorio,
+      hint: "maior = menor risco",
+      tone: s.risco_regulatorio < 50 ? "warning" : "default",
+    },
+  ];
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
-        <PDFButton study={study} kind="diagnostic" variant="ghost" label="↓ Diagnóstico em PDF" />
-      </div>
+      <OutputHeader
+        kind="diagnostic"
+        study={study}
+        metrics={metrics}
+        actions={<PDFButton study={study} kind="diagnostic" variant="ghost" label="PDF" />}
+      />
+
       <ScoreOverall value={s.overall} rationale={s.rationale?.overall} />
 
-      <div className="grid lg:grid-cols-5 gap-6">
-        <div className="lg:col-span-3">
+      <div className="grid lg:grid-cols-2 gap-6 items-stretch">
+        <div className="lg:sticky lg:top-24 lg:self-start">
           <ScoreRadar data={radarData} />
         </div>
-        <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 content-start">
           {SPECS.map((sp) => (
             <ScoreCard
               key={sp.key}
               label={sp.label}
               value={s[sp.key]}
-              hint={s.rationale?.[sp.key]}
+              hint={s.rationale?.[sp.key] || sp.description}
             />
           ))}
         </div>
       </div>
 
-      {/* Por dentro de cada score (rationale completo) */}
-      <div>
-        <div className="eyebrow mb-3">Por dentro de cada score</div>
-        <div className="grid md:grid-cols-2 gap-3">
-          {SPECS.map((sp) => {
-            const rationale = s.rationale?.[sp.key];
-            const value = s[sp.key];
-            if (!rationale) return null;
-            return (
-              <div key={sp.key} className="surface rounded-xl p-4 flex gap-4">
-                <div className="shrink-0 text-right min-w-[64px]">
-                  <div className="text-[10px] uppercase tracking-widest text-ink-mute font-bold leading-tight">
-                    {sp.label}
-                  </div>
-                  <div className="text-3xl font-black text-navy tabular-nums">{value}</div>
-                </div>
-                <div className="flex-1 min-w-0 border-l border-slate-200/70 pl-4">
-                  <p className="text-sm text-navy leading-relaxed">{rationale}</p>
-                  <p className="text-[11px] text-ink-mute mt-2 italic">{sp.description}</p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Insights-Chave */}
       {insights.length > 0 && (
         <div>
           <div className="eyebrow mb-3">Insights-Chave do Diagnóstico</div>
@@ -108,7 +104,10 @@ export function DiagnosticView({ study }: { study: StudyWithClient }) {
                 >
                   <span
                     className="inline-block text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded mb-2"
-                    style={{ background: meta.chip, color: meta.chip === "#52E1E7" ? "#06122A" : "white" }}
+                    style={{
+                      background: meta.chip,
+                      color: meta.chip === "#52E1E7" ? "#06122A" : "white",
+                    }}
                   >
                     {meta.label}
                   </span>

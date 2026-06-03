@@ -1,0 +1,120 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   PRECEPTOR! Venture Studio — Foundations
+   Tokens lifted from the design kit.
+   ───────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ─── Brand: Navy (dominant) ─────────────────────────────────────────── */
+  --navy:           #0A1F44;
+  --navy-deep:      #06122A;
+  --navy-soft:      #1B2F5C;
+
+  /* ─── Brand: Cyan (accent / signature) ───────────────────────────────── */
+  --cyan:           #52E1E7;
+  --cyan-soft:      #A8EFF2;
+  --cyan-deep:      #3BC8CF;
+
+  /* ─── Brand: Secondary accents (sparingly) ───────────────────────────── */
+  --purple:         #B964FF;
+  --purple-soft:    #E0BCFF;
+  --blue:           #5D57EB;
+
+  /* ─── Neutrals: Ink + light ground ───────────────────────────────────── */
+  --ink:            #0F1729;
+  --ink-soft:       #475569;
+  --ink-mute:       #94A3B8;
+  --line:           rgba(15, 23, 41, 0.06);
+  --line-strong:    rgba(15, 23, 41, 0.12);
+  --bg:             #F7F9FC;
+  --surface:        #FFFFFF;
+  --surface-2:      #F8FAFC;
+
+  /* ─── Status ─────────────────────────────────────────────────────────── */
+  --success:        #10B981;
+  --success-soft:   #D1FAE5;
+  --warning:        #F59E0B;
+  --warning-soft:   #FEF3C7;
+  --danger:         #EF4444;
+  --danger-rose:    #E11D48;
+  --danger-soft:    #FEE2E2;
+
+  /* ─── Typography ─────────────────────────────────────────────────────── */
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --fs-display-2xl: clamp(3rem, 5.2vw, 4.5rem);
+  --fs-display-xl:  2.5rem;
+  --fs-display-lg:  1.625rem;
+  --fs-display-md:  1.2rem;
+  --fs-body-lg:     1.0625rem;
+  --fs-body:        1rem;
+  --fs-body-sm:     0.92rem;
+  --fs-caption:     0.8125rem;
+  --fs-eyebrow:     0.7rem;
+  --fs-micro:       0.625rem;
+
+  --lh-tight: 1.1;
+  --lh-snug:  1.25;
+  --lh-base:  1.5;
+  --lh-prose: 1.75;
+
+  --tracking-tight: -0.025em;
+  --tracking-snug:  -0.02em;
+  --tracking-body:  -0.011em;
+  --tracking-wide:  0.12em;
+  --tracking-xwide: 0.25em;
+
+  /* ─── Radii ──────────────────────────────────────────────────────────── */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 10px;
+  --r-xl: 12px;
+  --r-2xl: 16px;
+  --r-3xl: 24px;
+  --r-pill: 999px;
+
+  /* ─── Spacing ────────────────────────────────────────────────────────── */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-7: 32px;
+  --s-8: 40px;
+  --s-9: 56px;
+  --s-10: 72px;
+
+  /* ─── Shadows & glow ─────────────────────────────────────────────────── */
+  --sh-card:      0 1px 2px rgba(15, 23, 41, 0.04),
+                  0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  --sh-card-lg:   0 12px 32px -12px rgba(10, 31, 68, 0.18),
+                  0 4px 8px -4px rgba(10, 31, 68, 0.06);
+  --sh-primary:   0 1px 0 rgba(255, 255, 255, 0.15) inset,
+                  0 4px 12px -4px rgba(10, 31, 68, 0.4);
+  --sh-cyan:      0 1px 0 rgba(255, 255, 255, 0.4) inset,
+                  0 4px 12px -4px rgba(82, 225, 231, 0.5);
+  --glow-cyan:    0 0 0 4px rgba(82, 225, 231, 0.18);
+  --glow-cyan-lg: 0 0 32px rgba(82, 225, 231, 0.35);
+  --glow-purple:  0 0 32px rgba(185, 100, 255, 0.25);
+
+  /* ─── Motion ─────────────────────────────────────────────────────────── */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --dur-fast: 160ms;
+  --dur-base: 320ms;
+  --dur-slow: 700ms;
+
+  /* ─── Signature gradients ────────────────────────────────────────────── */
+  --grad-navy: linear-gradient(180deg, #0A1F44 0%, #06122A 100%);
+  --grad-cyan: linear-gradient(180deg, #52E1E7 0%, #3BC8CF 100%);
+  --grad-progress: linear-gradient(90deg, #52E1E7 0%, #5D57EB 100%);
+  --grad-ambient-light:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(82, 225, 231, 0.08), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(185, 100, 255, 0.05), transparent),
+    #F7F9FC;
+  --grad-ambient-dark:
+    radial-gradient(ellipse 60% 40% at 20% 0%, rgba(82, 225, 231, 0.18), transparent 60%),
+    radial-gradient(ellipse 50% 35% at 100% 100%, rgba(93, 87, 235, 0.20), transparent 60%),
+    linear-gradient(180deg, #0A1F44 0%, #06122A 100%);
+}

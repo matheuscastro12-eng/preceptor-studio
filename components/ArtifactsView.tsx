@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { StudyWithClient, updateStudy } from "@/lib/store";
+import { StudyWithClient } from "@/lib/store";
+import { updateStudyRemote } from "@/lib/storeApi";
 import { ARTIFACT_META, ArtifactType } from "@/prompts/artifacts";
 import { ArtifactCard } from "./ArtifactCard";
 
@@ -42,7 +43,7 @@ export function ArtifactsView({
       }
       const { artifact } = await res.json();
       const next = { ...(study.artifacts || {}), [type]: artifact };
-      updateStudy(study.id, { artifacts: next });
+      await updateStudyRemote(study.id, { artifacts: next });
       onUpdate();
     } catch (e: any) {
       alert(`Erro regenerando: ${e.message}`);

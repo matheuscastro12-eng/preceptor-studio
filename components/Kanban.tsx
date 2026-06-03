@@ -5,10 +5,8 @@ import {
   Task,
   TaskStatus,
   Assignee,
-  updateTask,
-  deleteTask,
-  createTask,
 } from "@/lib/store";
+import { createTaskRemote, deleteTaskRemote, updateTaskRemote } from "@/lib/storeApi";
 import { AssigneeAvatar } from "./AssigneeAvatar";
 
 const COLUMNS: { key: TaskStatus; label: string; chip: string }[] = [
@@ -41,22 +39,22 @@ export function Kanban({
     .reduce((s, t) => s + (t.estimated_hours || 0), 0);
   const pct = totalHours > 0 ? Math.round((doneHours / totalHours) * 100) : 0;
 
-  function moveTask(taskId: string, newStatus: TaskStatus) {
-    updateTask(taskId, { status: newStatus });
+  async function moveTask(taskId: string, newStatus: TaskStatus) {
+    await updateTaskRemote(taskId, { status: newStatus });
     onChange();
   }
 
-  function handleDrop(e: React.DragEvent, status: TaskStatus) {
+  async function handleDrop(e: React.DragEvent, status: TaskStatus) {
     e.preventDefault();
     const id = e.dataTransfer.getData("text/plain");
-    if (id) moveTask(id, status);
+    if (id) await moveTask(id, status);
     setDraggingId(null);
   }
 
-  function addManual() {
+  async function addManual() {
     setCreating(true);
     const sprint = filterSprint === "all" ? 1 : (filterSprint as number);
-    createTask({
+    await createTaskRemote({
       study_id: studyId,
       sprint,
       title: "Nova tarefa",
@@ -169,17 +167,17 @@ function KanbanCard({
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(task.title);
 
-  function save() {
+  async function save() {
     if (title.trim() && title !== task.title) {
-      updateTask(task.id, { title: title.trim() });
+      await updateTaskRemote(task.id, { title: title.trim() });
       onChange();
     }
     setEditing(false);
   }
 
-  function remove() {
+  async function remove() {
     if (!confirm("Remover esta tarefa?")) return;
-    deleteTask(task.id);
+    await deleteTaskRemote(task.id);
     onChange();
   }
 
