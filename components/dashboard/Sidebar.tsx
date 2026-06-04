@@ -121,6 +121,13 @@ const IconFunnel = () => (
     <path d="M3 5h18l-7 8v6l-4 2v-8z" />
   </Ico>
 );
+const IconImage = () => (
+  <Ico>
+    <rect x="3" y="3" width="18" height="18" rx="2" />
+    <circle cx="8.5" cy="8.5" r="1.5" />
+    <path d="M21 15l-5-5L5 21" />
+  </Ico>
+);
 
 export function Sidebar({
   studiesBadge,
@@ -176,6 +183,12 @@ export function Sidebar({
       href: "/dashboard/biblioteca",
       label: "Biblioteca",
       icon: <IconBook />,
+    },
+    {
+      k: "criativos",
+      href: "/dashboard/criativos",
+      label: "Criativos",
+      icon: <IconImage />,
     },
     {
       k: "experimentos",
