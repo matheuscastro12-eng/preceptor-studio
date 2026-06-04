@@ -46,6 +46,15 @@ interface SubmitPayload {
     fbc?: string;
     event_source_url?: string;
   };
+  attribution?: {
+    utm_source?: string;
+    utm_medium?: string;
+    utm_campaign?: string;
+    utm_content?: string;
+    utm_term?: string;
+    landing_page?: string;
+    referrer?: string;
+  };
 }
 
 export async function POST(req: NextRequest) {
@@ -73,6 +82,7 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   const consentAt = new Date().toISOString();
+  const attr = payload.attribution ?? {};
 
   const categoryRaw = payload.category ? String(payload.category) : null;
   const category =
@@ -185,6 +195,13 @@ export async function POST(req: NextRequest) {
       ip_address: ip !== "unknown" ? ip : null,
       user_agent: userAgent,
       consent_given_at: consentAt,
+      utm_source: attr.utm_source ?? null,
+      utm_medium: attr.utm_medium ?? null,
+      utm_campaign: attr.utm_campaign ?? null,
+      utm_content: attr.utm_content ?? null,
+      utm_term: attr.utm_term ?? null,
+      landing_page: attr.landing_page ?? null,
+      referrer: attr.referrer ?? null,
     })
     .select("id")
     .single();

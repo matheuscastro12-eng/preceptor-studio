@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { fbqTrack, newEventId, readFbCookies } from "@/lib/metaEvents";
+import { trackFunnel, getAttribution } from "@/lib/funnelTrack";
 import { HeroScreen } from "./components/HeroScreen";
 import { QuestionnaireScreen } from "./components/QuestionnaireScreen";
 import { CaptureScreen, type CaptureContact } from "./components/CaptureScreen";
@@ -60,11 +61,13 @@ export function DiagnosticApp({ calcomUrl }: { calcomUrl?: string | null } = {})
   const firedInitiate = useRef(false);
   useEffect(() => {
     fbqTrack("ViewContent", { content_name: "diagnostico" });
+    trackFunnel("diagnostic_view");
   }, []);
   useEffect(() => {
     if (step === "quiz" && !firedInitiate.current) {
       firedInitiate.current = true;
       fbqTrack("InitiateCheckout", { content_name: "diagnostico" });
+      trackFunnel("diagnostic_start");
     }
   }, [step]);
 
@@ -113,6 +116,7 @@ export function DiagnosticApp({ calcomUrl }: { calcomUrl?: string | null } = {})
           consent,
           category: category || null,
           meta: { event_id: eventId, fbp, fbc, event_source_url: eventSourceUrl },
+          attribution: getAttribution(),
         }),
       });
       const data = (await res.json()) as DiagnosticResult & { error?: string; id?: string };

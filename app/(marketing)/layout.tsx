@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { FunnelTracker } from "@/components/FunnelTracker";
 import "./marketing.css";
 
 const SITE_URL = "https://preceptorstudio.com";
@@ -59,5 +60,10 @@ export default function MarketingLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="marketing-shell">{children}</div>;
+  return (
+    <div className="marketing-shell">
+      <FunnelTracker />
+      {children}
+    </div>
+  );
 }
