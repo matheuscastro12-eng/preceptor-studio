@@ -15,6 +15,13 @@ interface StudyOption {
   client_name: string | null;
 }
 
+const VALUE_PRESETS: Array<{ label: string; value: number }> = [
+  { label: "R$ 1k", value: 1000 },
+  { label: "R$ 5k", value: 5000 },
+  { label: "R$ 10k", value: 10000 },
+  { label: "R$ 25k", value: 25000 },
+];
+
 interface Props {
   existing: TransactionWithJoins | null;
   categories: FinanceCategory[];
@@ -50,8 +57,8 @@ export function TransactionForm({ existing, categories, studies, onClose, onSave
   async function save() {
     setError(null);
     const amt = Number(amount.replace(",", "."));
-    if (!Number.isFinite(amt) || amt < 0) {
-      setError("Valor inválido");
+    if (!Number.isFinite(amt) || amt <= 0) {
+      setError("Informe um valor maior que zero");
       return;
     }
     if (!description.trim()) {
@@ -93,9 +100,19 @@ export function TransactionForm({ existing, categories, studies, onClose, onSave
     }
   }
 
+  function onKeyDown(e: React.KeyboardEvent) {
+    // Enter (fora de textarea) ou Cmd/Ctrl+Enter envia o formulário.
+    const target = e.target as HTMLElement;
+    const isTextarea = target.tagName === "TEXTAREA";
+    if (e.key === "Enter" && (!isTextarea || e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      if (!saving) void save();
+    }
+  }
+
   return (
     <Modal onClose={onClose} title={existing ? "Editar transação" : "Nova transação"}>
-      <div style={{ display: "grid", gap: 12 }}>
+      <div style={{ display: "grid", gap: 12 }} onKeyDown={onKeyDown}>
         <Field label="Tipo">
           <div style={{ display: "flex", gap: 4 }}>
             {(["inflow", "outflow"] as const).map((k) => (
@@ -124,6 +141,7 @@ export function TransactionForm({ existing, categories, studies, onClose, onSave
         <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 12 }}>
           <Field label="Valor (R$)">
             <input
+              autoFocus
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="0,00"
@@ -131,6 +149,28 @@ export function TransactionForm({ existing, categories, studies, onClose, onSave
               inputMode="decimal"
               style={inputStyle}
             />
+            <div style={{ display: "flex", gap: 6, marginTop: 6 }}>
+              {VALUE_PRESETS.map((p) => (
+                <button
+                  key={p.value}
+                  type="button"
+                  onClick={() => setAmount(String(p.value))}
+                  style={{
+                    flex: 1,
+                    padding: "5px 4px",
+                    fontSize: 11,
+                    fontWeight: 700,
+                    border: "1px solid var(--line)",
+                    borderRadius: 6,
+                    background: "white",
+                    color: "var(--navy)",
+                    cursor: "pointer",
+                  }}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
           </Field>
           <Field label="Data">
             <input

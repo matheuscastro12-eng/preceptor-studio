@@ -10,6 +10,7 @@ import {
 import type { LeadCategory } from "@/lib/leads";
 import { computeScoreFields, generateLeadSummary } from "@/lib/leadEnrich";
 import { sendEmail, emailLayout, STUDIO_EMAIL } from "@/lib/email";
+import { sendMetaLeadEvent } from "@/lib/metaCapi";
 
 // O diagnóstico faz 2 chamadas Gemini (score + resumo) + e-mail: ~10-12s.
 // Sem isto cai no timeout padrão da Vercel e pode dar 504 em produção.
@@ -39,6 +40,12 @@ interface SubmitPayload {
   };
   category?: string;
   consent?: boolean;
+  meta?: {
+    event_id?: string;
+    fbp?: string;
+    fbc?: string;
+    event_source_url?: string;
+  };
 }
 
 export async function POST(req: NextRequest) {
@@ -214,6 +221,25 @@ export async function POST(req: NextRequest) {
       .eq("id", data.id);
   } catch {
     // Silencioso: enriquecimento é opcional. O recompute em massa cobre depois.
+  }
+
+  // ─── Meta CAPI: evento Lead server-side (best-effort, deduplicado) ─────
+  // Mesmo event_id do browser (payload.meta) para o Meta nao contar 2x.
+  try {
+    await sendMetaLeadEvent({
+      email,
+      phone,
+      ip: ip !== "unknown" ? ip : null,
+      userAgent,
+      eventId: payload.meta?.event_id ?? null,
+      fbp: payload.meta?.fbp ?? null,
+      fbc: payload.meta?.fbc ?? null,
+      eventSourceUrl: payload.meta?.event_source_url ?? null,
+      score: result.overall,
+      category,
+    });
+  } catch {
+    // Silencioso: CAPI e best-effort, nunca afeta a resposta do diagnostico.
   }
 
   // ─── Email do score pro lead (best-effort) ────────────────────────────

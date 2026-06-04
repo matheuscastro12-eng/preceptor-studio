@@ -19,6 +19,51 @@ interface StudyOption {
   client_name: string | null;
 }
 
+// Presets por arquétipo: valores típicos sugeridos (editáveis) ao selecionar.
+interface ArchetypePreset {
+  model: PricingModel;
+  fixed: number;
+  recurring: number;
+  recurringPeriod: RecurringPeriod;
+  equityPct: number;
+  cost: number;
+}
+
+const ARCHETYPE_PRESETS: Record<Archetype, ArchetypePreset> = {
+  empreendimento: {
+    model: "mixed",
+    fixed: 5000,
+    recurring: 300,
+    recurringPeriod: "monthly",
+    equityPct: 0,
+    cost: 0,
+  },
+  automacao: {
+    model: "fixed",
+    fixed: 15000,
+    recurring: 0,
+    recurringPeriod: "monthly",
+    equityPct: 0,
+    cost: 5000,
+  },
+  consultoria: {
+    model: "recurring",
+    fixed: 0,
+    recurring: 3000,
+    recurringPeriod: "monthly",
+    equityPct: 0,
+    cost: 0,
+  },
+  hibrido: {
+    model: "mixed",
+    fixed: 0,
+    recurring: 0,
+    recurringPeriod: "monthly",
+    equityPct: 0,
+    cost: 0,
+  },
+};
+
 interface Props {
   study: StudyOption;
   existing: StudyPricingWithJoins | null;
@@ -49,6 +94,20 @@ export function PricingForm({ study, existing, onClose, onSaved }: Props) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Aplica os valores típicos do arquétipo (sugestão inicial, editável).
+  // Só pré-preenche ao criar (sem registro existente) para não sobrescrever dados salvos.
+  function selectArchetype(a: Archetype) {
+    setArchetype(a);
+    if (existing) return;
+    const p = ARCHETYPE_PRESETS[a];
+    setModel(p.model);
+    setFixed(p.fixed ? String(p.fixed) : "");
+    setRecurring(p.recurring ? String(p.recurring) : "");
+    setRecurringPeriod(p.recurringPeriod);
+    setEquityPct(p.equityPct ? String(p.equityPct) : "");
+    setCost(p.cost ? String(p.cost) : "");
+  }
+
   function parseN(v: string) {
     const n = Number(v.replace(",", "."));
     return Number.isFinite(n) ? n : 0;
@@ -63,6 +122,19 @@ export function PricingForm({ study, existing, onClose, onSaved }: Props) {
 
   async function save() {
     setError(null);
+    // Validação: o modelo de cobrança precisa de pelo menos um valor coerente.
+    if ((model === "fixed" || model === "mixed") && fixedN <= 0 && recN <= 0) {
+      setError("Informe um valor fixo ou recorrente maior que zero");
+      return;
+    }
+    if (model === "recurring" && recN <= 0) {
+      setError("Informe um valor recorrente maior que zero");
+      return;
+    }
+    if (model === "equity" && parseN(equityPct) <= 0) {
+      setError("Informe o percentual de equity");
+      return;
+    }
     setSaving(true);
     const payload = {
       study_id: study.id,
@@ -93,6 +165,15 @@ export function PricingForm({ study, existing, onClose, onSaved }: Props) {
       setError(e instanceof Error ? e.message : "Erro");
     } finally {
       setSaving(false);
+    }
+  }
+
+  function onKeyDown(e: React.KeyboardEvent) {
+    const target = e.target as HTMLElement;
+    const isTextarea = target.tagName === "TEXTAREA";
+    if (e.key === "Enter" && (!isTextarea || e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      if (!saving) void save();
     }
   }
 
@@ -151,14 +232,14 @@ export function PricingForm({ study, existing, onClose, onSaved }: Props) {
           </button>
         </div>
 
-        <div style={{ display: "grid", gap: 14, marginTop: 18 }}>
+        <div style={{ display: "grid", gap: 14, marginTop: 18 }} onKeyDown={onKeyDown}>
           <Field label="Arquétipo do negócio">
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 6 }}>
               {(Object.keys(ARCHETYPE_LABELS) as Archetype[]).map((a) => (
                 <button
                   key={a}
                   type="button"
-                  onClick={() => setArchetype(a)}
+                  onClick={() => selectArchetype(a)}
                   style={{
                     padding: "10px 8px",
                     fontSize: 12,

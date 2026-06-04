@@ -1,6 +1,51 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServiceClient } from "@/lib/supabase";
+import { defaultRevenueCategoryId } from "@/lib/finance";
 import type { LeadStatus } from "@/lib/leads";
+
+interface LeadRow {
+  id: string;
+  name: string | null;
+  company: string | null;
+  status: LeadStatus | null;
+  estimated_value: number | null;
+}
+
+// Hook best-effort: ao fechar um deal (lead vira "ganho"), registra a receita
+// criando automaticamente uma transação de entrada (inflow) no Financeiro.
+// Idempotente: não duplica se já houver transação com a mesma descrição.
+// NUNCA lança: qualquer falha aqui é silenciada para não derrubar o PATCH do lead.
+async function recordWonDealRevenue(
+  supabase: ReturnType<typeof createSupabaseServiceClient>,
+  lead: LeadRow
+): Promise<void> {
+  try {
+    const company = lead.company ? ` (${lead.company})` : "";
+    const description = `Deal ganho: ${lead.name || "Lead"}${company}`;
+
+    // Guard de idempotência: se já existe transação com essa descrição, não duplica.
+    const { data: existing } = await supabase
+      .from("transactions")
+      .select("id")
+      .eq("description", description)
+      .limit(1)
+      .maybeSingle();
+    if (existing) return;
+
+    const categoryId = await defaultRevenueCategoryId(supabase);
+    await supabase.from("transactions").insert({
+      kind: "inflow",
+      amount_brl: Number(lead.estimated_value) || 0,
+      description,
+      category_id: categoryId,
+      study_id: null,
+      client_id: null,
+      occurred_at: new Date().toISOString().slice(0, 10),
+    });
+  } catch {
+    // Best-effort: ignora falhas (não impacta a atualização do lead).
+  }
+}
 
 const VALID_STATUSES: LeadStatus[] = [
   "novo",
@@ -51,6 +96,20 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     if ("category" in input) update.category = input.category || null;
 
     const supabase = createSupabaseServiceClient();
+
+    // Captura o status anterior para detectar a transição para "ganho".
+    let prevStatus: LeadStatus | null = null;
+    try {
+      const { data: before } = await supabase
+        .from("leads")
+        .select("status")
+        .eq("id", params.id)
+        .maybeSingle();
+      prevStatus = (before as { status: LeadStatus | null } | null)?.status ?? null;
+    } catch {
+      // ignora; o hook abaixo é best-effort
+    }
+
     const { data, error } = await supabase
       .from("leads")
       .update(update)
@@ -58,6 +117,12 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       .select("*")
       .single();
     if (error) throw error;
+
+    // Lead ganho -> receita: registra a transação quando o deal fecha.
+    if (update.status === "ganho" && prevStatus !== "ganho") {
+      await recordWonDealRevenue(supabase, data as LeadRow);
+    }
+
     return NextResponse.json({ lead: data });
   } catch (err) {
     return apiError(err);

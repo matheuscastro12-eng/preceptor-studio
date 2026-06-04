@@ -1,16 +1,18 @@
 import { fetchCategories, fetchPricings, fetchSummary, fetchTransactions } from "@/lib/finance";
+import { getFinanceAnalytics } from "@/lib/financeAnalytics";
 import { fetchStudies } from "@/lib/dashboardData";
 import { FinanceView } from "./FinanceView";
 
 export const dynamic = "force-dynamic";
 
 export default async function FinanceiroPage() {
-  const [summary, transactions, pricings, categories, studies] = await Promise.all([
+  const [summary, transactions, pricings, categories, studies, analytics] = await Promise.all([
     fetchSummary(),
     fetchTransactions({ limit: 500 }),
     fetchPricings(),
     fetchCategories(),
     fetchStudies(),
+    getFinanceAnalytics(),
   ]);
   const studyOptions = studies.map((s) => ({
     id: s.id,
@@ -27,6 +29,7 @@ export default async function FinanceiroPage() {
       initialPricings={pricings}
       categories={categories}
       studies={studyOptions}
+      analytics={analytics}
     />
   );
 }

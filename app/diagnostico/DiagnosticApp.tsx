@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { fbqTrack, newEventId, readFbCookies } from "@/lib/metaEvents";
 import { HeroScreen } from "./components/HeroScreen";
 import { QuestionnaireScreen } from "./components/QuestionnaireScreen";
 import { CaptureScreen, type CaptureContact } from "./components/CaptureScreen";
@@ -55,6 +56,18 @@ export function DiagnosticApp({ calcomUrl }: { calcomUrl?: string | null } = {})
     return () => window.removeEventListener("popstate", onPop);
   }, []);
 
+  // ─── Meta Pixel: eventos de funil (ViewContent → InitiateCheckout → Lead) ─
+  const firedInitiate = useRef(false);
+  useEffect(() => {
+    fbqTrack("ViewContent", { content_name: "diagnostico" });
+  }, []);
+  useEffect(() => {
+    if (step === "quiz" && !firedInitiate.current) {
+      firedInitiate.current = true;
+      fbqTrack("InitiateCheckout", { content_name: "diagnostico" });
+    }
+  }, [step]);
+
   function reset() {
     setStep("hero");
     setSection(0);
@@ -76,6 +89,12 @@ export function DiagnosticApp({ calcomUrl }: { calcomUrl?: string | null } = {})
     setStep("loading");
     const start = Date.now();
 
+    // Contexto Meta para deduplicar o Lead do browser com o da CAPI (servidor).
+    const eventId = newEventId();
+    const { fbp, fbc } = readFbCookies();
+    const eventSourceUrl =
+      typeof window !== "undefined" ? window.location.href : undefined;
+
     async function settleLoading() {
       const elapsed = Date.now() - start;
       const remaining = MIN_LOADING_MS - elapsed;
@@ -93,6 +112,7 @@ export function DiagnosticApp({ calcomUrl }: { calcomUrl?: string | null } = {})
           contact,
           consent,
           category: category || null,
+          meta: { event_id: eventId, fbp, fbc, event_source_url: eventSourceUrl },
         }),
       });
       const data = (await res.json()) as DiagnosticResult & { error?: string; id?: string };
@@ -120,6 +140,17 @@ export function DiagnosticApp({ calcomUrl }: { calcomUrl?: string | null } = {})
       });
       setLeadId(data.id ?? null);
       setStep("result");
+      // Evento de conversao (browser). A CAPI dispara o mesmo Lead no servidor,
+      // deduplicado pelo eventId. Esse e o evento que o Meta vai otimizar.
+      fbqTrack(
+        "Lead",
+        {
+          content_name: "diagnostico",
+          content_category: category || "geral",
+          predicted_score: data.overall,
+        },
+        eventId
+      );
     } catch (err) {
       await settleLoading();
       setErrorMessage(

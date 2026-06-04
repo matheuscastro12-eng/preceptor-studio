@@ -191,6 +191,61 @@ export async function fetchCategories(): Promise<FinanceCategory[]> {
   }
 }
 
+// Conjunto padrão de categorias financeiras (seed).
+// Revenue em tons de cyan/verde; expense em tons de rosa/laranja.
+export const DEFAULT_CATEGORIES: Array<{ name: string; kind: CategoryKind; color: string }> = [
+  // Receita
+  { name: "Estudo estratégico", kind: "revenue", color: "#52e1e7" },
+  { name: "Execução", kind: "revenue", color: "#22d3ee" },
+  { name: "Mensalidade", kind: "revenue", color: "#10b981" },
+  { name: "Automação", kind: "revenue", color: "#34d399" },
+  { name: "Consultoria", kind: "revenue", color: "#06b6d4" },
+  // Despesa
+  { name: "Salários", kind: "expense", color: "#e11d48" },
+  { name: "Ferramentas/Software", kind: "expense", color: "#f43f5e" },
+  { name: "Mídia paga", kind: "expense", color: "#fb7185" },
+  { name: "Impostos", kind: "expense", color: "#f59e0b" },
+  { name: "Infra", kind: "expense", color: "#fb923c" },
+  { name: "Outros", kind: "expense", color: "#94a3b8" },
+];
+
+// Idempotente: só insere o seed se a tabela finance_categories estiver vazia.
+// Best-effort: nunca lança; falha silenciosa para não derrubar o fluxo de quem chama.
+export async function ensureDefaultCategories(
+  supabase = createSupabaseServiceClient()
+): Promise<void> {
+  try {
+    const { count, error } = await supabase
+      .from("finance_categories")
+      .select("id", { count: "exact", head: true });
+    if (error) throw error;
+    if ((count ?? 0) > 0) return;
+    const rows = DEFAULT_CATEGORIES.map((c) => ({ ...c, is_default: true }));
+    await supabase.from("finance_categories").insert(rows);
+  } catch {
+    // Best-effort: ignora falhas (tabela inexistente, RLS, etc.)
+  }
+}
+
+// Retorna o id de uma categoria de receita padrão (ou null se nenhuma existir).
+// Usado pelo hook de "lead ganho" para categorizar a receita automaticamente.
+export async function defaultRevenueCategoryId(
+  supabase = createSupabaseServiceClient()
+): Promise<string | null> {
+  try {
+    const { data } = await supabase
+      .from("finance_categories")
+      .select("id")
+      .eq("kind", "revenue")
+      .order("is_default", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    return (data as { id: string } | null)?.id ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export async function fetchTransactions(opts?: {
   from?: string;
   to?: string;

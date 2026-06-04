@@ -16,8 +16,15 @@ import {
   type StudyPricingWithJoins,
   type TransactionWithJoins,
 } from "@/lib/finance";
+import type { FinanceAnalytics } from "@/lib/financeAnalytics";
 import { TransactionForm } from "./TransactionForm";
 import { PricingForm } from "./PricingForm";
+import {
+  AlertCards,
+  CashflowChart,
+  MarginByStudyTable,
+  RevenueVsCostChart,
+} from "./FinanceCharts";
 
 interface StudyOption {
   id: string;
@@ -36,6 +43,7 @@ interface Props {
   initialPricings: StudyPricingWithJoins[];
   categories: FinanceCategory[];
   studies: StudyOption[];
+  analytics: FinanceAnalytics;
 }
 
 export function FinanceView({
@@ -44,6 +52,7 @@ export function FinanceView({
   initialPricings,
   categories,
   studies,
+  analytics,
 }: Props) {
   const router = useRouter();
   const [tab, setTab] = useState<Tab>("overview");
@@ -61,56 +70,49 @@ export function FinanceView({
   }
 
   return (
-    <div style={{ paddingBottom: 40 }}>
-      <header style={{ marginBottom: 24 }}>
-        <div
-          style={{
-            fontSize: 10,
-            fontWeight: 800,
-            letterSpacing: "0.22em",
-            textTransform: "uppercase",
-            color: "var(--ink-mute)",
-            marginBottom: 6,
-          }}
-        >
-          Financeiro · Venture Studio
+    <div className="fin-page">
+      <div className="page-head">
+        <div>
+          <div className="fin-eyebrow">Financeiro · PRECEPTOR! Venture Studio</div>
+          <h1 className="fin-title">Financeiro</h1>
+          <p className="sub">
+            Caixa, precificação e P&amp;L: receita por estudo, projeção de fluxo e parcelas a
+            receber.
+          </p>
         </div>
-        <h1
-          style={{
-            fontFamily: "var(--font-sans)",
-            fontSize: 32,
-            fontWeight: 900,
-            letterSpacing: "-0.025em",
-            color: "var(--navy)",
-            margin: 0,
-          }}
-        >
-          Caixa, precificação e P&L
-        </h1>
-        <p style={{ color: "var(--ink-soft)", marginTop: 6, fontSize: 14 }}>
-          Visibilidade sobre receita por estudo, classificação empreendimento × automação, e fluxo
-          de caixa do PRECEPTOR! Venture Studio.
-        </p>
-      </header>
+        <div className="fin-head-actions">
+          <button
+            type="button"
+            className="btn-ghost"
+            onClick={() => setTab("pricing")}
+            style={{ fontSize: 13 }}
+          >
+            Precificar estudo
+          </button>
+          <button
+            type="button"
+            className="btn-primary"
+            onClick={() => {
+              setEditingTx(null);
+              setShowTxForm(true);
+            }}
+            style={{ fontSize: 13 }}
+          >
+            + Novo lançamento
+          </button>
+        </div>
+      </div>
 
       <KpiGroups summary={summary} />
 
-      <nav
-        style={{
-          display: "flex",
-          gap: 4,
-          marginTop: 24,
-          marginBottom: 20,
-          borderBottom: "1px solid var(--line)",
-        }}
-      >
+      <nav className="fin-tabs">
         {(
           [
             { k: "overview", l: "Visão geral" },
-            { k: "transactions", l: `Transações (${transactions.length})` },
-            { k: "pricing", l: `Precificação (${pricings.length})` },
-            { k: "categories", l: `Categorias (${categories.length})` },
-          ] as { k: Tab; l: string }[]
+            { k: "transactions", l: "Transações", n: transactions.length },
+            { k: "pricing", l: "Precificação", n: pricings.length },
+            { k: "categories", l: "Categorias", n: categories.length },
+          ] as { k: Tab; l: string; n?: number }[]
         ).map((t) => {
           const active = tab === t.k;
           return (
@@ -118,19 +120,10 @@ export function FinanceView({
               key={t.k}
               type="button"
               onClick={() => setTab(t.k)}
-              style={{
-                padding: "10px 14px",
-                fontSize: 13,
-                fontWeight: 700,
-                color: active ? "var(--navy)" : "var(--ink-soft)",
-                background: "transparent",
-                border: 0,
-                borderBottom: active ? "2px solid var(--cyan)" : "2px solid transparent",
-                cursor: "pointer",
-                marginBottom: -1,
-              }}
+              className={"fin-tab" + (active ? " active" : "")}
             >
               {t.l}
+              {typeof t.n === "number" && <span className="fin-tab__count">{t.n}</span>}
             </button>
           );
         })}
@@ -140,6 +133,7 @@ export function FinanceView({
         <Overview
           summary={summary}
           pricings={pricings}
+          analytics={analytics}
           onPayInstallment={async (id) => {
             const res = await fetch(`/api/finance/installments/${id}/pay`, {
               method: "POST",
@@ -238,143 +232,55 @@ export function FinanceView({
 }
 
 function KpiGroups({ summary }: { summary: FinanceSummary }) {
+  const items: Array<{ label: string; value: number; accent: string; help: string }> = [
+    {
+      label: "Faturamento fechado",
+      value: summary.revenue_ytd_brl,
+      accent: "var(--success)",
+      help: "Receita realizada (entradas) registrada neste ano.",
+    },
+    {
+      label: "A receber",
+      value: summary.ar_open_brl,
+      accent: "var(--warning)",
+      help: "Soma das parcelas pendentes ou atrasadas.",
+    },
+    {
+      label: "Custo (YTD)",
+      value: summary.expense_ytd_brl,
+      accent: "var(--danger-rose)",
+      help: "Despesa realizada (saídas) registrada neste ano.",
+    },
+    {
+      label: "Margem (YTD)",
+      value: summary.net_ytd_brl,
+      accent: summary.net_ytd_brl >= 0 ? "var(--navy)" : "var(--danger-rose)",
+      help: "Receita menos despesa realizada neste ano.",
+    },
+    {
+      label: "Recorrente / MRR",
+      value: summary.mrr_brl,
+      accent: "var(--cyan-deep)",
+      help: "Soma mensal das receitas recorrentes dos estudos ativos.",
+    },
+    {
+      label: "Em aberto / atrasado",
+      value: summary.ar_overdue_brl,
+      accent: "var(--danger-rose)",
+      help: "Parcelas pendentes com vencimento já passado.",
+    },
+  ];
   return (
-    <div style={{ display: "grid", gap: 12 }}>
-      {/* Linha 1: Caixa realizado (entrou/saiu de fato) */}
-      <KpiRow
-        title="Caixa realizado (transações no período)"
-        items={[
-          {
-            label: "Receita YTD",
-            value: summary.revenue_ytd_brl,
-            color: "#10b981",
-            help: "Soma de todas as entradas registradas neste ano.",
-          },
-          {
-            label: "Despesa YTD",
-            value: summary.expense_ytd_brl,
-            color: "#ef4444",
-            help: "Soma de todas as saídas registradas neste ano.",
-          },
-          {
-            label: "Net YTD",
-            value: summary.net_ytd_brl,
-            color: summary.net_ytd_brl >= 0 ? "#5d57eb" : "#ef4444",
-            help: "Receita YTD menos Despesa YTD.",
-          },
-          {
-            label: "Net 30 dias",
-            value: summary.net_30d_brl,
-            color: summary.net_30d_brl >= 0 ? "#5d57eb" : "#ef4444",
-            help: "Entradas menos saídas nos últimos 30 dias.",
-          },
-        ]}
-      />
-      {/* Linha 2: Pipeline contratado e a receber */}
-      <KpiRow
-        title="Pipeline (estudos precificados, parcelas em aberto)"
-        items={[
-          {
-            label: "Contratado total",
-            value: summary.contracted_total_brl,
-            color: "#5d57eb",
-            help: "TCV: soma de fixo + 12m de recorrente de todos os estudos precificados.",
-          },
-          {
-            label: "Contratado YTD",
-            value: summary.contracted_ytd_brl,
-            color: "#5d57eb",
-            help: "TCV dos estudos precificados neste ano.",
-          },
-          {
-            label: "MRR estimado",
-            value: summary.mrr_brl,
-            color: "#52e1e7",
-            help: "Soma mensal das receitas recorrentes dos estudos ativos.",
-          },
-          {
-            label: "A receber (AR)",
-            value: summary.ar_open_brl,
-            color: "#f59e0b",
-            help: "Soma das parcelas pendentes ou atrasadas.",
-          },
-          {
-            label: "A receber 30d",
-            value: summary.ar_next_30d_brl,
-            color: "#0ea5e9",
-            help: "Parcelas com vencimento nos próximos 30 dias.",
-          },
-          {
-            label: "Atrasado",
-            value: summary.ar_overdue_brl,
-            color: "#dc2626",
-            help: "Parcelas pendentes com vencimento já passado.",
-          },
-        ]}
-      />
-    </div>
-  );
-}
-
-function KpiRow({
-  title,
-  items,
-}: {
-  title: string;
-  items: Array<{ label: string; value: number; color: string; help: string }>;
-}) {
-  return (
-    <div className="surface" style={{ padding: 14, borderRadius: 14 }}>
-      <div
-        style={{
-          fontSize: 10,
-          fontWeight: 800,
-          letterSpacing: "0.22em",
-          textTransform: "uppercase",
-          color: "var(--ink-mute)",
-          marginBottom: 10,
-        }}
-      >
-        {title}
-      </div>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: `repeat(${items.length}, 1fr)`,
-          gap: 12,
-        }}
-      >
-        {items.map((it) => (
-          <div key={it.label} title={it.help} style={{ minWidth: 0 }}>
-            <div
-              style={{
-                fontSize: 10,
-                fontWeight: 700,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                color: "var(--ink-mute)",
-              }}
-            >
-              {it.label}
-            </div>
-            <div
-              style={{
-                fontSize: 20,
-                fontWeight: 900,
-                marginTop: 4,
-                color: it.color,
-                letterSpacing: "-0.02em",
-                fontFamily: "var(--font-sans)",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {formatBRL(it.value)}
-            </div>
+    <div className="fin-kpis">
+      {items.map((it) => (
+        <div key={it.label} className="fin-kpi" title={it.help}>
+          <div className="fin-kpi__bar" style={{ background: it.accent }} />
+          <div className="fin-kpi__label">{it.label}</div>
+          <div className="fin-kpi__value" style={{ color: it.accent }}>
+            {formatBRL(it.value)}
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -382,10 +288,12 @@ function KpiRow({
 function Overview({
   summary,
   pricings,
+  analytics,
   onPayInstallment,
 }: {
   summary: FinanceSummary;
   pricings: StudyPricingWithJoins[];
+  analytics: FinanceAnalytics;
   onPayInstallment: (id: string) => void;
 }) {
   const maxBar = Math.max(
@@ -398,6 +306,22 @@ function Overview({
 
   return (
     <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 16 }}>
+      <div style={{ gridColumn: "span 2" }}>
+        <AlertCards alerts={analytics.alerts} />
+      </div>
+
+      <div style={{ gridColumn: "span 2" }}>
+        <CashflowChart data={analytics.cashflow} />
+      </div>
+
+      <div>
+        <RevenueVsCostChart data={analytics.revenueVsCost} />
+      </div>
+
+      <div>
+        <MarginByStudyTable data={analytics.marginByStudy} />
+      </div>
+
       <div className="surface" style={{ padding: 20, borderRadius: 14, gridColumn: "span 2" }}>
         <SectionTitle>Próximas parcelas a receber</SectionTitle>
         {summary.upcoming_installments.length === 0 ? (
@@ -446,7 +370,7 @@ function Overview({
                       whiteSpace: "nowrap",
                     }}
                   >
-                    {i.study?.title || "—"}
+                    {i.study?.title || "·"}
                   </div>
                   <div style={{ fontSize: 11, color: "var(--ink-mute)" }}>
                     {i.study?.client_name ? `${i.study.client_name} · ` : ""}Parcela{" "}
@@ -841,7 +765,7 @@ function TransactionsTab({
                         {t.category.name}
                       </span>
                     ) : (
-                      <span style={{ color: "var(--ink-mute)" }}>—</span>
+                      <span style={{ color: "var(--ink-mute)" }}>·</span>
                     )}
                   </td>
                   <td style={td}>
@@ -857,7 +781,7 @@ function TransactionsTab({
                     ) : t.client ? (
                       <span style={{ fontSize: 12 }}>{t.client.name}</span>
                     ) : (
-                      <span style={{ color: "var(--ink-mute)" }}>—</span>
+                      <span style={{ color: "var(--ink-mute)" }}>·</span>
                     )}
                   </td>
                   <td
@@ -955,14 +879,14 @@ function PricingTab({
                     {ARCHETYPE_LABELS[pricing.archetype]}
                   </Chip>
                 ) : (
-                  <span style={{ fontSize: 11, color: "var(--ink-mute)" }}>—</span>
+                  <span style={{ fontSize: 11, color: "var(--ink-mute)" }}>·</span>
                 )}
               </div>
               <div style={{ fontSize: 12, fontFamily: "var(--font-mono)", color: "var(--ink-soft)" }}>
-                {pricing ? formatBRL(pricingTotalContractValue(pricing)) : "—"}
+                {pricing ? formatBRL(pricingTotalContractValue(pricing)) : "·"}
               </div>
               <div style={{ fontSize: 12, fontFamily: "var(--font-mono)", color: "var(--ink-soft)" }}>
-                {pricing ? `${pricingExpectedMargin(pricing).toFixed(0)}%` : "—"}
+                {pricing ? `${pricingExpectedMargin(pricing).toFixed(0)}%` : "·"}
               </div>
               <div>
                 {pricing ? (
@@ -970,7 +894,7 @@ function PricingTab({
                     {STATUS_LABELS[pricing.payment_status]}
                   </Chip>
                 ) : (
-                  <span style={{ fontSize: 11, color: "var(--ink-mute)" }}>—</span>
+                  <span style={{ fontSize: 11, color: "var(--ink-mute)" }}>·</span>
                 )}
               </div>
               <div style={{ display: "flex", gap: 4 }}>
