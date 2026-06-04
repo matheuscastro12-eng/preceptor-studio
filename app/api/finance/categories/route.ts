@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServiceClient } from "@/lib/supabase";
-import { fetchCategories } from "@/lib/finance";
+import { ensureDefaultCategories, fetchCategories } from "@/lib/finance";
 import { requireUser } from "@/lib/apiAuth";
 
 function apiError(error: unknown, status = 500) {
@@ -14,6 +14,8 @@ export async function GET() {
   const guard = await requireUser();
   if (guard) return guard;
   try {
+    // Best-effort: garante o seed de categorias padrão se a tabela estiver vazia.
+    await ensureDefaultCategories();
     const categories = await fetchCategories();
     return NextResponse.json({ categories });
   } catch (e) {
