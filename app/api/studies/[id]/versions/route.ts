@@ -11,6 +11,7 @@ const VALID_TYPES = new Set([
   "thesis",
   "slides",
   "artifact",
+  "financial",
 ]);
 
 function apiError(error: unknown, status = 500) {

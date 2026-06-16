@@ -89,7 +89,7 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
       summaryLine: lead.summary_line,
     });
 
-    const apiKey = process.env.GOOGLE_API_KEY;
+    const apiKey = (process.env.ANTHROPIC_API_KEY || process.env.GOOGLE_API_KEY);
     if (!apiKey) {
       return NextResponse.json({ context: fallback, source: "fallback" });
     }

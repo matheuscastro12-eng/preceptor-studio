@@ -11,7 +11,8 @@ export type VersionType =
   | "execution"
   | "slides"
   | "artifact"
-  | "diagnostic";
+  | "diagnostic"
+  | "financial";
 
 interface VersionSummary {
   id: string;

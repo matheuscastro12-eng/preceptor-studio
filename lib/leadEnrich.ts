@@ -47,7 +47,7 @@ interface SummaryInput {
  */
 export async function generateLeadSummary(input: SummaryInput): Promise<string> {
   const fallback = buildLeadSummaryFallback(input);
-  const apiKey = process.env.GOOGLE_API_KEY;
+  const apiKey = (process.env.ANTHROPIC_API_KEY || process.env.GOOGLE_API_KEY);
   if (!apiKey) return fallback;
   try {
     const userPrompt = buildLeadSummaryUserPrompt(input);

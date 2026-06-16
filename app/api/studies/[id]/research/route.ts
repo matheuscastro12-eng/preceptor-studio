@@ -56,7 +56,7 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
-    const apiKey = process.env.GOOGLE_API_KEY;
+    const apiKey = (process.env.ANTHROPIC_API_KEY || process.env.GOOGLE_API_KEY);
     if (!apiKey) {
       return apiError(new Error("GOOGLE_API_KEY não configurada"), 500);
     }

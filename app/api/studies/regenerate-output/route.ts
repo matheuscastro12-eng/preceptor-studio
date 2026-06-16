@@ -11,6 +11,10 @@ import {
   buildInternalThesisSystemPrompt,
   buildInternalThesisUserPrompt,
 } from "@/prompts/internalThesis";
+import {
+  buildFinancialSystemPrompt,
+  buildFinancialUserPrompt,
+} from "@/prompts/financialForecast";
 import { callGemini, extractScores } from "@/lib/gemini";
 import { getQuestions } from "@/lib/questions";
 import { recommendationFromScore } from "@/lib/scoreColors";
@@ -18,7 +22,7 @@ import { createSupabaseServiceClient } from "@/lib/supabase";
 
 async function recordVersion(
   studyId: string | undefined,
-  outputType: "brand" | "commercial" | "thesis",
+  outputType: "brand" | "commercial" | "thesis" | "financial",
   contentMd: string | null,
   metadata: Record<string, unknown>
 ) {
@@ -74,7 +78,7 @@ function normalizeInternalScores(scores: any) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { outputType, category, studyMd, clientName, title, answers, studyId } = await req.json();
+    const { outputType, category, studyMd, commercialMd, clientName, title, answers, studyId } = await req.json();
 
     if (!outputType || !studyMd || !category) {
       return NextResponse.json(
@@ -83,7 +87,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const apiKey = process.env.GOOGLE_API_KEY;
+    const apiKey = (process.env.ANTHROPIC_API_KEY || process.env.GOOGLE_API_KEY);
     if (!apiKey) {
       return NextResponse.json(
         { error: "GOOGLE_API_KEY nao configurada" },
@@ -109,6 +113,9 @@ export async function POST(req: NextRequest) {
         studyMd,
         clientName
       );
+    } else if (outputType === "financial") {
+      systemPrompt = buildFinancialSystemPrompt(category);
+      userPrompt = buildFinancialUserPrompt(studyMd, commercialMd, clientName, title);
     } else {
       return NextResponse.json(
         { error: `Tipo de output invalido: ${outputType}` },
@@ -117,7 +124,7 @@ export async function POST(req: NextRequest) {
     }
 
     const result = await callGemini(systemPrompt, userPrompt, apiKey, {
-      thinking: outputType === "thesis",
+      thinking: outputType === "thesis" || outputType === "financial",
     });
 
     if (outputType === "thesis") {
@@ -136,7 +143,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    await recordVersion(studyId, outputType as "brand" | "commercial", result.content, {
+    await recordVersion(studyId, outputType as "brand" | "commercial" | "financial", result.content, {
       model: result.model_used,
       usage: result.usage,
       generated_at: new Date().toISOString(),

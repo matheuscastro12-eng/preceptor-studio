@@ -137,7 +137,7 @@ export async function POST(req: NextRequest) {
   let result: DiagnosticResult;
   let meta: ClaudeGenerationMeta;
 
-  const apiKey = process.env.GOOGLE_API_KEY;
+  const apiKey = (process.env.ANTHROPIC_API_KEY || process.env.GOOGLE_API_KEY);
   if (apiKey) {
     try {
       const out = await makeResultWithGemini(answers);

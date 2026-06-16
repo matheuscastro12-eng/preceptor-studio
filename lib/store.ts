@@ -77,6 +77,7 @@ export interface Study {
   brand_brief_md: string | null;
   commercial_plan_md: string | null;
   internal_thesis_md: string | null;
+  financial_md: string | null;
   insights_chave: InsightItem[];
   scores: StudyScores;
   // Mantido para compatibilidade com estudos antigos (briefing_dev/financial/prospecting)
@@ -208,6 +209,7 @@ export function createStudy(input: {
     brand_brief_md: null,
     commercial_plan_md: null,
     internal_thesis_md: null,
+    financial_md: null,
     insights_chave: [],
     scores: {},
     artifacts: {},

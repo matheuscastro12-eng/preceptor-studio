@@ -20,7 +20,7 @@ export async function POST(
     } = await auth.auth.getUser();
     if (!user) return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
 
-    const apiKey = process.env.GOOGLE_API_KEY;
+    const apiKey = (process.env.ANTHROPIC_API_KEY || process.env.GOOGLE_API_KEY);
     if (!apiKey) {
       return NextResponse.json({ error: "GOOGLE_API_KEY não configurada" }, { status: 500 });
     }

@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const apiKey = process.env.GOOGLE_API_KEY;
+    const apiKey = (process.env.ANTHROPIC_API_KEY || process.env.GOOGLE_API_KEY);
     if (!apiKey) {
       return NextResponse.json(
         { error: "GOOGLE_API_KEY não configurada no servidor" },

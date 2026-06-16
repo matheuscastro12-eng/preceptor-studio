@@ -19,6 +19,7 @@ import { EstudoTab } from "./EstudoTab";
 import { TeseTab } from "./TeseTab";
 import { MarcaTab } from "./MarcaTab";
 import { ComercialTab } from "./ComercialTab";
+import { FinanceiroTab } from "./FinanceiroTab";
 import { ExecucaoTab } from "./ExecucaoTab";
 import { CommentsSidebar } from "@/components/dashboard/CommentsSidebar";
 import { PortalAccessCard } from "./PortalAccessCard";
@@ -33,6 +34,7 @@ type TabKey =
   | "tese"
   | "marca"
   | "comercial"
+  | "financeiro"
   | "execucao";
 
 interface TabDef {
@@ -48,6 +50,7 @@ const TABS: TabDef[] = [
   { key: "tese", label: "Tese interna", icon: "✦", confidential: true },
   { key: "marca", label: "Marca", icon: "◇" },
   { key: "comercial", label: "Comercial", icon: "⟶" },
+  { key: "financeiro", label: "Financeiro", icon: "₿" },
   { key: "execucao", label: "Execução", icon: "▦" },
 ];
 
@@ -782,6 +785,9 @@ export default function StudyPage() {
             {tab === "marca" && <MarcaTab study={study} onUpdate={loadStudy} />}
             {tab === "comercial" && (
               <ComercialTab study={study} onUpdate={loadStudy} />
+            )}
+            {tab === "financeiro" && (
+              <FinanceiroTab study={study} onUpdate={loadStudy} />
             )}
             {tab === "execucao" && <ExecucaoTab study={study} />}
           </motion.div>

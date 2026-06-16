@@ -681,7 +681,7 @@ export async function makeResultWithGemini(
   const start = Date.now();
   const userPrompt = buildDiagnosticUserPrompt(answers);
 
-  const apiKey = process.env.GOOGLE_API_KEY;
+  const apiKey = (process.env.ANTHROPIC_API_KEY || process.env.GOOGLE_API_KEY);
   if (!apiKey) {
     return {
       result: makeResultFallback(answers),

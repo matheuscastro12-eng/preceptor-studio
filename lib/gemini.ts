@@ -1,16 +1,20 @@
-const DEFAULT_MODEL = "gemini-2.5-flash";
-const FALLBACK_MODEL = "gemini-2.5-pro";
+// Provider: Claude (Anthropic). Mantemos os nomes "gemini" nas exports para
+// não quebrar os ~20 call sites; internamente tudo chama a Messages API da Anthropic.
+const DEFAULT_MODEL = "claude-sonnet-4-6";
+const FALLBACK_MODEL = "claude-haiku-4-5";
+const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
+const ANTHROPIC_VERSION = "2023-06-01";
 
 function getModel() {
-  return process.env.GEMINI_MODEL || DEFAULT_MODEL;
+  return process.env.CLAUDE_MODEL || process.env.GEMINI_MODEL || DEFAULT_MODEL;
 }
 
 function getFallbackModel() {
-  return process.env.GEMINI_FALLBACK_MODEL || FALLBACK_MODEL;
-}
-
-function getUrl(model: string) {
-  return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+  return (
+    process.env.CLAUDE_FALLBACK_MODEL ||
+    process.env.GEMINI_FALLBACK_MODEL ||
+    FALLBACK_MODEL
+  );
 }
 
 export const SCORES_RE = /<!--\s*SCORES_JSON\s*([\s\S]*?)\s*SCORES_JSON\s*-->/;
@@ -41,37 +45,41 @@ async function callOnce(
   apiKey: string,
   config: { temperature?: number; maxOutputTokens?: number; thinking?: boolean; timeoutMs?: number }
 ): Promise<{ content: string; usage: any; status: number; finishReason?: string }> {
+  // Opus 4.8 / Sonnet 4.6: nada de temperature/top_p (retorna 400) e thinking
+  // só no modo adaptive. max_tokens precisa acomodar o thinking + a saída.
   const body: any = {
-    systemInstruction: { parts: [{ text: systemPrompt }] },
-    contents: [{ role: "user", parts: [{ text: userPrompt }] }],
-    generationConfig: {
-      temperature: config.temperature ?? 0.7,
-      maxOutputTokens: config.maxOutputTokens ?? 32768,
-    },
+    model,
+    max_tokens: config.maxOutputTokens ?? 32768,
+    system: systemPrompt,
+    messages: [{ role: "user", content: userPrompt }],
   };
 
   if (config.thinking !== false) {
-    body.generationConfig.thinkingConfig = { thinkingBudget: -1 };
-  } else if (!model.includes("pro")) {
-    body.generationConfig.thinkingConfig = { thinkingBudget: 0 };
+    body.thinking = { type: "adaptive" };
   }
 
   const controller = new AbortController();
-  const timeoutMs = config.timeoutMs ?? 55000;
+  // Claude Opus + thinking é mais lento que o Gemini Flash; damos folga (as
+  // rotas pesadas têm maxDuration 120s).
+  const timeoutMs = config.timeoutMs ?? 110000;
   const timer = setTimeout(() => controller.abort(), timeoutMs);
 
   let res: Response;
   try {
-    res = await fetch(`${getUrl(model)}?key=${apiKey}`, {
+    res = await fetch(ANTHROPIC_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": ANTHROPIC_VERSION,
+      },
       body: JSON.stringify(body),
       signal: controller.signal,
     });
   } catch (e: any) {
     clearTimeout(timer);
     if (e.name === "AbortError") {
-      const err: any = new Error(`Gemini ${model} timeout após ${timeoutMs}ms`);
+      const err: any = new Error(`Claude ${model} timeout após ${timeoutMs}ms`);
       err.retryable = true;
       throw err;
     }
@@ -81,30 +89,33 @@ async function callOnce(
 
   if (!res.ok) {
     const errText = await res.text();
-    const err: any = new Error(`Gemini ${res.status}: ${errText.slice(0, 300)}`);
+    const err: any = new Error(`Claude ${res.status}: ${errText.slice(0, 300)}`);
     err.status = res.status;
     err.retryable = RETRYABLE_STATUSES.has(res.status);
     throw err;
   }
 
   const data = await res.json();
-  const candidate = data?.candidates?.[0];
-  const finishReason: string | undefined = candidate?.finishReason;
+  const stopReason: string | undefined = data?.stop_reason;
   const content =
-    candidate?.content?.parts?.map((p: any) => p.text || "").join("\n") || "";
+    (Array.isArray(data?.content) ? data.content : [])
+      .filter((b: any) => b.type === "text")
+      .map((b: any) => b.text || "")
+      .join("\n") || "";
 
-  // Bloqueio por segurança/política: erro terminal, não adianta retry.
-  if (finishReason === "SAFETY" || finishReason === "RECITATION" || finishReason === "BLOCKLIST") {
-    const err: any = new Error(`Gemini bloqueou a resposta (${finishReason}).`);
+  // Recusa por segurança/política: erro terminal, não adianta retry.
+  if (stopReason === "refusal") {
+    const detail = data?.stop_details?.explanation || "";
+    const err: any = new Error(`Claude recusou a resposta (refusal). ${detail}`.trim());
     err.retryable = false;
     throw err;
   }
 
   // Resposta truncada por limite de tokens: marca como retryable (o fallback
   // pode ter mais espaço) e nunca entrega estudo cortado como se fosse completo.
-  if (finishReason === "MAX_TOKENS" || finishReason === "LENGTH") {
+  if (stopReason === "max_tokens") {
     const err: any = new Error(
-      `Gemini ${model} truncou a resposta (${finishReason}). Conteúdo incompleto.`
+      `Claude ${model} truncou a resposta (max_tokens). Conteúdo incompleto.`
     );
     err.retryable = true;
     err.truncated = true;
@@ -113,9 +124,9 @@ async function callOnce(
 
   return {
     content,
-    usage: data?.usageMetadata || null,
+    usage: data?.usage || null,
     status: res.status,
-    finishReason,
+    finishReason: stopReason,
   };
 }
 
@@ -127,11 +138,14 @@ export async function callGemini(
 ): Promise<GeminiResult> {
   const primary = config.primaryModel || getModel();
   const fallback = config.fallbackModel || getFallbackModel();
+  // A chave da Anthropic tem prioridade; o param `apiKey` (legado, vinha do
+  // GOOGLE_API_KEY) só é usado como fallback.
+  const key = process.env.ANTHROPIC_API_KEY || apiKey;
 
   try {
-    const r = await callOnce(primary, systemPrompt, userPrompt, apiKey, {
+    const r = await callOnce(primary, systemPrompt, userPrompt, key, {
       ...config,
-      timeoutMs: config.primaryTimeoutMs ?? 55000,
+      timeoutMs: config.primaryTimeoutMs ?? 110000,
     });
     return { content: r.content, usage: r.usage, model_used: primary };
   } catch (e: any) {
@@ -139,7 +153,7 @@ export async function callGemini(
       throw e;
     }
     try {
-      const r = await callOnce(fallback, systemPrompt, userPrompt, apiKey, {
+      const r = await callOnce(fallback, systemPrompt, userPrompt, key, {
         ...config,
         thinking: false,
         timeoutMs: config.fallbackTimeoutMs ?? 55000,
