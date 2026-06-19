@@ -1,4 +1,5 @@
 import { Sparkle, CircleRing, DoubleCircle, MiniDiamond } from "./MarketingShared";
+import { AutomationContactForm } from "./AutomationContactForm";
 
 const STEPS = [
   { n: "01", label: "Mapeamos a operação" },
@@ -148,33 +149,24 @@ export function AutomationSection() {
           ))}
         </div>
 
-        <div
-          style={{
-            marginTop: 44,
-            display: "flex",
-            alignItems: "center",
-            gap: 16,
-            flexWrap: "wrap",
-          }}
-        >
-          <a
-            href="mailto:thiago@ospreceptores.com?subject=Automação na minha empresa"
-            className="mkt-btn mkt-btn--cyan mkt-btn--lg"
-            aria-label="Falar sobre automação com IA"
-          >
-            Falar sobre automação
-            <span className="mkt-btn__icon" aria-hidden="true">
-              →
-            </span>
-          </a>
-          <span
+        <div style={{ marginTop: 44 }}>
+          <h3
             style={{
-              fontSize: 13,
-              color: "rgba(255,255,255,0.6)",
+              margin: "0 0 6px",
+              fontFamily: "var(--font-sans)",
+              fontWeight: 800,
+              fontSize: 20,
+              color: "#fff",
+              letterSpacing: "-0.02em",
             }}
           >
-            Conversa direta com o time, sem formulário longo.
-          </span>
+            Fale sobre a automação da sua empresa
+          </h3>
+          <p style={{ margin: "0 0 18px", fontSize: 13.5, color: "rgba(255,255,255,0.6)", maxWidth: 560 }}>
+            Preencha e o time entra em contato para mapear onde a automação se
+            paga mais rápido na sua operação.
+          </p>
+          <AutomationContactForm />
         </div>
       </div>
     </section>
