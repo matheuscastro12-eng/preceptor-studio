@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getAttribution } from "@/lib/funnelTrack";
+import { fbqTrack } from "@/lib/metaEvents";
 
 const SETORES = [
   { value: "", label: "Selecione (opcional)" },
@@ -45,6 +46,56 @@ export function AutomationContactForm() {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+  const wrapRef = useRef<HTMLElement | null>(null);
+
+  // Meta Pixel: dispara ViewContent quando a seção do formulário entra na tela
+  // (uma vez), para metrificar o funil de automação no pixel. Robusto ao timing:
+  // se o pixel ainda não carregou quando a seção aparece, espera (poll) e dispara
+  // assim que o fbq existir, em vez de virar no-op.
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    let fired = false;
+    let poll: ReturnType<typeof setInterval> | null = null;
+
+    const fire = () => {
+      if (fired) return;
+      if (typeof window !== "undefined" && typeof window.fbq === "function") {
+        fired = true;
+        fbqTrack("ViewContent", { content_name: "automacao_form" });
+        if (poll) clearInterval(poll);
+        obs.disconnect();
+      } else if (!poll) {
+        // pixel ainda não carregou: tenta a cada 500ms (máx ~10s)
+        let tries = 0;
+        poll = setInterval(() => {
+          tries += 1;
+          if (fired || tries > 20) {
+            if (poll) clearInterval(poll);
+            return;
+          }
+          fire();
+        }, 500);
+      }
+    };
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            fire();
+            break;
+          }
+        }
+      },
+      { threshold: 0, rootMargin: "0px 0px -15% 0px" }
+    );
+    obs.observe(el);
+    return () => {
+      if (poll) clearInterval(poll);
+      obs.disconnect();
+    };
+  }, []);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -69,6 +120,7 @@ export function AutomationContactForm() {
       });
       const data = (await res.json()) as { ok?: boolean; error?: string };
       if (!res.ok || !data.ok) throw new Error(data.error || "Falha ao enviar.");
+      fbqTrack("Lead", { content_name: "automacao" });
       setDone(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao enviar.");
@@ -79,24 +131,27 @@ export function AutomationContactForm() {
 
   if (done) {
     return (
-      <div
-        className="mkt-card mkt-card--dark"
-        style={{ padding: 28, maxWidth: 560 }}
-        role="status"
-      >
-        <h3 style={{ margin: 0, color: "#fff", fontSize: 20, fontWeight: 800 }}>
-          Recebemos o seu contato. ✅
-        </h3>
-        <p style={{ margin: "10px 0 0", color: "rgba(255,255,255,0.72)", fontSize: 14.5, lineHeight: 1.55 }}>
-          O time entra em contato em breve para entender sua operação e onde a
-          automação se paga mais rápido.
-        </p>
+      <div ref={(node) => { wrapRef.current = node; }}>
+        <div
+          className="mkt-card mkt-card--dark"
+          style={{ padding: 28, maxWidth: 560 }}
+          role="status"
+        >
+          <h3 style={{ margin: 0, color: "#fff", fontSize: 20, fontWeight: 800 }}>
+            Recebemos o seu contato. ✅
+          </h3>
+          <p style={{ margin: "10px 0 0", color: "rgba(255,255,255,0.72)", fontSize: 14.5, lineHeight: 1.55 }}>
+            O time entra em contato em breve para entender sua operação e onde a
+            automação se paga mais rápido.
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
     <form
+      ref={(node) => { wrapRef.current = node; }}
       onSubmit={submit}
       className="mkt-card mkt-card--dark"
       style={{ padding: 28, maxWidth: 560, display: "flex", flexDirection: "column", gap: 16 }}
