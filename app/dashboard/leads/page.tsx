@@ -12,6 +12,7 @@ export default async function LeadsPage() {
     phone: l.phone,
     company: l.company,
     category: l.category,
+    source: l.source,
     score: l.diagnostic_score,
     priority: l.priority_score,
     summary: l.summary_line,

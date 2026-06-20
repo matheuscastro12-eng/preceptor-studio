@@ -22,6 +22,7 @@ export interface LeadRow {
   phone: string | null;
   company: string | null;
   category: string | null;
+  source: string | null;
   score: number | null;
   priority: number | null;
   summary: string | null;
@@ -34,12 +35,20 @@ export interface LeadRow {
 
 type SortKey = "priority" | "score" | "recent";
 
+const ORIGIN_LABEL: Record<string, string> = {
+  diagnostic_public: "diagnóstico",
+  automacao: "automação",
+  manual: "manual",
+  indicacao: "indicação",
+};
+
 export function LeadsView({ rows }: { rows: LeadRow[] }) {
   const router = useRouter();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [search, setSearch] = useState("");
   const [setorFilter, setSetorFilter] = useState<string>("all");
   const [stageFilter, setStageFilter] = useState<string>("all");
+  const [originFilter, setOriginFilter] = useState<string>("all");
   const [sortKey, setSortKey] = useState<SortKey>("priority");
   const [recomputing, setRecomputing] = useState(false);
   const [page, setPage] = useState(1);
@@ -48,6 +57,7 @@ export function LeadsView({ rows }: { rows: LeadRow[] }) {
     const out = rows.filter((l) => {
       if (setorFilter !== "all" && l.category !== setorFilter) return false;
       if (stageFilter !== "all" && l.status !== stageFilter) return false;
+      if (originFilter !== "all" && (l.source || "") !== originFilter) return false;
       if (search.trim()) {
         const s = search.toLowerCase();
         if (
@@ -69,7 +79,7 @@ export function LeadsView({ rows }: { rows: LeadRow[] }) {
       return (b.priority ?? -1) - (a.priority ?? -1);
     });
     return out;
-  }, [rows, setorFilter, stageFilter, search, sortKey]);
+  }, [rows, setorFilter, stageFilter, originFilter, search, sortKey]);
 
   async function recomputeScores() {
     if (recomputing) return;
@@ -255,6 +265,18 @@ export function LeadsView({ rows }: { rows: LeadRow[] }) {
               {s.label}
             </option>
           ))}
+        </select>
+        <select
+          className="ds-input"
+          value={originFilter}
+          onChange={(e) => setOriginFilter(e.target.value)}
+          style={{ width: 160 }}
+        >
+          <option value="all">Todas origens</option>
+          <option value="diagnostic_public">Diagnóstico</option>
+          <option value="automacao">Automação</option>
+          <option value="manual">Manual</option>
+          <option value="indicacao">Indicação</option>
         </select>
         <select
           className="ds-input"
@@ -517,13 +539,29 @@ function LeadRowEl({
         )}
       </td>
       <td>
-        {lead.category ? (
-          <span className={`tag ${lead.category}`}>
-            {SECTORS_LABEL[lead.category as DashCategory] || lead.category}
+        <div style={{ display: "flex", flexDirection: "column", gap: 4, alignItems: "flex-start" }}>
+          {lead.category ? (
+            <span className={`tag ${lead.category}`}>
+              {SECTORS_LABEL[lead.category as DashCategory] || lead.category}
+            </span>
+          ) : (
+            <span style={{ color: "var(--ink-mute)" }}>-</span>
+          )}
+          <span
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: 10,
+              letterSpacing: "0.04em",
+              padding: "2px 7px",
+              borderRadius: 999,
+              border: "1px solid var(--slate-200)",
+              color: lead.source === "automacao" ? "var(--cyan-deep, #3BC8CF)" : "var(--ink-mute)",
+              background: lead.source === "automacao" ? "rgba(82,225,231,0.10)" : "transparent",
+            }}
+          >
+            {ORIGIN_LABEL[lead.source || ""] || lead.source || "—"}
           </span>
-        ) : (
-          <span style={{ color: "var(--ink-mute)" }}>-</span>
-        )}
+        </div>
       </td>
       <td>
         {typeof lead.score === "number" ? (
