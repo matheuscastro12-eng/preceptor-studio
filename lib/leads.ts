@@ -8,7 +8,7 @@ export type LeadStatus =
   | "ganho"
   | "perdido";
 
-export type LeadSource = "diagnostic_public" | "manual" | "indicacao";
+export type LeadSource = "diagnostic_public" | "manual" | "indicacao" | "automacao";
 
 export type LeadCategory = "saude" | "educacao" | "juridico" | "tech" | "outro";
 

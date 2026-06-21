@@ -129,6 +129,12 @@ const IconImage = () => (
   </Ico>
 );
 
+const IconBolt = () => (
+  <Ico>
+    <path d="M13 2L4 14h7l-1 8 9-12h-7z" />
+  </Ico>
+);
+
 export function Sidebar({
   studiesBadge,
   leadsBadge,
@@ -154,6 +160,12 @@ export function Sidebar({
       label: "Leads",
       icon: <IconUsers />,
       badgeNew: leadsBadge ? String(leadsBadge) : undefined,
+    },
+    {
+      k: "automacoes",
+      href: "/dashboard/automacoes",
+      label: "Automações",
+      icon: <IconBolt />,
     },
     { k: "crm", href: "/dashboard/crm", label: "CRM", icon: <IconPipeline /> },
     { k: "funil", href: "/dashboard/funil", label: "Funil", icon: <IconFunnel /> },
