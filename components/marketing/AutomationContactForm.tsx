@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { getAttribution } from "@/lib/funnelTrack";
 import { fbqTrack } from "@/lib/metaEvents";
 
@@ -36,6 +37,7 @@ const labelStyle: React.CSSProperties = {
 };
 
 export function AutomationContactForm() {
+  const router = useRouter();
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [empresa, setEmpresa] = useState("");
@@ -45,7 +47,6 @@ export function AutomationContactForm() {
   const [consent, setConsent] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [done, setDone] = useState(false);
   const wrapRef = useRef<HTMLElement | null>(null);
 
   // Meta Pixel: dispara ViewContent quando a seção do formulário entra na tela
@@ -120,33 +121,12 @@ export function AutomationContactForm() {
       });
       const data = (await res.json()) as { ok?: boolean; error?: string };
       if (!res.ok || !data.ok) throw new Error(data.error || "Falha ao enviar.");
-      fbqTrack("Lead", { content_name: "automacao" });
-      setDone(true);
+      // Sucesso: leva pra página de obrigado (mede conversão por URL/evento).
+      router.push("/obrigado/automacao");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao enviar.");
-    } finally {
       setSending(false);
     }
-  }
-
-  if (done) {
-    return (
-      <div ref={(node) => { wrapRef.current = node; }}>
-        <div
-          className="mkt-card mkt-card--dark"
-          style={{ padding: 28, maxWidth: 560 }}
-          role="status"
-        >
-          <h3 style={{ margin: 0, color: "#fff", fontSize: 20, fontWeight: 800 }}>
-            Recebemos o seu contato. ✅
-          </h3>
-          <p style={{ margin: "10px 0 0", color: "rgba(255,255,255,0.72)", fontSize: 14.5, lineHeight: 1.55 }}>
-            O time entra em contato em breve para entender sua operação e onde a
-            automação se paga mais rápido.
-          </p>
-        </div>
-      </div>
-    );
   }
 
   return (
