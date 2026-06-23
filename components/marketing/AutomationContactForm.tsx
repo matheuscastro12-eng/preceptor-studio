@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { getAttribution } from "@/lib/funnelTrack";
 import { fbqTrack } from "@/lib/metaEvents";
 
@@ -37,7 +36,6 @@ const labelStyle: React.CSSProperties = {
 };
 
 export function AutomationContactForm() {
-  const router = useRouter();
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [empresa, setEmpresa] = useState("");
@@ -121,8 +119,9 @@ export function AutomationContactForm() {
       });
       const data = (await res.json()) as { ok?: boolean; error?: string };
       if (!res.ok || !data.ok) throw new Error(data.error || "Falha ao enviar.");
-      // Sucesso: leva pra página de obrigado (mede conversão por URL/evento).
-      router.push("/obrigado/automacao");
+      // Sucesso: navegação REAL (não SPA) pra página de obrigado, pra o Pixel
+      // disparar o PageView da URL /obrigado/automacao e a conversão pegar.
+      window.location.assign("/obrigado/automacao");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao enviar.");
       setSending(false);

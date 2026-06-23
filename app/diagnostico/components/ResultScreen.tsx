@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Chrome } from "./Chrome";
 import { LockedReveal } from "./LockedReveal";
 import { Sparkle, DoubleCircle, CircleRing } from "@/components/Ornaments";
@@ -31,7 +30,6 @@ export function ResultScreen({
   onRestart: () => void;
   onHome: () => void;
 }) {
-  const router = useRouter();
   const [contactState, setContactState] = useState<"idle" | "loading" | "done" | "error">("idle");
 
   async function requestContact() {
@@ -48,8 +46,9 @@ export function ResultScreen({
         return;
       }
       setContactState("done");
-      // Conversão "começar o negócio": leva pra página de obrigado (mede no Pixel).
-      router.push("/obrigado/comecar");
+      // Conversão "começar o negócio": navegação REAL pra página de obrigado,
+      // pra o Pixel disparar o PageView da URL e a conversão pegar.
+      window.location.assign("/obrigado/comecar");
     } catch {
       setContactState("error");
     }
