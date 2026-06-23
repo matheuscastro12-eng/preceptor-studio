@@ -8,6 +8,7 @@ import {
   MiniDiamond,
 } from "@/components/marketing/MarketingShared";
 import { AutomationContactForm } from "@/components/marketing/AutomationContactForm";
+import { ScreenIndicator } from "@/components/marketing/ScreenIndicator";
 
 export const metadata: Metadata = {
   title: "Automação com IA",
@@ -336,6 +337,7 @@ export default function AutomacaoPage() {
       </section>
 
       <Footer variant="automacao" />
+      <ScreenIndicator />
     </div>
   );
 }

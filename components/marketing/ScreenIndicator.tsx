@@ -3,13 +3,27 @@
 import { useEffect, useRef, useState } from "react";
 import { fbqTrack } from "@/lib/metaEvents";
 
-// Indicador de seção: badge fixo "/ {label}" que muda conforme o scroll, com
-// animação. Calcula a seção ativa por posição (scroll handler), o que é bem
-// mais confiável que IntersectionObserver com band estreito. Também dispara um
-// evento no Pixel por seção alcançada (uma vez), pra metrificar o scroll.
+// Indicador de seção: atualiza a URL (hash) conforme o scroll, com animação no
+// badge "/ {label}". Calcula a seção ativa por posição (scroll handler), o que
+// é bem mais confiável que IntersectionObserver. Também dispara um evento no
+// Pixel por seção alcançada (uma vez), pra metrificar o scroll.
+
+// "01 Hero" -> "hero" ; "Automação" -> "automacao"
+function slugify(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/^\d+\s*/, "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
 export function ScreenIndicator() {
   const [label, setLabel] = useState<string>("");
   const fired = useRef<Set<string>>(new Set());
+  const lastSlug = useRef<string>("");
   const raf = useRef<number | null>(null);
 
   useEffect(() => {
@@ -21,6 +35,7 @@ export function ScreenIndicator() {
       if (els.length === 0) return;
       const line = window.innerHeight * 0.35; // linha de referência (35% do topo)
       let active = "";
+      let activeEl: HTMLElement | null = null;
       let bestTop = -Infinity;
       for (const el of els) {
         const r = el.getBoundingClientRect();
@@ -28,12 +43,30 @@ export function ScreenIndicator() {
         if (r.top <= line && r.top > bestTop) {
           bestTop = r.top;
           active = el.getAttribute("data-screen-label") || "";
+          activeEl = el;
         }
       }
       // antes da primeira seção cruzar a linha, usa a primeira da página.
-      if (!active) active = els[0].getAttribute("data-screen-label") || "";
+      if (!active) {
+        activeEl = els[0];
+        active = els[0].getAttribute("data-screen-label") || "";
+      }
       if (!active) return;
       setLabel((prev) => (prev === active ? prev : active));
+
+      // Atualiza a URL sem recarregar nem dar pulo de scroll. Usa o id real da
+      // seção quando existe (pra bater com as âncoras dos links), senão deriva
+      // do label.
+      const slug = activeEl?.id || slugify(active);
+      if (slug && slug !== lastSlug.current) {
+        lastSlug.current = slug;
+        try {
+          history.replaceState(null, "", "#" + slug);
+        } catch {
+          /* no-op */
+        }
+      }
+
       if (!fired.current.has(active)) {
         fired.current.add(active);
         fbqTrack("ViewContent", { content_name: "secao_landing", secao: active });
