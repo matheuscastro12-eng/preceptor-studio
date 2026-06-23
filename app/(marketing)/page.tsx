@@ -6,8 +6,10 @@ import { HowSection } from "@/components/marketing/HowSection";
 import { DeliverablesSection } from "@/components/marketing/DeliverablesSection";
 import { AutomationSection } from "@/components/marketing/AutomationSection";
 import { SectorsSection } from "@/components/marketing/SectorsSection";
+import { StatsSection } from "@/components/marketing/StatsSection";
 import { CTASection } from "@/components/marketing/CTASection";
 import { Footer } from "@/components/marketing/Footer";
+import { ScreenIndicator } from "@/components/marketing/ScreenIndicator";
 
 const SITE_URL = "https://preceptorstudio.com";
 
@@ -77,8 +79,10 @@ export default function MarketingHome() {
       <DeliverablesSection />
       <AutomationSection />
       <SectorsSection />
+      <StatsSection />
       <CTASection />
       <Footer />
+      <ScreenIndicator />
     </div>
   );
 }

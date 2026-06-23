@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { Chrome } from "./Chrome";
 import { LikertField, LongText, SingleChoice } from "./QuestionFields";
+import { fbqTrack } from "@/lib/metaEvents";
 import type { DiagnosticAnswers } from "@/lib/diagnosticScore";
 
 type QuestionItem =
@@ -161,6 +163,21 @@ export function QuestionnaireScreen({
 }) {
   const total = QUESTIONS.length;
   const section = QUESTIONS[currentSection]!;
+
+  // Meta Pixel: dispara um evento por etapa do questionário (mede onde o
+  // cliente avança/abandona). Deduplicado por etapa via ref.
+  const firedEtapas = useRef<Set<number>>(new Set());
+  useEffect(() => {
+    if (firedEtapas.current.has(currentSection)) return;
+    firedEtapas.current.add(currentSection);
+    fbqTrack("ViewContent", {
+      content_name: "diag_etapa",
+      etapa: currentSection + 1,
+      total_etapas: total,
+      secao: section.name,
+    });
+  }, [currentSection, total, section.name]);
+
   const valid = section.items.every((q) => {
     const v = answers[q.id];
     return v !== undefined && v !== null && String(v).trim() !== "";
