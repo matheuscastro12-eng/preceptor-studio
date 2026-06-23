@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Nav } from "@/components/marketing/Nav";
 import { Footer } from "@/components/marketing/Footer";
 import {
@@ -135,13 +134,6 @@ export default function AutomacaoPage() {
               Falar sobre automação
               <span className="mkt-btn__icon" aria-hidden="true">→</span>
             </a>
-            <Link
-              href="/diagnostico?start=1"
-              className="mkt-btn mkt-btn--ghost mkt-btn--lg"
-            >
-              Fazer diagnóstico grátis
-              <span className="mkt-btn__icon" aria-hidden="true">→</span>
-            </Link>
           </div>
 
           <div className="mkt-flow" style={{ marginTop: 48 }}>
