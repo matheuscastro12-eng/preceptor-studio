@@ -164,10 +164,27 @@ export function QuestionnaireScreen({
   const total = QUESTIONS.length;
   const section = QUESTIONS[currentSection]!;
 
-  // Meta Pixel: dispara um evento por etapa do questionário (mede onde o
-  // cliente avança/abandona). Deduplicado por etapa via ref.
+  // URL por passo + Meta Pixel por etapa. A URL vira #etapa-N-slug a cada
+  // passo do questionário (replaceState, sem reload), e o pixel registra o
+  // avanço/abandono (deduplicado por etapa).
   const firedEtapas = useRef<Set<number>>(new Set());
   useEffect(() => {
+    const slug =
+      "etapa-" +
+      (currentSection + 1) +
+      "-" +
+      section.name
+        .normalize("NFD")
+        .replace(/[̀-ͯ]/g, "")
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
+    try {
+      history.replaceState(null, "", "#" + slug);
+    } catch {
+      /* no-op */
+    }
     if (firedEtapas.current.has(currentSection)) return;
     firedEtapas.current.add(currentSection);
     fbqTrack("ViewContent", {

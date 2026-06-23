@@ -71,6 +71,24 @@ export function DiagnosticApp({ calcomUrl }: { calcomUrl?: string | null } = {})
     }
   }, [step]);
 
+  // URL por passo do diagnóstico (#inicio, #contato, #analisando, #resultado).
+  // No "quiz", o QuestionnaireScreen cuida do hash por etapa.
+  useEffect(() => {
+    if (step === "quiz") return;
+    const map: Record<Step, string> = {
+      hero: "inicio",
+      quiz: "questionario",
+      capture: "contato",
+      loading: "analisando",
+      result: "resultado",
+    };
+    try {
+      history.replaceState(null, "", "#" + map[step]);
+    } catch {
+      /* no-op */
+    }
+  }, [step]);
+
   function reset() {
     setStep("hero");
     setSection(0);
