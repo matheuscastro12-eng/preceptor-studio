@@ -3,6 +3,7 @@ import Script from "next/script";
 import "./globals.css";
 
 const META_PIXEL_ID = "4342291746023127";
+const GA_ID = "G-1B7CCZ2YYK";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://preceptorstudio.com"),
@@ -26,6 +27,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="pt-BR">
       <body className="bg-slate-50 text-ink">
+        {/* Google Analytics (gtag.js). Carrega afterInteractive em todas as páginas. */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="ga-gtag" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GA_ID}');`}
+        </Script>
         {/* Meta Pixel (Facebook Ads). Carrega afterInteractive em todas as páginas. */}
         <Script id="meta-pixel" strategy="afterInteractive">
           {`!function(f,b,e,v,n,t,s)
