@@ -1,7 +1,63 @@
 import Link from "next/link";
 import { Mark } from "./MarketingShared";
 
-export function Footer() {
+interface FooterLink {
+  label: string;
+  href: string;
+}
+
+interface FooterColumn {
+  title: string;
+  items: FooterLink[];
+  mono?: boolean;
+}
+
+// Colunas do meio para a landing de automação: cada item leva pra uma seção
+// da própria página (URL própria por âncora).
+const AUTOMACAO_COLUMNS: FooterColumn[] = [
+  {
+    title: "Automação",
+    items: [
+      { label: "O que entregamos", href: "/automacao#entregamos" },
+      { label: "Onde se paga primeiro", href: "/automacao#possibilidades" },
+      { label: "Como funciona", href: "/automacao#como-funciona" },
+      { label: "Falar sobre automação", href: "/automacao#falar" },
+    ],
+  },
+  {
+    title: "Possibilidades",
+    items: [
+      { label: "Triagem no WhatsApp", href: "/automacao#possibilidades" },
+      { label: "ERP + CRM integrados", href: "/automacao#possibilidades" },
+      { label: "Cobrança automática", href: "/automacao#possibilidades" },
+      { label: "Painéis e relatórios", href: "/automacao#possibilidades" },
+    ],
+  },
+];
+
+const DEFAULT_COLUMNS: FooterColumn[] = [
+  {
+    title: "Estúdio",
+    items: [
+      { label: "Como construímos", href: "/#como" },
+      { label: "O que entregamos", href: "/#entregamos" },
+      { label: "Setores", href: "/#setores" },
+      { label: "Cases", href: "/#cases" },
+    ],
+  },
+  {
+    title: "Diagnóstico",
+    items: [
+      { label: "Fazer grátis", href: "/diagnostico?start=1" },
+      { label: "Como funciona", href: "/diagnostico" },
+      { label: "Diagnóstico completo", href: "/diagnostico" },
+      { label: "Falar com especialista", href: "/diagnostico?start=1" },
+    ],
+  },
+];
+
+export function Footer({ variant = "default" }: { variant?: "default" | "automacao" }) {
+  const columns = variant === "automacao" ? AUTOMACAO_COLUMNS : DEFAULT_COLUMNS;
   return (
     <footer
       id="estudio"
@@ -68,26 +124,16 @@ export function Footer() {
               <span className="mkt-chip">Operação 2026</span>
             </div>
           </div>
-          <FooterCol
-            title="Estúdio"
-            items={["Como construímos", "O que entregamos", "Setores", "Cases"]}
-          />
-          <FooterCol
-            title="Diagnóstico"
-            items={[
-              "Fazer grátis",
-              "Como funciona",
-              "Diagnóstico completo",
-              "Falar com especialista",
-            ]}
-          />
+          {columns.map((col) => (
+            <FooterCol key={col.title} title={col.title} items={col.items} />
+          ))}
           <FooterCol
             title="Contato"
             items={[
-              "thiago@ospreceptores.com",
-              "+55 35 98703 5957",
-              "Itajubá, MG",
-              "@preceptorstudio",
+              { label: "thiago@ospreceptores.com", href: "mailto:thiago@ospreceptores.com" },
+              { label: "+55 35 98703 5957", href: "https://wa.me/5535987035957" },
+              { label: "Itajubá, MG", href: "#" },
+              { label: "@preceptorstudio", href: "#" },
             ]}
             mono
           />
@@ -139,7 +185,7 @@ function FooterCol({
   mono,
 }: {
   title: string;
-  items: string[];
+  items: FooterLink[];
   mono?: boolean;
 }) {
   return (
@@ -162,7 +208,7 @@ function FooterCol({
       >
         {items.map((i) => (
           <li
-            key={i}
+            key={i.label}
             style={{
               color: "rgba(255,255,255,0.78)",
               fontSize: 14,
@@ -170,8 +216,8 @@ function FooterCol({
               fontWeight: 500,
             }}
           >
-            <a href="#" rel="nofollow" style={{ transition: "color 160ms" }}>
-              {i}
+            <a href={i.href} rel="nofollow" style={{ transition: "color 160ms" }}>
+              {i.label}
             </a>
           </li>
         ))}

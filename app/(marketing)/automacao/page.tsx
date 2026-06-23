@@ -100,6 +100,7 @@ export default function AutomacaoPage() {
 
       {/* Hero */}
       <section
+        id="inicio"
         className="section section--dark"
         data-screen-label="Automação"
         style={{ paddingTop: 96, paddingBottom: 96, position: "relative" }}
@@ -158,7 +159,7 @@ export default function AutomacaoPage() {
       </section>
 
       {/* Três pilares */}
-      <section className="section section--sm">
+      <section id="entregamos" className="section section--sm" data-screen-label="O que entregamos">
         <div className="container">
           <span className="eyebrow">O que entregamos</span>
           <h2 className="mkt-h2" style={{ marginTop: 14, maxWidth: 720 }}>
@@ -233,7 +234,7 @@ export default function AutomacaoPage() {
       </section>
 
       {/* O que dá pra automatizar */}
-      <section className="section section--sm">
+      <section id="possibilidades" className="section section--sm" data-screen-label="Possibilidades">
         <div className="container">
           <span className="eyebrow">O que dá pra automatizar</span>
           <h2 className="mkt-h2" style={{ marginTop: 14, maxWidth: 720 }}>
@@ -247,12 +248,32 @@ export default function AutomacaoPage() {
                 <p className="mkt-sector-card__body">{c.body}</p>
               </article>
             ))}
+
+            <article
+              className="mkt-card mkt-sector-card"
+              style={{
+                background:
+                  "linear-gradient(135deg, rgba(82,225,231,0.16), rgba(82,225,231,0.04))",
+                border: "1px solid rgba(82,225,231,0.4)",
+                justifyContent: "center",
+              }}
+            >
+              <MiniDiamond size={10} color="var(--cyan-deep)" />
+              <h3 className="mkt-sector-card__title" style={{ color: "var(--cyan-deep)" }}>
+                E infinitas possibilidades
+              </h3>
+              <p className="mkt-sector-card__body">
+                Esses são só os pontos de partida mais comuns. Se a tarefa se
+                repete e segue uma regra, dá pra automatizar. A gente mapeia a
+                sua operação e mostra o que se paga primeiro.
+              </p>
+            </article>
           </div>
         </div>
       </section>
 
       {/* Como funciona */}
-      <section className="section section--sm">
+      <section id="como-funciona" className="section section--sm" data-screen-label="Como funciona">
         <div className="container">
           <span className="eyebrow">Como funciona</span>
           <h2 className="mkt-h2" style={{ marginTop: 14, maxWidth: 720 }}>
@@ -293,6 +314,7 @@ export default function AutomacaoPage() {
       <section
         id="falar"
         className="section section--dark"
+        data-screen-label="Falar sobre automação"
         style={{ paddingTop: 96, paddingBottom: 96, position: "relative" }}
       >
         <CircleRing size={120} dashed style={{ top: 70, left: 48 }} />
@@ -313,7 +335,7 @@ export default function AutomacaoPage() {
         </div>
       </section>
 
-      <Footer />
+      <Footer variant="automacao" />
     </div>
   );
 }
