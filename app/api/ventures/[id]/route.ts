@@ -61,6 +61,18 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       return apiError(new Error("Nada para atualizar"), 400);
     }
     const supabase = createSupabaseServiceClient();
+
+    // Para registrar mudança de estágio na timeline, lê o estágio anterior.
+    let prevStage: string | null = null;
+    if (typeof update.stage === "string") {
+      const { data: cur } = await supabase
+        .from("ventures")
+        .select("stage")
+        .eq("id", params.id)
+        .maybeSingle();
+      prevStage = (cur?.stage as string) ?? null;
+    }
+
     const { data, error } = await supabase
       .from("ventures")
       .update(update)
@@ -68,6 +80,20 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       .select("*")
       .single();
     if (error) throw error;
+
+    // Best-effort: registra o evento de estágio. Nunca derruba o PATCH.
+    if (typeof update.stage === "string" && prevStage && prevStage !== update.stage) {
+      try {
+        await supabase.from("venture_events").insert({
+          venture_id: params.id,
+          type: "estagio",
+          title: `Estágio: ${prevStage} para ${update.stage}`,
+        });
+      } catch {
+        /* ignora */
+      }
+    }
+
     return NextResponse.json({ venture: data });
   } catch (e) {
     return apiError(e);

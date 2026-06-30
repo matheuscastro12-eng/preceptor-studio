@@ -343,6 +343,34 @@ export interface VentureTxLite {
   occurred_at: string;
 }
 
+export interface VentureEvent {
+  id: string;
+  venture_id: string;
+  type: "estagio" | "nota" | "sistema";
+  title: string;
+  detail: string | null;
+  actor: string | null;
+  created_at: string;
+}
+
+export type TimelineKind =
+  | "venture"
+  | "estudo"
+  | "receita"
+  | "saida"
+  | "custo"
+  | "horas"
+  | "estagio"
+  | "nota"
+  | "sistema";
+export interface TimelineEvent {
+  id: string;
+  date: string;
+  kind: TimelineKind;
+  title: string;
+  detail?: string | null;
+}
+
 export interface VentureDetail {
   venture: VentureRow;
   studies: VentureStudyLite[];
@@ -350,6 +378,8 @@ export interface VentureDetail {
   transactions: VentureTxLite[];
   timeEntries: TimeEntry[];
   costEntries: CostEntry[];
+  events: VentureEvent[];
+  timeline: TimelineEvent[];
 }
 
 export async function getVentureDetail(id: string): Promise<VentureDetail | null> {
@@ -363,7 +393,7 @@ export async function getVentureDetail(id: string): Promise<VentureDetail | null
     if (error || !vData) return null;
     const venture = vData as Venture;
 
-    const [studiesRes, tasksRes, timeRes, costRes] = await Promise.all([
+    const [studiesRes, tasksRes, timeRes, costRes, eventsRes] = await Promise.all([
       supabase
         .from("studies")
         .select("id, title, status, created_at, client_id, generation_metadata")
@@ -384,6 +414,11 @@ export async function getVentureDetail(id: string): Promise<VentureDetail | null
         .select("*")
         .eq("venture_id", id)
         .order("incurred_at", { ascending: false }),
+      supabase
+        .from("venture_events")
+        .select("*")
+        .eq("venture_id", id)
+        .order("created_at", { ascending: false }),
     ]);
 
     const studiesFull =
@@ -405,6 +440,7 @@ export async function getVentureDetail(id: string): Promise<VentureDetail | null
 
     const timeEntries = (timeRes.data as TimeEntry[]) || [];
     const costEntries = (costRes.data as CostEntry[]) || [];
+    const events = (eventsRes.data as VentureEvent[]) || [];
 
     // métricas (mesma lógica do list, escopo desta venture)
     const m = emptyMetrics();
@@ -454,6 +490,43 @@ export async function getVentureDetail(id: string): Promise<VentureDetail | null
       metrics: m,
     };
 
+    // Timeline: eventos registrados + sinais derivados, ordenados por data desc.
+    const timeline: TimelineEvent[] = [];
+    timeline.push({ id: `v-${venture.id}`, date: venture.created_at, kind: "venture", title: "Venture criada" });
+    for (const s of studiesFull) {
+      timeline.push({ id: `s-${s.id}`, date: s.created_at, kind: "estudo", title: `Estudo: ${s.title}` });
+    }
+    for (const t of txs) {
+      timeline.push({
+        id: `t-${t.id}`,
+        date: t.occurred_at,
+        kind: t.kind === "inflow" ? "receita" : "saida",
+        title: t.kind === "inflow" ? `Receita: ${t.description}` : `Saída: ${t.description}`,
+        detail: fmtBRL(Number(t.amount_brl) || 0),
+      });
+    }
+    for (const c of costEntries) {
+      timeline.push({
+        id: `c-${c.id}`,
+        date: c.incurred_at,
+        kind: "custo",
+        title: `Custo ${c.cost_type === "ia_anthropic" ? "IA" : c.cost_type}`,
+        detail: fmtBRL(Number(c.amount_brl) || 0),
+      });
+    }
+    for (const te of timeEntries) {
+      timeline.push({
+        id: `h-${te.id}`,
+        date: te.entry_date,
+        kind: "horas",
+        title: `${Number(te.hours).toFixed(1)}h${te.member_key ? ` · ${te.member_key}` : ""}`,
+      });
+    }
+    for (const e of events) {
+      timeline.push({ id: `e-${e.id}`, date: e.created_at, kind: e.type, title: e.title, detail: e.detail });
+    }
+    timeline.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+
     return {
       venture: ventureRow,
       studies: studiesFull.map((s) => ({
@@ -472,6 +545,8 @@ export async function getVentureDetail(id: string): Promise<VentureDetail | null
       })),
       timeEntries,
       costEntries,
+      events,
+      timeline: timeline.slice(0, 40),
     };
   } catch {
     return null;

@@ -12,6 +12,8 @@ import {
   type VentureStage,
   type VentureHealth,
   type EquityStatus,
+  type TimelineEvent,
+  type TimelineKind,
 } from "@/lib/ventures";
 
 const HEALTHS: VentureHealth[] = ["verde", "amarelo", "vermelho"];
@@ -26,11 +28,26 @@ const darkSelect: React.CSSProperties = {
   fontSize: 13,
 };
 
+const TL_COLOR: Record<TimelineKind, string> = {
+  venture: "#5D57EB",
+  estudo: "#52E1E7",
+  receita: "#10B981",
+  saida: "#EF4444",
+  custo: "#F59E0B",
+  horas: "#60A5FA",
+  estagio: "#A78BFA",
+  nota: "#94A3B8",
+  sistema: "#94A3B8",
+};
+
+type Tab = "geral" | "timeline" | "financeiro";
+
 export function VentureDetailView({ detail }: { detail: VentureDetail }) {
   const router = useRouter();
   const v = detail.venture;
   const m = v.metrics;
   const [busy, setBusy] = useState(false);
+  const [tab, setTab] = useState<Tab>("geral");
 
   async function patch(update: Record<string, unknown>) {
     setBusy(true);
@@ -74,12 +91,7 @@ export function VentureDetailView({ detail }: { detail: VentureDetail }) {
           </div>
           <div className="flex items-center gap-3 flex-wrap">
             <Field label="Estágio">
-              <select
-                value={v.stage}
-                disabled={busy}
-                onChange={(e) => patch({ stage: e.target.value as VentureStage })}
-                style={darkSelect}
-              >
+              <select value={v.stage} disabled={busy} onChange={(e) => patch({ stage: e.target.value as VentureStage })} style={darkSelect}>
                 {VENTURE_STAGES.map((s) => (
                   <option key={s} value={s}>
                     {STAGE_LABEL[s]}
@@ -88,12 +100,7 @@ export function VentureDetailView({ detail }: { detail: VentureDetail }) {
               </select>
             </Field>
             <Field label="Saúde">
-              <select
-                value={v.health}
-                disabled={busy}
-                onChange={(e) => patch({ health: e.target.value })}
-                style={darkSelect}
-              >
+              <select value={v.health} disabled={busy} onChange={(e) => patch({ health: e.target.value })} style={darkSelect}>
                 {HEALTHS.map((h) => (
                   <option key={h} value={h}>
                     {h}
@@ -102,12 +109,7 @@ export function VentureDetailView({ detail }: { detail: VentureDetail }) {
               </select>
             </Field>
             <Field label="Responsável">
-              <select
-                value={v.owner_team_key || ""}
-                disabled={busy}
-                onChange={(e) => patch({ owner_team_key: e.target.value || null })}
-                style={darkSelect}
-              >
+              <select value={v.owner_team_key || ""} disabled={busy} onChange={(e) => patch({ owner_team_key: e.target.value || null })} style={darkSelect}>
                 <option value="">-</option>
                 {Object.entries(TEAM_COLORS).map(([key, t]) => (
                   <option key={key} value={key}>
@@ -124,107 +126,155 @@ export function VentureDetailView({ detail }: { detail: VentureDetail }) {
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <Kpi label="Receita realizada" value={fmtBRL(m.receita_realizada)} />
         <Kpi label="Horas" value={`${m.horas.toFixed(1)}h`} sub={fmtBRL(m.custo_horas)} />
-        <Kpi
-          label="Custo IA"
-          value={fmtBRL(m.custo_ia)}
-          sub={m.custo_ia_estimado ? "estimado" : "registrado"}
-        />
+        <Kpi label="Custo IA" value={fmtBRL(m.custo_ia)} sub={m.custo_ia_estimado ? "estimado" : "registrado"} />
         <Kpi label="MRR" value={m.mrr ? fmtBRL(m.mrr) : "-"} />
-        <Kpi
-          label="Margem"
-          value={fmtBRL(m.margem)}
-          valueColor={m.margem >= 0 ? "#10B981" : "#EF4444"}
-        />
+        <Kpi label="Margem" value={fmtBRL(m.margem)} valueColor={m.margem >= 0 ? "#10B981" : "#EF4444"} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Coluna esquerda */}
-        <div className="lg:col-span-2 space-y-5">
-          {/* Estudos */}
-          <Section title="Estudos vinculados">
-            {detail.studies.length === 0 ? (
-              <Empty>Nenhum estudo ligado a esta venture.</Empty>
-            ) : (
-              <div className="space-y-2">
-                {detail.studies.map((s) => (
-                  <Link
-                    key={s.id}
-                    href={`/dashboard/study/${s.id}`}
-                    className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl hover:bg-cyan-50"
-                    style={{ border: "1px solid var(--line)" }}
-                  >
-                    <span className="font-semibold text-ink truncate">{s.title}</span>
-                    <span className="text-[10px] uppercase tracking-widest font-bold text-ink-mute">
-                      {s.status}
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </Section>
+      {/* Tabs */}
+      <div className="seg-tabs">
+        {([
+          ["geral", "Visão geral"],
+          ["timeline", "Timeline"],
+          ["financeiro", "Financeiro"],
+        ] as [Tab, string][]).map(([k, label]) => (
+          <button key={k} type="button" className={"seg-tabs__btn" + (tab === k ? " on" : "")} onClick={() => setTab(k)}>
+            {label}
+          </button>
+        ))}
+      </div>
 
-          {/* Tarefas */}
-          <Section title="Execução">
-            {detail.tasks.length === 0 ? (
-              <Empty>Sem tarefas nesta venture.</Empty>
-            ) : (
-              <div className="flex gap-3 flex-wrap">
-                {(["todo", "doing", "done", "blocked"] as const).map((st) => {
-                  const count = detail.tasks.filter((t) => t.status === st).length;
-                  return (
-                    <div
-                      key={st}
-                      className="rounded-xl px-4 py-3"
-                      style={{ border: "1px solid var(--line)", minWidth: 96 }}
+      {tab === "geral" && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <div className="lg:col-span-2 space-y-5">
+            <Section title="Estudos vinculados">
+              {detail.studies.length === 0 ? (
+                <Empty>Nenhum estudo ligado a esta venture.</Empty>
+              ) : (
+                <div className="space-y-2">
+                  {detail.studies.map((s) => (
+                    <Link
+                      key={s.id}
+                      href={`/dashboard/study/${s.id}`}
+                      className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl hover:bg-cyan-50"
+                      style={{ border: "1px solid var(--line)" }}
                     >
-                      <div className="text-2xl font-black tabular-nums" style={{ color: "var(--navy)" }}>
-                        {count}
+                      <span className="font-semibold text-ink truncate">{s.title}</span>
+                      <span className="text-[10px] uppercase tracking-widest font-bold text-ink-mute">{s.status}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </Section>
+
+            <Section title="Execução">
+              {detail.tasks.length === 0 ? (
+                <Empty>Sem tarefas nesta venture.</Empty>
+              ) : (
+                <div className="flex gap-3 flex-wrap">
+                  {(["todo", "doing", "done", "blocked"] as const).map((st) => {
+                    const count = detail.tasks.filter((t) => t.status === st).length;
+                    return (
+                      <div key={st} className="rounded-xl px-4 py-3" style={{ border: "1px solid var(--line)", minWidth: 96 }}>
+                        <div className="text-2xl font-black tabular-nums" style={{ color: "var(--navy)" }}>
+                          {count}
+                        </div>
+                        <div className="text-[10px] uppercase tracking-widest font-bold text-ink-mute">{st}</div>
                       </div>
-                      <div className="text-[10px] uppercase tracking-widest font-bold text-ink-mute">
-                        {st}
-                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </Section>
+          </div>
+
+          <div className="space-y-5">
+            <EquityCard venture={v} patch={patch} busy={busy} />
+          </div>
+        </div>
+      )}
+
+      {tab === "timeline" && <TimelineTab events={detail.timeline} />}
+
+      {tab === "financeiro" && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <div className="lg:col-span-2 space-y-5">
+            <Section title="Transações">
+              {detail.transactions.length === 0 ? (
+                <Empty>Sem transações ligadas. A receita aparece ao registrar inflows no Financeiro com o estudo ou cliente desta venture.</Empty>
+              ) : (
+                <div className="space-y-1">
+                  {detail.transactions.slice(0, 20).map((t) => (
+                    <div key={t.id} className="flex items-center justify-between gap-3 py-2" style={{ borderBottom: "1px solid var(--line)" }}>
+                      <span className="text-sm text-ink-soft truncate">{t.description}</span>
+                      <span className="font-mono text-sm font-bold shrink-0" style={{ color: t.kind === "inflow" ? "#10B981" : "#EF4444" }}>
+                        {t.kind === "inflow" ? "+" : "-"}
+                        {fmtBRL(t.amount_brl)}
+                      </span>
                     </div>
-                  );
-                })}
-              </div>
-            )}
-          </Section>
-
-          {/* Financeiro */}
-          <Section title="Financeiro">
-            {detail.transactions.length === 0 ? (
-              <Empty>Sem transações ligadas. A receita aparece ao registrar inflows no Financeiro com o estudo ou cliente desta venture.</Empty>
-            ) : (
-              <div className="space-y-1">
-                {detail.transactions.slice(0, 12).map((t) => (
-                  <div
-                    key={t.id}
-                    className="flex items-center justify-between gap-3 py-2"
-                    style={{ borderBottom: "1px solid var(--line)" }}
-                  >
-                    <span className="text-sm text-ink-soft truncate">{t.description}</span>
-                    <span
-                      className="font-mono text-sm font-bold shrink-0"
-                      style={{ color: t.kind === "inflow" ? "#10B981" : "#EF4444" }}
-                    >
-                      {t.kind === "inflow" ? "+" : "-"}
-                      {fmtBRL(t.amount_brl)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </Section>
+                  ))}
+                </div>
+              )}
+            </Section>
+          </div>
+          <div className="space-y-5">
+            <TimeCard ventureId={v.id} entries={detail.timeEntries} />
+            <CostCard ventureId={v.id} entries={detail.costEntries} />
+          </div>
         </div>
+      )}
 
-        {/* Coluna direita */}
-        <div className="space-y-5">
-          <EquityCard venture={v} patch={patch} busy={busy} />
-          <TimeCard ventureId={v.id} entries={detail.timeEntries} />
-          <CostCard ventureId={v.id} entries={detail.costEntries} />
+      <style>{`
+        .seg-tabs { display:inline-flex; gap:2px; background:var(--bg,#F1F5F9); border:1px solid var(--line,#E6EBF2); border-radius:999px; padding:3px; }
+        .seg-tabs__btn { border:0; background:transparent; font-size:13px; font-weight:700; color:var(--ink-soft); padding:8px 18px; border-radius:999px; cursor:pointer; }
+        .seg-tabs__btn.on { background:var(--surface,#fff); color:var(--navy); box-shadow:0 1px 3px rgba(10,31,68,.12); }
+      `}</style>
+    </div>
+  );
+}
+
+function TimelineTab({ events }: { events: TimelineEvent[] }) {
+  if (events.length === 0) {
+    return (
+      <div className="surface rounded-2xl p-6">
+        <Empty>Sem atividade ainda. Mova a venture de estágio, lance horas ou registre receita para começar a timeline.</Empty>
+      </div>
+    );
+  }
+  return (
+    <div className="surface rounded-2xl p-6">
+      <div className="eyebrow mb-5">Linha do tempo</div>
+      <div style={{ position: "relative", paddingLeft: 22 }}>
+        <div style={{ position: "absolute", left: 5, top: 4, bottom: 4, width: 2, background: "var(--line, #E6EBF2)" }} />
+        <div className="space-y-4">
+          {events.map((e) => (
+            <div key={e.id} style={{ position: "relative" }}>
+              <span
+                style={{
+                  position: "absolute",
+                  left: -22,
+                  top: 4,
+                  width: 12,
+                  height: 12,
+                  borderRadius: 999,
+                  background: TL_COLOR[e.kind] || "#94A3B8",
+                  border: "2px solid var(--surface, #fff)",
+                  boxShadow: "0 0 0 1px var(--line, #E6EBF2)",
+                }}
+              />
+              <div className="flex items-baseline justify-between gap-3">
+                <span className="text-sm font-semibold text-ink">
+                  {e.title}
+                  {e.detail && <span className="text-ink-mute font-normal"> · {e.detail}</span>}
+                </span>
+                <span className="text-[11px] text-ink-mute tabular-nums shrink-0 font-mono">
+                  {new Date(e.date).toLocaleDateString("pt-BR")}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-
     </div>
   );
 }
@@ -249,9 +299,7 @@ function EquityCard({
         <LabeledInput label="Equity (%)" value={pct} onChange={setPct} />
         <LabeledInput label="Fair value (R$)" value={fair} onChange={setFair} />
         <div>
-          <div className="text-[10px] uppercase tracking-widest font-bold text-ink-mute mb-1">
-            Status equity
-          </div>
+          <div className="text-[10px] uppercase tracking-widest font-bold text-ink-mute mb-1">Status equity</div>
           <select
             className="input-field"
             value={venture.equity_status || ""}
@@ -285,13 +333,7 @@ function EquityCard({
   );
 }
 
-function TimeCard({
-  ventureId,
-  entries,
-}: {
-  ventureId: string;
-  entries: VentureDetail["timeEntries"];
-}) {
+function TimeCard({ ventureId, entries }: { ventureId: string; entries: VentureDetail["timeEntries"] }) {
   const router = useRouter();
   const [hours, setHours] = useState("");
   const [cost, setCost] = useState("");
@@ -305,11 +347,7 @@ function TimeCard({
       const res = await fetch(`/api/ventures/${ventureId}/time`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          hours: Number(hours),
-          hourly_cost_brl: Number(cost) || 0,
-          member_key: member || null,
-        }),
+        body: JSON.stringify({ hours: Number(hours), hourly_cost_brl: Number(cost) || 0, member_key: member || null }),
       });
       if (res.ok) {
         setHours("");
@@ -337,12 +375,7 @@ function TimeCard({
           ))}
         </select>
       </div>
-      <button
-        type="button"
-        className="btn-pill btn-pill--ghost w-full justify-center mt-2"
-        disabled={saving || !hours}
-        onClick={add}
-      >
+      <button type="button" className="btn-pill btn-pill--ghost w-full justify-center mt-2" disabled={saving || !hours} onClick={add}>
         {saving ? "Lançando..." : "Lançar horas"}
       </button>
       {entries.length > 0 && (
@@ -363,13 +396,7 @@ function TimeCard({
   );
 }
 
-function CostCard({
-  ventureId,
-  entries,
-}: {
-  ventureId: string;
-  entries: VentureDetail["costEntries"];
-}) {
+function CostCard({ ventureId, entries }: { ventureId: string; entries: VentureDetail["costEntries"] }) {
   const router = useRouter();
   const [amount, setAmount] = useState("");
   const [type, setType] = useState("ia_anthropic");
@@ -408,12 +435,7 @@ function CostCard({
         </div>
         <LabeledInput label="Valor (R$)" value={amount} onChange={setAmount} />
       </div>
-      <button
-        type="button"
-        className="btn-pill btn-pill--ghost w-full justify-center mt-2"
-        disabled={saving || !amount}
-        onClick={add}
-      >
+      <button type="button" className="btn-pill btn-pill--ghost w-full justify-center mt-2" disabled={saving || !amount} onClick={add}>
         {saving ? "Lançando..." : "Lançar custo"}
       </button>
       {entries.length > 0 && (
@@ -442,17 +464,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function Empty({ children }: { children: React.ReactNode }) {
   return <p className="text-sm text-ink-soft m-0">{children}</p>;
 }
-function Kpi({
-  label,
-  value,
-  sub,
-  valueColor,
-}: {
-  label: string;
-  value: string;
-  sub?: string;
-  valueColor?: string;
-}) {
+function Kpi({ label, value, sub, valueColor }: { label: string; value: string; sub?: string; valueColor?: string }) {
   return (
     <div className="surface rounded-2xl p-4">
       <div className="text-[10px] uppercase tracking-widest font-bold text-ink-mute">{label}</div>
@@ -473,24 +485,11 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     </label>
   );
 }
-function LabeledInput({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-}) {
+function LabeledInput({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
     <div>
       <div className="text-[10px] uppercase tracking-widest font-bold text-ink-mute mb-1">{label}</div>
-      <input
-        className="input-field"
-        inputMode="decimal"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-      />
+      <input className="input-field" inputMode="decimal" value={value} onChange={(e) => onChange(e.target.value)} />
     </div>
   );
 }
