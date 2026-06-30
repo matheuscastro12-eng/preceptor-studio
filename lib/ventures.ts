@@ -321,6 +321,39 @@ export async function studioHeader(rows?: VentureRow[]): Promise<StudioHeader> {
   }
 }
 
+// ── Receita e margem por camada (estudo/execução/manutenção) ─────────────────
+export interface LayerSummary {
+  layer: string;
+  label: string;
+  count: number;
+  receita: number;
+  mrr: number;
+  margem: number;
+}
+const LAYER_LABEL: Record<string, string> = {
+  estudo: "Estudo",
+  execucao: "Execução",
+  manutencao: "Manutenção",
+  sem: "Sem camada",
+};
+
+export function revenueByLayer(rows: VentureRow[]): LayerSummary[] {
+  const order = ["estudo", "execucao", "manutencao", "sem"];
+  const map = new Map<string, LayerSummary>();
+  for (const k of order) {
+    map.set(k, { layer: k, label: LAYER_LABEL[k], count: 0, receita: 0, mrr: 0, margem: 0 });
+  }
+  for (const v of rows) {
+    const k = v.layer ?? "sem";
+    const e = map.get(k) ?? map.get("sem")!;
+    e.count += 1;
+    e.receita += v.metrics.receita_realizada;
+    e.mrr += v.metrics.mrr;
+    e.margem += v.metrics.margem;
+  }
+  return order.map((k) => map.get(k)!).filter((s) => s.count > 0);
+}
+
 // ── Leitura: ficha completa de uma venture ───────────────────────────────────
 export interface VentureStudyLite {
   id: string;

@@ -6,10 +6,12 @@ import { useState } from "react";
 import {
   STAGE_LABEL,
   fmtBRL,
+  revenueByLayer,
   type VentureRow,
   type StudioHeader,
   type VentureStage,
   type VentureHealth,
+  type LayerSummary,
 } from "@/lib/ventures";
 import { VenturesBoard } from "./VenturesBoard";
 
@@ -108,6 +110,8 @@ export function VenturesWorkspace({ rows, header }: { rows: VentureRow[]; header
         <Kpi label="Portfólio de equity" value={fmtBRL(header.portfolio_equity)} hint="valor de papel" />
       </div>
 
+      <LayerStrip layers={revenueByLayer(rows)} />
+
       {view === "board" ? <VenturesBoard rows={rows} /> : <VenturesTable rows={rows} />}
 
       <style>{`
@@ -180,6 +184,37 @@ function VenturesTable({ rows }: { rows: VentureRow[] }) {
           ))}
         </tbody>
       </table>
+    </div>
+  );
+}
+
+function LayerStrip({ layers }: { layers: LayerSummary[] }) {
+  if (layers.length === 0) return null;
+  return (
+    <div className="surface rounded-2xl p-5">
+      <div className="flex items-center justify-between mb-4">
+        <div className="eyebrow">Receita e margem por camada</div>
+        <span className="text-[11px] text-ink-mute">estudo · execução · manutenção</span>
+      </div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {layers.map((l) => (
+          <div key={l.layer} className="rounded-xl p-4" style={{ border: "1px solid var(--line)" }}>
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] uppercase tracking-widest font-bold text-ink-mute">{l.label}</span>
+              <span className="text-[11px] font-bold text-ink-soft tabular-nums">{l.count}</span>
+            </div>
+            <div className="text-lg font-black tabular-nums mt-1" style={{ color: "var(--navy)" }}>
+              {fmtBRL(l.receita)}
+            </div>
+            <div className="flex items-center gap-3 mt-1 text-[11px]">
+              {l.mrr > 0 && <span style={{ color: "#10B981", fontWeight: 700 }}>MRR {fmtBRL(l.mrr)}</span>}
+              <span style={{ color: l.margem >= 0 ? "#10B981" : "#EF4444", fontWeight: 700 }}>
+                Margem {fmtBRL(l.margem)}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
