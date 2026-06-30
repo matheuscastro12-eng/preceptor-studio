@@ -143,6 +143,13 @@ const IconVenture = () => (
   </Ico>
 );
 
+const IconSparkle = () => (
+  <Ico>
+    <path d="M12 3l1.8 4.6L18.5 9l-4.7 1.4L12 15l-1.8-4.6L5.5 9l4.7-1.4z" />
+    <path d="M18 15l.7 1.8L20.5 17.5l-1.8.7L18 20l-.7-1.8L15.5 17.5l1.8-.7z" />
+  </Ico>
+);
+
 export function Sidebar({
   studiesBadge,
   leadsBadge,
@@ -203,6 +210,7 @@ export function Sidebar({
     },
   ];
   const secondary: Item[] = [
+    { k: "copilot", href: "/dashboard/copilot", label: "Copiloto", icon: <IconSparkle /> },
     { k: "time", href: "/dashboard/time", label: "Time", icon: <IconTeam /> },
     {
       k: "biblioteca",
