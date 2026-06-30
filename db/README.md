@@ -65,6 +65,16 @@ returning token;
 
 E mande o link `https://preceptor-studio.vercel.app/signup?token=<TOKEN>`.
 
+## Migrations adicionais (rodar nesta ordem, depois do schema.sql)
+
+Cada arquivo `.sql` é aditivo e idempotente. Cole no SQL Editor e execute.
+
+1. `finance_migration.sql` - financeiro (categorias, pricing, transações)
+2. `finance_v2_installments.sql` - parcelas do pricing
+3. `funnel_migration.sql` - eventos de funil
+4. `security_v3_portal_rls.sql` - RLS do portal do cliente
+5. `erp_v1_ventures.sql` - **ERP Onda 1**: entidade central `ventures` (lead -> equity), `time_entries`, `cost_entries`, `media_spend`, e backfill de 1 venture por client existente, ligando estudos e tarefas. Habilita a aba `/dashboard/ventures` (margem real por venture).
+
 ## Env vars
 
 ```env

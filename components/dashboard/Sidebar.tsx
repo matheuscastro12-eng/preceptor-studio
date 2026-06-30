@@ -135,6 +135,14 @@ const IconBolt = () => (
   </Ico>
 );
 
+const IconVenture = () => (
+  <Ico>
+    <circle cx="12" cy="12" r="9" />
+    <circle cx="12" cy="12" r="4" />
+    <circle cx="12" cy="12" r="0.5" />
+  </Ico>
+);
+
 export function Sidebar({
   studiesBadge,
   leadsBadge,
@@ -147,6 +155,12 @@ export function Sidebar({
   const pathname = usePathname() || "";
   const items: Item[] = [
     { k: "home", href: "/dashboard", label: "Home", icon: <IconHome /> },
+    {
+      k: "ventures",
+      href: "/dashboard/ventures",
+      label: "Ventures",
+      icon: <IconVenture />,
+    },
     {
       k: "estudos",
       href: "/dashboard/estudos",
