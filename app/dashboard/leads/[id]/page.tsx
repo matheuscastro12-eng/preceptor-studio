@@ -32,6 +32,20 @@ export default function LeadDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [answersOpen, setAnswersOpen] = useState(false);
   const [regenSummary, setRegenSummary] = useState(false);
+  const [promoting, setPromoting] = useState(false);
+
+  async function promote() {
+    if (!lead || promoting) return;
+    setPromoting(true);
+    try {
+      const res = await fetch(`/api/leads/${lead.id}/promote`, { method: "POST" });
+      const data = (await res.json()) as { venture?: { id: string }; error?: string };
+      if (data.venture) router.push(`/dashboard/ventures/${data.venture.id}`);
+      else if (data.error) alert(data.error);
+    } finally {
+      setPromoting(false);
+    }
+  }
 
   async function regenerateSummary() {
     if (!lead || regenSummary) return;
@@ -161,6 +175,28 @@ export default function LeadDetailPage() {
                 </div>
               </>
             )}
+            <button
+              type="button"
+              onClick={promote}
+              disabled={promoting}
+              style={{
+                background: "rgba(255,255,255,0.12)",
+                color: "#fff",
+                fontWeight: 800,
+                fontSize: 13,
+                padding: "12px 18px",
+                borderRadius: 999,
+                border: "1px solid rgba(255,255,255,0.25)",
+                cursor: promoting ? "wait" : "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                whiteSpace: "nowrap",
+              }}
+            >
+              {promoting ? "Convertendo..." : "Virar venture"}
+              <span style={{ fontWeight: 900 }}>→</span>
+            </button>
             <button
               type="button"
               onClick={() => router.push(`/dashboard/new?lead_id=${lead.id}`)}
