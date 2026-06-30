@@ -2,135 +2,166 @@ import Link from "next/link";
 import {
   fetchStudies,
   fetchLeads,
-  summarize,
-  studyOverall,
-  getRevenueMetrics,
   getHotLeads,
+  getRevenueByMonth,
   formatBRL,
-  type RevenueMetrics,
   type HotLead,
+  type MonthPoint,
 } from "@/lib/dashboardData";
-import { Kpi } from "@/components/dashboard/Kpi";
+import { getInstallmentAlerts, type InstallmentAlert } from "@/lib/financeAnalytics";
 import {
-  CategoryIcon,
-  StatusPill,
-  ScoreChip,
-  getStage,
-  lookupStageForLead,
-} from "@/components/dashboard/Shared";
-import { priorityColor } from "@/lib/leadScore";
+  listVentures,
+  studioHeader,
+  STAGE_LABEL,
+  type VentureRow,
+  type VentureStage,
+} from "@/lib/ventures";
+import { Kpi } from "@/components/dashboard/Kpi";
 
 export const dynamic = "force-dynamic";
 
+// Estágios na ordem do funil lead -> equity (a espinha do CRM).
+const STAGE_ORDER: VentureStage[] = [
+  "lead",
+  "diagnostico",
+  "estudo",
+  "proposta",
+  "onboarding",
+  "execucao",
+  "manutencao",
+  "equity",
+];
+const STAGE_COLOR: Record<VentureStage, string> = {
+  lead: "#94A3B8",
+  diagnostico: "#60A5FA",
+  estudo: "#52E1E7",
+  proposta: "#38BDF8",
+  onboarding: "#A78BFA",
+  execucao: "#34D399",
+  manutencao: "#10B981",
+  equity: "#F59E0B",
+  encerrada: "#64748B",
+};
+const HEALTH = {
+  verde: { color: "#10B981", label: "Saudáveis" },
+  amarelo: { color: "#F59E0B", label: "Atenção" },
+  vermelho: { color: "#EF4444", label: "Risco" },
+} as const;
+
 export default async function HomePage() {
-  const [studies, leads, revenue, hotLeads] = await Promise.all([
+  const ventures = await listVentures();
+  const [header, studies, leads, hotLeads, alerts, revByMonth] = await Promise.all([
+    studioHeader(ventures),
     fetchStudies(),
     fetchLeads(),
-    getRevenueMetrics(),
-    getHotLeads(5),
+    getHotLeads(6),
+    getInstallmentAlerts(),
+    getRevenueByMonth(7),
   ]);
-  const c = summarize(studies, leads);
 
-  // weekly synthetic activity for the chart (last 12 weeks).
-  const leadsByWeek = bucketByWeek(leads.map((l) => l.created_at), 12);
-  const studiesByWeek = bucketByWeek(
-    studies.map((s) => s.created_at),
-    12
+  const generating = studies.filter((s) => s.status === "generating").length;
+  const newLeads = leads.filter((l) => l.status === "novo").length;
+
+  // Agregados do studio (margem real consolidada das ventures).
+  const tot = ventures.reduce(
+    (a, v) => ({
+      receita: a.receita + v.metrics.receita_realizada,
+      custoHoras: a.custoHoras + v.metrics.custo_horas,
+      custoIa: a.custoIa + v.metrics.custo_ia,
+      custoOutros: a.custoOutros + v.metrics.custo_outros,
+      margem: a.margem + v.metrics.margem,
+      horas: a.horas + v.metrics.horas,
+    }),
+    { receita: 0, custoHoras: 0, custoIa: 0, custoOutros: 0, margem: 0, horas: 0 }
   );
+
+  const byStage = STAGE_ORDER.map((st) => {
+    const items = ventures.filter((v) => v.stage === st);
+    return {
+      stage: st,
+      count: items.length,
+      receita: items.reduce((s, v) => s + v.metrics.receita_realizada, 0),
+    };
+  });
+
+  const health = ventures.reduce(
+    (a, v) => ({ ...a, [v.health]: (a[v.health as keyof typeof a] || 0) + 1 }),
+    { verde: 0, amarelo: 0, vermelho: 0 }
+  );
+
+  const revSpark = revByMonth.map((m) => m.value);
+  const recentVentures = ventures.slice(0, 6);
 
   return (
     <div className="page" data-screen-label="Home">
       <div className="page-head">
         <div>
           <h1 className="h-page">
-            Bom dia, Luciano{" "}
-            <span style={{ color: "var(--ink-mute)", fontWeight: 500 }}>
-              · {formatToday()}
-            </span>
+            Painel do studio{" "}
+            <span style={{ color: "var(--ink-mute)", fontWeight: 500 }}>· {formatToday()}</span>
           </h1>
           <p className="sub">
-            {c.newLeads} leads novos aguardando triagem · {c.generating} estudo
-            {c.generating === 1 ? "" : "s"} gerando · {studies.filter((s) => s.status === "questionnaire").length} em questionário.
+            {ventures.length} ventures ativas · {newLeads} lead{newLeads === 1 ? "" : "s"} novo
+            {newLeads === 1 ? "" : "s"} pra triar
+            {generating > 0 ? ` · ${generating} estudo${generating === 1 ? "" : "s"} gerando` : ""}.
           </p>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
-          <button className="ds-btn ds-btn-ghost">▾ Esta semana</button>
+          <Link className="ds-btn ds-btn-ghost" href="/dashboard/ventures">
+            Ventures
+          </Link>
           <Link className="ds-btn ds-btn-primary" href="/dashboard/new">
             + Novo estudo
           </Link>
         </div>
       </div>
 
+      {/* 4 números que contam a história do studio */}
       <div className="kpis">
         <Kpi
-          label="Pipeline ponderado"
-          value={formatBRL(revenue.weightedPipeline)}
-          delta="por probabilidade de estágio"
-          deltaDir="up"
+          label="Caixa do mês"
+          value={formatBRL(header.caixa_mes)}
+          delta="entradas menos saídas, realizado"
+          deltaDir={header.caixa_mes >= 0 ? "up" : "down"}
           icon="◆"
-          spark={[3, 5, 4, 7, 6, 8, 9]}
+          spark={revSpark.some((v) => v > 0) ? revSpark : undefined}
         />
         <Kpi
-          label="MRR projetado"
-          value={formatBRL(revenue.projectedMrr)}
-          delta="ganhos / 12 meses"
+          label="MRR atual"
+          value={formatBRL(header.mrr_total)}
+          delta="recorrência de manutenção"
           deltaDir="up"
           icon="↑"
-          spark={[2, 3, 3, 4, 5, 6, 7]}
         />
         <Kpi
-          label="Ticket médio"
-          value={formatBRL(revenue.averageTicket)}
-          delta={
-            revenue.averageTicket > 0 ? "estimado por deal" : "sem dados ainda"
-          }
+          label="Pipeline aberto"
+          value={formatBRL(header.pipeline_aberto)}
+          delta="leads em negociação"
           deltaDir="up"
           icon="◇"
-          spark={[4, 4, 5, 5, 6, 6, 7]}
         />
         <Kpi
-          label="Taxa de conversão"
-          value={`${revenue.conversionRate}%`}
-          delta="ganhos / (ganhos + perdidos)"
+          label="Portfólio de equity"
+          value={formatBRL(header.portfolio_equity)}
+          delta="valor de papel, separado do caixa"
           deltaDir="up"
           icon="◐"
-          spark={[28, 29, 30, 31, 32, 33, 34]}
         />
       </div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1.4fr 1fr",
-          gap: 14,
-          marginBottom: 14,
-        }}
-      >
-        <RevenueFunnel revenue={revenue} />
+      <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 14, marginBottom: 14 }}>
+        <VenturesPipeline byStage={byStage} total={ventures.length} />
+        <TodayPanel alerts={alerts.overdue} hotLeads={hotLeads} generating={generating} />
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 14, marginBottom: 14 }}>
+        <StudioMargin tot={tot} revByMonth={revByMonth} />
+        <HealthPanel health={health} />
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 14 }}>
+        <RecentVentures ventures={recentVentures} />
         <HotLeadsPanel leads={hotLeads} />
-      </div>
-
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "2fr 1fr",
-          gap: 14,
-          marginBottom: 14,
-        }}
-      >
-        <ActivityChart leads={leadsByWeek} studies={studiesByWeek} />
-        <PipelineMini leads={leads} />
-      </div>
-
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1.4fr 1fr",
-          gap: 14,
-        }}
-      >
-        <RecentStudiesPanel studies={studies.slice(0, 5)} />
-        <RecentLeadsPanel leads={leads.slice(0, 5)} />
       </div>
     </div>
   );
@@ -144,162 +175,315 @@ function formatToday() {
   });
 }
 
-function bucketByWeek(dates: string[], weeks: number): number[] {
-  const buckets = Array.from({ length: weeks }, () => 0);
-  const now = Date.now();
-  const weekMs = 7 * 86400000;
-  for (const d of dates) {
-    if (!d) continue;
-    const t = new Date(d).getTime();
-    const diff = Math.floor((now - t) / weekMs);
-    const idx = weeks - 1 - diff;
-    if (idx >= 0 && idx < weeks) buckets[idx]++;
-  }
-  return buckets;
-}
-
-function RevenueFunnel({ revenue }: { revenue: RevenueMetrics }) {
-  const max = Math.max(...revenue.funnel.map((f) => f.value), 1);
+// ─── Pipeline de Ventures (espinha lead -> equity) ───────────────────────────
+function VenturesPipeline({
+  byStage,
+  total,
+}: {
+  byStage: { stage: VentureStage; count: number; receita: number }[];
+  total: number;
+}) {
+  const max = Math.max(...byStage.map((s) => s.count), 1);
   return (
     <div className="ds-card" style={{ padding: 16 }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 14,
-        }}
-      >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
         <div>
-          <h3 className="h-section">Funil de receita</h3>
-          <p
-            style={{
-              margin: "4px 0 0",
-              fontSize: 11.5,
-              color: "var(--ink-soft)",
-            }}
-          >
-            Valor R$ acumulado por estágio do pipeline
+          <h3 className="h-section">Pipeline de ventures</h3>
+          <p style={{ margin: "4px 0 0", fontSize: 11.5, color: "var(--ink-soft)" }}>
+            Cada conta do lead à equity · {total} no total
           </p>
         </div>
-        <Link
-          href="/dashboard/crm"
-          style={{ fontSize: 11.5, color: "var(--blue)", fontWeight: 700 }}
-        >
-          Abrir CRM →
+        <Link href="/dashboard/ventures" style={{ fontSize: 11.5, color: "var(--blue)", fontWeight: 700 }}>
+          Abrir Ventures →
         </Link>
       </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        {revenue.funnel.map((f) => {
-          const s = getStage(f.stage);
-          return (
-            <div
-              key={f.stage}
-              style={{
-                display: "grid",
-                gridTemplateColumns: "auto 1fr auto",
-                gap: 10,
-                alignItems: "center",
-              }}
-            >
-              <span
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 6,
-                  fontSize: 11.5,
-                  color: "var(--ink-soft)",
-                  minWidth: 130,
-                }}
-              >
-                <span
-                  style={{
-                    width: 7,
-                    height: 7,
-                    background: s.color,
-                    borderRadius: 2,
-                  }}
-                />
-                {s.label}
-              </span>
+      <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+        {byStage.map((s) => (
+          <div
+            key={s.stage}
+            style={{ display: "grid", gridTemplateColumns: "130px 1fr auto", gap: 10, alignItems: "center" }}
+          >
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 11.5, color: "var(--ink-soft)" }}>
+              <span style={{ width: 7, height: 7, background: STAGE_COLOR[s.stage], borderRadius: 2 }} />
+              {STAGE_LABEL[s.stage]}
+            </span>
+            <div style={{ height: 8, background: "var(--slate-100, #F1F5F9)", borderRadius: 999, overflow: "hidden" }}>
               <div
                 style={{
-                  height: 8,
-                  background: "var(--slate-100)",
-                  borderRadius: 999,
-                  overflow: "hidden",
+                  height: "100%",
+                  width: `${s.count > 0 ? Math.max((s.count / max) * 100, 6) : 0}%`,
+                  background: STAGE_COLOR[s.stage],
                 }}
-              >
-                <div
-                  style={{
-                    height: "100%",
-                    width: `${Math.max((f.value / max) * 100, f.value > 0 ? 4 : 0)}%`,
-                    background: s.color,
-                  }}
-                />
-              </div>
-              <span
-                className="tabular"
-                style={{
-                  fontSize: 12,
-                  fontWeight: 800,
-                  color: s.color,
-                  minWidth: 64,
-                  textAlign: "right",
-                }}
-              >
-                {formatBRL(f.value)}
-              </span>
+              />
             </div>
-          );
-        })}
-        {revenue.funnel.every((f) => f.value === 0) && (
-          <p
-            style={{
-              margin: 0,
-              fontSize: 12,
-              color: "var(--ink-mute)",
-              textAlign: "center",
-              padding: "8px 0",
-            }}
-          >
-            Sem valor estimado no pipeline ainda.
-          </p>
-        )}
+            <span
+              className="tabular"
+              style={{ fontSize: 12, fontWeight: 800, color: STAGE_COLOR[s.stage], minWidth: 70, textAlign: "right" }}
+            >
+              {s.count}
+              {s.receita > 0 && (
+                <span style={{ color: "var(--ink-mute)", fontWeight: 600 }}> · {formatBRL(s.receita)}</span>
+              )}
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
+// ─── O que fazer hoje (alertas acionáveis) ───────────────────────────────────
+function TodayPanel({
+  alerts,
+  hotLeads,
+  generating,
+}: {
+  alerts: InstallmentAlert[];
+  hotLeads: HotLead[];
+  generating: number;
+}) {
+  const items: { href: string; tag: string; tagColor: string; text: string }[] = [];
+  for (const a of alerts.slice(0, 3)) {
+    items.push({
+      href: "/dashboard/financeiro",
+      tag: "Vencida",
+      tagColor: "#EF4444",
+      text: `${formatBRL(a.amount_brl)} · ${a.study_title} (${Math.abs(a.days)}d)`,
+    });
+  }
+  for (const l of hotLeads.slice(0, 3)) {
+    items.push({
+      href: `/dashboard/leads/${l.id}`,
+      tag: "Lead quente",
+      tagColor: "#3BC8CF",
+      text: `${l.name}${l.company ? ` · ${l.company}` : ""}`,
+    });
+  }
+  if (generating > 0) {
+    items.push({
+      href: "/dashboard/estudos",
+      tag: "Gerando",
+      tagColor: "#5D57EB",
+      text: `${generating} estudo${generating === 1 ? "" : "s"} em geração`,
+    });
+  }
+
+  return (
+    <div className="ds-card" style={{ padding: 0 }}>
+      <div style={{ padding: "14px 16px" }}>
+        <h3 className="h-section">O que fazer hoje</h3>
+      </div>
+      {items.length === 0 && (
+        <div style={{ padding: 28, textAlign: "center", color: "var(--ink-mute)", fontSize: 13, borderTop: "1px solid var(--slate-100, #F1F5F9)" }}>
+          Tudo em dia. Sem pendências.
+        </div>
+      )}
+      {items.map((it, i) => (
+        <Link
+          key={i}
+          href={it.href}
+          style={{
+            display: "grid",
+            gridTemplateColumns: "auto 1fr",
+            gap: 10,
+            alignItems: "center",
+            padding: "11px 16px",
+            borderTop: "1px solid var(--slate-100, #F1F5F9)",
+          }}
+        >
+          <span
+            style={{
+              fontSize: 9.5,
+              fontWeight: 800,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: it.tagColor,
+              background: `${it.tagColor}1A`,
+              padding: "4px 8px",
+              borderRadius: 999,
+              whiteSpace: "nowrap",
+            }}
+          >
+            {it.tag}
+          </span>
+          <span style={{ fontSize: 12.5, color: "var(--navy)", fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+            {it.text}
+          </span>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+// ─── Margem do studio (receita - horas - IA) ─────────────────────────────────
+function StudioMargin({
+  tot,
+  revByMonth,
+}: {
+  tot: { receita: number; custoHoras: number; custoIa: number; custoOutros: number; margem: number; horas: number };
+  revByMonth: MonthPoint[];
+}) {
+  const custoTotal = tot.custoHoras + tot.custoIa + tot.custoOutros;
+  const max = Math.max(...revByMonth.map((m) => m.value), 1);
+  return (
+    <div className="ds-card" style={{ padding: 16 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+        <div>
+          <h3 className="h-section">Margem do studio</h3>
+          <p style={{ margin: "4px 0 0", fontSize: 11.5, color: "var(--ink-soft)" }}>
+            Receita realizada menos horas, IA e infra
+          </p>
+        </div>
+        <Link href="/dashboard/financeiro" style={{ fontSize: 11.5, color: "var(--blue)", fontWeight: 700 }}>
+          Financeiro →
+        </Link>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginBottom: 16 }}>
+        <MiniStat label="Receita" value={formatBRL(tot.receita)} />
+        <MiniStat label="Custo IA" value={formatBRL(tot.custoIa)} />
+        <MiniStat label="Horas" value={`${tot.horas.toFixed(0)}h`} sub={formatBRL(tot.custoHoras)} />
+        <MiniStat label="Margem" value={formatBRL(tot.margem)} color={tot.margem >= 0 ? "#10B981" : "#EF4444"} />
+      </div>
+      <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 64 }}>
+        {revByMonth.map((m, i) => (
+          <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+            <div
+              style={{
+                width: "100%",
+                height: `${Math.max((m.value / max) * 52, m.value > 0 ? 4 : 1)}px`,
+                background: m.value > 0 ? "var(--cyan-deep, #1796A0)" : "var(--slate-100, #E2E8F0)",
+                borderRadius: 4,
+              }}
+            />
+            <span style={{ fontSize: 9.5, color: "var(--ink-mute)", fontFamily: "var(--font-mono)" }}>{m.label}</span>
+          </div>
+        ))}
+      </div>
+      <p style={{ margin: "10px 0 0", fontSize: 10.5, color: "var(--ink-mute)" }}>
+        Barras: valor fechado por mês (deals ganhos). Custo total atual: {formatBRL(custoTotal)}.
+      </p>
+    </div>
+  );
+}
+
+function MiniStat({ label, value, sub, color }: { label: string; value: string; sub?: string; color?: string }) {
+  return (
+    <div style={{ padding: "10px 12px", background: "var(--bg, #F8FAFC)", borderRadius: 10, border: "1px solid var(--line, #E6EBF2)" }}>
+      <div style={{ fontSize: 9.5, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--ink-mute)" }}>
+        {label}
+      </div>
+      <div className="tabular" style={{ fontSize: 17, fontWeight: 800, color: color || "var(--navy)", marginTop: 2 }}>
+        {value}
+      </div>
+      {sub && <div style={{ fontSize: 10.5, color: "var(--ink-mute)" }}>{sub}</div>}
+    </div>
+  );
+}
+
+// ─── Saúde do portfólio ──────────────────────────────────────────────────────
+function HealthPanel({ health }: { health: { verde: number; amarelo: number; vermelho: number } }) {
+  const total = health.verde + health.amarelo + health.vermelho || 1;
+  return (
+    <div className="ds-card" style={{ padding: 16 }}>
+      <h3 className="h-section" style={{ marginBottom: 14 }}>
+        Saúde do portfólio
+      </h3>
+      <div style={{ display: "flex", height: 10, borderRadius: 999, overflow: "hidden", marginBottom: 16 }}>
+        {(["verde", "amarelo", "vermelho"] as const).map((k) => (
+          <div key={k} style={{ width: `${(health[k] / total) * 100}%`, background: HEALTH[k].color }} />
+        ))}
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {(["verde", "amarelo", "vermelho"] as const).map((k) => (
+          <div key={k} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 12.5, color: "var(--ink-soft)" }}>
+              <span style={{ width: 9, height: 9, background: HEALTH[k].color, borderRadius: 999 }} />
+              {HEALTH[k].label}
+            </span>
+            <span className="tabular" style={{ fontSize: 15, fontWeight: 800, color: "var(--navy)" }}>
+              {health[k]}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Ventures recentes ───────────────────────────────────────────────────────
+function RecentVentures({ ventures }: { ventures: VentureRow[] }) {
+  return (
+    <div className="ds-card" style={{ padding: 0 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px" }}>
+        <h3 className="h-section">Ventures recentes</h3>
+        <Link href="/dashboard/ventures" style={{ fontSize: 11.5, color: "var(--blue)", fontWeight: 700 }}>
+          Ver todas →
+        </Link>
+      </div>
+      {ventures.length === 0 && (
+        <div style={{ padding: 32, textAlign: "center", color: "var(--ink-mute)", fontSize: 13, borderTop: "1px solid var(--slate-100, #F1F5F9)" }}>
+          Nenhuma venture ainda.
+        </div>
+      )}
+      {ventures.map((v) => (
+        <Link
+          key={v.id}
+          href={`/dashboard/ventures/${v.id}`}
+          style={{
+            display: "grid",
+            gridTemplateColumns: "auto 1fr auto auto",
+            gap: 12,
+            alignItems: "center",
+            padding: "11px 16px",
+            borderTop: "1px solid var(--slate-100, #F1F5F9)",
+          }}
+        >
+          <span style={{ width: 8, height: 8, borderRadius: 999, background: HEALTH[v.health].color }} />
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontWeight: 700, color: "var(--navy)", fontSize: 13, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+              {v.name}
+            </div>
+            <div style={{ fontSize: 11.5, color: "var(--ink-soft)" }}>{v.client_name || "Sem cliente"}</div>
+          </div>
+          <span
+            style={{
+              fontSize: 10,
+              fontWeight: 800,
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              color: STAGE_COLOR[v.stage],
+              background: `${STAGE_COLOR[v.stage]}1A`,
+              padding: "4px 9px",
+              borderRadius: 999,
+              whiteSpace: "nowrap",
+            }}
+          >
+            {STAGE_LABEL[v.stage]}
+          </span>
+          <span
+            className="tabular"
+            style={{ fontSize: 12, fontWeight: 800, color: v.metrics.margem >= 0 ? "#10B981" : "#EF4444", minWidth: 70, textAlign: "right" }}
+          >
+            {formatBRL(v.metrics.margem)}
+          </span>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+// ─── Leads quentes ───────────────────────────────────────────────────────────
 function HotLeadsPanel({ leads }: { leads: HotLead[] }) {
   return (
     <div className="ds-card" style={{ padding: 0 }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "14px 16px",
-        }}
-      >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px" }}>
         <h3 className="h-section">Leads quentes</h3>
-        <Link
-          href="/dashboard/leads"
-          style={{ fontSize: 11.5, color: "var(--blue)", fontWeight: 700 }}
-        >
+        <Link href="/dashboard/leads" style={{ fontSize: 11.5, color: "var(--blue)", fontWeight: 700 }}>
           Ver todos →
         </Link>
       </div>
       {leads.length === 0 && (
-        <div
-          style={{
-            padding: 32,
-            textAlign: "center",
-            color: "var(--ink-mute)",
-            fontSize: 13,
-            borderTop: "1px solid var(--slate-100)",
-          }}
-        >
+        <div style={{ padding: 32, textAlign: "center", color: "var(--ink-mute)", fontSize: 13, borderTop: "1px solid var(--slate-100, #F1F5F9)" }}>
           Sem leads pontuados ainda.
         </div>
       )}
@@ -313,504 +497,26 @@ function HotLeadsPanel({ leads }: { leads: HotLead[] }) {
             gap: 12,
             alignItems: "center",
             padding: "11px 16px",
-            borderTop: "1px solid var(--slate-100)",
+            borderTop: "1px solid var(--slate-100, #F1F5F9)",
           }}
         >
           <span
             className="tabular"
-            style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: 16,
-              fontWeight: 800,
-              color: priorityColor(l.priority_score),
-              minWidth: 32,
-              textAlign: "center",
-            }}
+            style={{ fontFamily: "var(--font-mono)", fontSize: 16, fontWeight: 800, color: "var(--cyan-deep, #1796A0)", minWidth: 28, textAlign: "center" }}
           >
             {l.priority_score ?? "-"}
           </span>
           <div style={{ minWidth: 0 }}>
-            <div
-              style={{
-                fontWeight: 700,
-                color: "var(--navy)",
-                fontSize: 13,
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-            >
+            <div style={{ fontWeight: 700, color: "var(--navy)", fontSize: 13, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
               {l.name}
-              {l.company && (
-                <span style={{ color: "var(--ink-mute)", fontWeight: 500 }}>
-                  {" "}
-                  · {l.company}
-                </span>
-              )}
+              {l.company && <span style={{ color: "var(--ink-mute)", fontWeight: 500 }}> · {l.company}</span>}
             </div>
-            <div
-              style={{
-                fontSize: 11,
-                color: "var(--ink-soft)",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-            >
+            <div style={{ fontSize: 11, color: "var(--ink-soft)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
               {l.summary_line || "Sem resumo gerado."}
             </div>
           </div>
         </Link>
       ))}
-    </div>
-  );
-}
-
-function ActivityChart({
-  leads,
-  studies,
-}: {
-  leads: number[];
-  studies: number[];
-}) {
-  const W = 720;
-  const H = 220;
-  const PAD = { l: 40, r: 16, t: 16, b: 28 };
-  const max = Math.max(...leads, ...studies, 4) + 4;
-  const innerW = W - PAD.l - PAD.r;
-  const innerH = H - PAD.t - PAD.b;
-  const step = innerW / Math.max(leads.length - 1, 1);
-  const pts = (arr: number[]) =>
-    arr
-      .map(
-        (v, i) =>
-          `${PAD.l + i * step},${PAD.t + innerH - (v / max) * innerH}`
-      )
-      .join(" ");
-  return (
-    <div className="ds-card" style={{ padding: 16 }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-start",
-          marginBottom: 10,
-          gap: 14,
-        }}
-      >
-        <div style={{ minWidth: 0 }}>
-          <h3 className="h-section" style={{ whiteSpace: "nowrap" }}>
-            Atividade do estúdio
-          </h3>
-          <p
-            style={{
-              margin: "4px 0 0",
-              fontSize: 11.5,
-              color: "var(--ink-soft)",
-            }}
-          >
-            Últimas 12 semanas
-          </p>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            gap: 14,
-            fontSize: 11.5,
-            color: "var(--ink-soft)",
-            flexShrink: 0,
-          }}
-        >
-          <span>
-            <span
-              style={{
-                width: 8,
-                height: 8,
-                background: "var(--cyan-deep)",
-                borderRadius: 2,
-                display: "inline-block",
-                marginRight: 6,
-                verticalAlign: "middle",
-              }}
-            />{" "}
-            Leads
-          </span>
-          <span>
-            <span
-              style={{
-                width: 8,
-                height: 8,
-                background: "var(--blue)",
-                borderRadius: 2,
-                display: "inline-block",
-                marginRight: 6,
-                verticalAlign: "middle",
-              }}
-            />{" "}
-            Estudos
-          </span>
-        </div>
-      </div>
-      <svg
-        width="100%"
-        height={H}
-        viewBox={`0 0 ${W} ${H}`}
-        style={{ display: "block" }}
-      >
-        {[0, 0.25, 0.5, 0.75, 1].map((p, i) => {
-          const y = PAD.t + innerH * (1 - p);
-          return (
-            <g key={i}>
-              <line
-                x1={PAD.l}
-                y1={y}
-                x2={W - PAD.r}
-                y2={y}
-                stroke="#E2E8F0"
-                strokeDasharray={i === 0 || i === 4 ? "" : "3 3"}
-                strokeWidth="1"
-              />
-              <text
-                x={PAD.l - 8}
-                y={y + 3}
-                fontSize="10"
-                fill="#94A3B8"
-                textAnchor="end"
-                fontFamily="JetBrains Mono"
-              >
-                {Math.round(max * p)}
-              </text>
-            </g>
-          );
-        })}
-        {leads.map((_, i) => (
-          <text
-            key={i}
-            x={PAD.l + i * step}
-            y={H - 8}
-            fontSize="10"
-            fill="#94A3B8"
-            textAnchor="middle"
-            fontFamily="JetBrains Mono"
-          >
-            S{i + 1}
-          </text>
-        ))}
-        <defs>
-          <linearGradient id="g-leads" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#3BC8CF" stopOpacity="0.25" />
-            <stop offset="100%" stopColor="#3BC8CF" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        <polygon
-          fill="url(#g-leads)"
-          points={`${PAD.l},${PAD.t + innerH} ${pts(leads)} ${W - PAD.r},${PAD.t + innerH}`}
-        />
-        <polyline
-          fill="none"
-          stroke="#3BC8CF"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          points={pts(leads)}
-        />
-        <polyline
-          fill="none"
-          stroke="#5D57EB"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          points={pts(studies)}
-        />
-        {leads.map((v, i) => (
-          <circle
-            key={`l${i}`}
-            cx={PAD.l + i * step}
-            cy={PAD.t + innerH - (v / max) * innerH}
-            r="2.5"
-            fill="#3BC8CF"
-          />
-        ))}
-        {studies.map((v, i) => (
-          <circle
-            key={`s${i}`}
-            cx={PAD.l + i * step}
-            cy={PAD.t + innerH - (v / max) * innerH}
-            r="2.5"
-            fill="#5D57EB"
-          />
-        ))}
-      </svg>
-    </div>
-  );
-}
-
-function PipelineMini({ leads }: { leads: { status: string }[] }) {
-  const order = ["contatado", "qualificado", "proposta", "ganho"];
-  const counts: Record<string, number> = {};
-  for (const k of order) counts[k] = leads.filter((l) => l.status === k).length;
-  const max = Math.max(...Object.values(counts), 1);
-  return (
-    <div
-      className="ds-card"
-      style={{ padding: 16, display: "flex", flexDirection: "column", gap: 12 }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <h3 className="h-section">Funil esta semana</h3>
-        <Link
-          href="/dashboard/crm"
-          style={{ fontSize: 11.5, color: "var(--blue)", fontWeight: 700 }}
-        >
-          Abrir CRM →
-        </Link>
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-        {order.map((k) => {
-          const s = getStage(k);
-          return (
-            <div
-              key={k}
-              style={{
-                display: "grid",
-                gridTemplateColumns: "auto 1fr auto",
-                gap: 10,
-                alignItems: "center",
-              }}
-            >
-              <span
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 6,
-                  fontSize: 11.5,
-                  color: "var(--ink-soft)",
-                  minWidth: 130,
-                }}
-              >
-                <span
-                  style={{
-                    width: 7,
-                    height: 7,
-                    background: s.color,
-                    borderRadius: 2,
-                  }}
-                />
-                {s.label}
-              </span>
-              <div
-                style={{
-                  height: 6,
-                  background: "var(--slate-100)",
-                  borderRadius: 999,
-                  overflow: "hidden",
-                }}
-              >
-                <div
-                  style={{
-                    height: "100%",
-                    width: `${(counts[k] / max) * 100}%`,
-                    background: s.color,
-                  }}
-                />
-              </div>
-              <span
-                className="tabular"
-                style={{
-                  fontSize: 12,
-                  fontWeight: 800,
-                  color: s.color,
-                  minWidth: 24,
-                  textAlign: "right",
-                }}
-              >
-                {counts[k]}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function RecentStudiesPanel({ studies }: { studies: Awaited<ReturnType<typeof fetchStudies>> }) {
-  return (
-    <div className="ds-card" style={{ padding: 0 }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "14px 16px",
-        }}
-      >
-        <h3 className="h-section">Estudos recentes</h3>
-        <Link
-          href="/dashboard/estudos"
-          style={{ fontSize: 11.5, color: "var(--blue)", fontWeight: 700 }}
-        >
-          Ver todos →
-        </Link>
-      </div>
-      <div>
-        {studies.length === 0 && (
-          <div
-            style={{
-              padding: 32,
-              textAlign: "center",
-              color: "var(--ink-mute)",
-              fontSize: 13,
-            }}
-          >
-            Nenhum estudo ainda.
-          </div>
-        )}
-        {studies.map((s) => {
-          const overall = studyOverall(s);
-          return (
-            <Link
-              key={s.id}
-              href={`/dashboard/study/${s.id}`}
-              style={{
-                display: "grid",
-                gridTemplateColumns: "auto 1fr auto auto",
-                gap: 14,
-                alignItems: "center",
-                padding: "11px 16px",
-                borderTop: "1px solid var(--slate-100)",
-              }}
-            >
-              <CategoryIcon category={s.category} size={32} />
-              <div style={{ minWidth: 0 }}>
-                <div
-                  style={{
-                    fontWeight: 700,
-                    color: "var(--navy)",
-                    fontSize: 13,
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {s.title}
-                </div>
-                <div style={{ fontSize: 11.5, color: "var(--ink-soft)" }}>
-                  {s.client?.name || "Sem cliente"}
-                  <span style={{ margin: "0 6px", color: "var(--ink-mute)" }}>·</span>
-                  <span className="tabular">
-                    {new Date(s.created_at).toLocaleDateString("pt-BR")}
-                  </span>
-                </div>
-              </div>
-              <StatusPill status={s.status} />
-              {typeof overall === "number" ? (
-                <ScoreChip value={overall} />
-              ) : (
-                <span style={{ width: 56 }} />
-              )}
-            </Link>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function RecentLeadsPanel({ leads }: { leads: Awaited<ReturnType<typeof fetchLeads>> }) {
-  return (
-    <div className="ds-card" style={{ padding: 0 }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "14px 16px",
-        }}
-      >
-        <h3 className="h-section">Leads recentes</h3>
-        <Link
-          href="/dashboard/leads"
-          style={{ fontSize: 11.5, color: "var(--blue)", fontWeight: 700 }}
-        >
-          Ver todos →
-        </Link>
-      </div>
-      {leads.length === 0 && (
-        <div
-          style={{
-            padding: 32,
-            textAlign: "center",
-            color: "var(--ink-mute)",
-            fontSize: 13,
-            borderTop: "1px solid var(--slate-100)",
-          }}
-        >
-          Sem leads ainda.
-        </div>
-      )}
-      {leads.map((l) => {
-        const stage = lookupStageForLead(l.status);
-        return (
-          <div
-            key={l.id}
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr auto auto",
-              gap: 12,
-              alignItems: "center",
-              padding: "11px 16px",
-              borderTop: "1px solid var(--slate-100)",
-            }}
-          >
-            <div style={{ minWidth: 0 }}>
-              <div
-                style={{
-                  fontWeight: 700,
-                  color: "var(--navy)",
-                  fontSize: 13,
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                {l.name}{" "}
-                {l.company && (
-                  <span style={{ color: "var(--ink-mute)", fontWeight: 500 }}>
-                    · {l.company}
-                  </span>
-                )}
-              </div>
-              <div
-                style={{
-                  fontSize: 11,
-                  color: "var(--ink-soft)",
-                  fontFamily: "var(--font-mono)",
-                }}
-              >
-                {l.email}
-              </div>
-            </div>
-            <span
-              className="pill"
-              style={{ background: stage.soft, color: stage.color }}
-            >
-              <span className="dot" style={{ background: stage.color }} />
-              {stage.label}
-            </span>
-            {typeof l.diagnostic_score === "number" ? (
-              <ScoreChip value={l.diagnostic_score} />
-            ) : (
-              <span style={{ width: 56 }} />
-            )}
-          </div>
-        );
-      })}
     </div>
   );
 }
