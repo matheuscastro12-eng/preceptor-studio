@@ -143,6 +143,13 @@ const IconVenture = () => (
   </Ico>
 );
 
+const IconCompass = () => (
+  <Ico>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M15.5 8.5l-2 5-5 2 2-5z" />
+  </Ico>
+);
+
 const IconSparkle = () => (
   <Ico>
     <path d="M12 3l1.8 4.6L18.5 9l-4.7 1.4L12 15l-1.8-4.6L5.5 9l4.7-1.4z" />
@@ -211,6 +218,7 @@ export function Sidebar({
   ];
   const secondary: Item[] = [
     { k: "copilot", href: "/dashboard/copilot", label: "Copiloto", icon: <IconSparkle /> },
+    { k: "manual", href: "/dashboard/manual", label: "Manual", icon: <IconCompass /> },
     { k: "time", href: "/dashboard/time", label: "Time", icon: <IconTeam /> },
     {
       k: "biblioteca",
