@@ -586,7 +586,7 @@ function WorkspaceTab({
               fontSize: 17,
             }}
           >
-            PRECEPTOR! Venture Studio
+            PRECEPTOR! Studio · IA Aplicada
           </div>
           <div
             style={{
@@ -678,7 +678,7 @@ function WorkspaceTab({
             className="ds-input"
             value={form.studio_name}
             disabled={!canEdit || loading}
-            placeholder="PRECEPTOR! Venture Studio"
+            placeholder="PRECEPTOR! Studio"
             onChange={(e) => update("studio_name", e.target.value)}
           />
         </label>

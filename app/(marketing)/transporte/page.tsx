@@ -19,7 +19,7 @@ const CONTENT: SegmentContent = {
     },
     {
       title: "A ocorrência que o cliente avisa primeiro",
-      body: "O atraso e a avaria chegam pelo telefone do cliente, não pelo seu painel. A torre de controle vive apagando incêndio.",
+      body: "O atraso e a avaria chegam pelo telefone do cliente antes de aparecer no seu painel. A torre de controle vive apagando incêndio.",
     },
     {
       title: "O faturamento que atravessa a noite",
@@ -41,7 +41,7 @@ const CONTENT: SegmentContent = {
     },
     {
       title: "Faturamento conferido no prazo",
-      body: "Fechamento que roda no horário, com pendência apontada por sistema, não por madrugada de gente.",
+      body: "Fechamento que roda no horário, com cada pendência apontada pelo sistema antes de virar madrugada de gente.",
     },
     {
       title: "Atendimento ao motorista",
@@ -51,7 +51,7 @@ const CONTENT: SegmentContent = {
   results: [
     { v: "60h por mês", l: "devolvidas ao time só na conferência de documentação." },
     { v: "No prazo", l: "faturamento fechando no horário, sem mutirão de fim de mês." },
-    { v: "Antes do cliente", l: "ocorrência avisada pelo seu painel, não pelo telefone dele." },
+    { v: "Antes do cliente", l: "a ocorrência chega pelo seu painel enquanto ainda dá tempo de agir." },
   ],
   ctaLine:
     "Conta pra gente como a sua operação roda hoje. A gente mostra onde a automação se paga primeiro.",

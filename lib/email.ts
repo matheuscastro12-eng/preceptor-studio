@@ -154,7 +154,7 @@ export function emailLayout(input: EmailLayoutInput): string {
             </tr>
             <tr>
               <td style="padding:18px 32px 28px 32px;border-top:1px solid #E2E8F0;">
-                <div style="color:#94A3B8;font-size:12px;line-height:1.5;">PRECEPTOR! Venture Studio &middot; Itajuba, MG</div>
+                <div style="color:#94A3B8;font-size:12px;line-height:1.5;">PRECEPTOR! Studio &middot; IA Aplicada &middot; Itajuba, MG</div>
                 ${note}
               </td>
             </tr>

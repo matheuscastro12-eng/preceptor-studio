@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
       displayHeaderFooter: true,
       headerTemplate: `
         <div style="font-family: Inter, sans-serif; width: 100%; padding: 5mm 18mm 0; font-size: 8px; color: #94a8d0; display: flex; justify-content: space-between;">
-          <span><strong style="color:#0a1f44">PRECEPTOR!</strong> · Venture Studio</span>
+          <span><strong style="color:#00033D">PRECEPTOR!</strong> · IA Aplicada a Processos</span>
           <span>${meta.title}${meta.confidential ? " · CONFIDENCIAL" : ""}</span>
         </div>
       `,
@@ -296,7 +296,7 @@ function buildPDFTemplate(opts: {
     : "";
   const cover = `
     <div class="cover">
-      <div class="cover-brand"><strong>PRECEPTOR!</strong> &nbsp; VENTURE STUDIO</div>
+      <div class="cover-brand"><strong>PRECEPTOR!</strong> &nbsp; IA APLICADA A PROCESSOS</div>
       <div style="margin-top: 70mm;">
         <div class="cover-title">${escapeHtml(opts.kindTitle)}</div>
         <div class="cover-line"></div>

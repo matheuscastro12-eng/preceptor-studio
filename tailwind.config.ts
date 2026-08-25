@@ -9,17 +9,17 @@ const config: Config = {
     extend: {
       colors: {
         navy: {
-          DEFAULT: "#0A1F44",
-          deep: "#06122A",
-          soft: "#1B2F5C",
+          DEFAULT: "#00033D",
+          deep: "#010226",
+          soft: "#001060",
         },
         cyan: {
-          DEFAULT: "#52E1E7",
-          soft: "#A8EFF2",
-          deep: "#3BC8CF",
+          DEFAULT: "#3BCACE",
+          soft: "#9FE7E9",
+          deep: "#12888E",
         },
-        purple: { DEFAULT: "#B964FF", soft: "#E0BCFF" },
-        blue: { DEFAULT: "#5D57EB" },
+        purple: { DEFAULT: "#3BCACE", soft: "#9FE7E9" },
+        blue: { DEFAULT: "#12888E" },
         ink: {
           DEFAULT: "#0F1729",
           soft: "#475569",
@@ -34,7 +34,7 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
+        sans: ["Instrument Sans", "Inter", "system-ui", "sans-serif"],
         mono: ["JetBrains Mono", "ui-monospace", "monospace"],
       },
       boxShadow: {

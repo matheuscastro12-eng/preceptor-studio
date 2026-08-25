@@ -73,7 +73,7 @@ export function FinanceView({
     <div className="fin-page">
       <div className="page-head">
         <div>
-          <div className="fin-eyebrow">Financeiro · PRECEPTOR! Venture Studio</div>
+          <div className="fin-eyebrow">Financeiro · PRECEPTOR! Studio</div>
           <h1 className="fin-title">Financeiro</h1>
           <p className="sub">
             Caixa, precificação e P&amp;L: receita por estudo, projeção de fluxo e parcelas a

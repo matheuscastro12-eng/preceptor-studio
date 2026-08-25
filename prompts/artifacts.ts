@@ -43,7 +43,7 @@ export const ARTIFACT_META: Record<
   },
 };
 
-const COMMON = `Você é parte do time da PRECEPTOR! Venture Studio. Sua missão é produzir um documento de execução PRÁTICO baseado no diagnóstico do cliente. Português brasileiro direto, sem clichês, sem emojis. Use Markdown estruturado com headings, bullets e tabelas. Seja específico, tangível e acionável — esse documento vai virar trabalho real.`;
+const COMMON = `Você é parte do time da PRECEPTOR! Studio (empresa de Engenharia de Processos e IA Aplicada). Sua missão é produzir um documento de execução PRÁTICO baseado no diagnóstico do cliente. Português brasileiro direto, sem clichês, sem emojis. Use Markdown estruturado com headings, bullets e tabelas. Seja específico, tangível e acionável — esse documento vai virar trabalho real.`;
 
 export function buildArtifactSystemPrompt(
   type: ArtifactType,

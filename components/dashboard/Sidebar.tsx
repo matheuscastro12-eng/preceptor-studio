@@ -172,7 +172,7 @@ export function Sidebar({
     {
       k: "ventures",
       href: "/dashboard/ventures",
-      label: "Ventures",
+      label: "Projetos",
       icon: <IconVenture />,
     },
     {

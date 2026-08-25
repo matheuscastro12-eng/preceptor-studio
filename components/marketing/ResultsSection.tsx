@@ -54,7 +54,7 @@ export function ResultsSection() {
                 <Num>7 de cada 10 execuções</Num> pra rodar sem toque humano.
                 Da assinatura à primeira automação em produção:{" "}
                 <Num>
-                  semanas, não meses
+                  semanas
                   <span
                     style={{
                       display: "inline-block",

@@ -1,6 +1,12 @@
 import { Category } from "@/lib/store";
 
 const CATEGORY_HINT: Record<Category, string> = {
+  logistica:
+    "Logística e Transportes: CT-e/MDF-e e conferência documental no faturamento, torre de controle e ocorrências, TMS/ERP que não conversam, motorista atendido por WhatsApp.",
+  agro:
+    "Agro: dado nasce no campo (papel/WhatsApp), relatórios multiformato por cooperativa/banco/certificadora, receituário e rastreabilidade de insumos, sazonalidade de safra.",
+  medicina:
+    "Medicina: TISS e regra por convênio, glosa como custo silencioso, LGPD para dado de paciente, no-show de agenda, prontuários com integração limitada.",
   saude:
     "Saúde: regulação ANVISA/CFM (Resolução CFM 2.314/2022), LGPD para dados sensíveis, integração com operadoras (ANS), ciclo de venda longo.",
   educacao:
@@ -21,7 +27,7 @@ const AXIS_RULES = `EIXOS (escala 0-100):
 - Regulatório: ESCALA INVERTIDA. 100 = sem risco regulatório. 20 = risco alto. Quanto MAIOR o risco, MENOR o número.`;
 
 export function buildLiveScoreSystemPrompt(category: Category): string {
-  return `Você é o analista sênior da PRECEPTOR! Venture Studio. Sua tarefa é REAVALIAR o score de uma tese que JÁ está em execução, considerando o ESTADO ATUAL do projeto.
+  return `Você é o analista sênior da PRECEPTOR! Studio (empresa de Engenharia de Processos e IA Aplicada). Sua tarefa é REAVALIAR o score de uma tese que JÁ está em execução, considerando o ESTADO ATUAL do projeto.
 
 Diferente do score inicial (feito só com o questionário), agora você tem sinais novos: progresso de execução (tarefas concluídas por sprint), respostas a perguntas de aprofundamento, e o estudo já gerado. Use esses sinais para ajustar cada eixo para cima ou para baixo de forma honesta.
 
@@ -30,7 +36,7 @@ ${AXIS_RULES}
 CONTEXTO DO SETOR (use isto na sua análise, traga números e dinâmicas reais do mercado): ${CATEGORY_HINT[category]}
 
 POSTURA DE ANÁLISE (isto é o que importa mais que tudo):
-As respostas do fundador são INSUMO, não conteúdo. Você é um consultor de venture studio que conhece o setor. Sua leitura precisa ir ALÉM do que ele marcou: traga benchmark de mercado, padrão observado em teses parecidas, risco não óbvio, dinâmica competitiva, custo real de operar nesse setor (CAC típico, ciclo de venda, custo de conformidade, churn esperado). O fundador tem que terminar pensando "esses caras entendem do meu setor", não "esses caras leram minhas respostas de novo".
+As respostas do fundador são INSUMO, não conteúdo. Você é um consultor de engenharia de processos e automação que conhece o setor. Sua leitura precisa ir ALÉM do que ele marcou: traga benchmark de mercado, padrão observado em teses parecidas, risco não óbvio, dinâmica competitiva, custo real de operar nesse setor (CAC típico, ciclo de venda, custo de conformidade, churn esperado). O fundador tem que terminar pensando "esses caras entendem do meu setor", não "esses caras leram minhas respostas de novo".
 
 PROIBIDO (a regra mais importante deste prompt):
 - Citar a resposta marcada. NUNCA escreva "o cliente marcou", "conforme marcado", "marcado como", "selecionou", "respondeu Concordo/Discordo", "conforme respondeu". O fundador já sabe o que escreveu.

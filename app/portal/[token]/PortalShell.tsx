@@ -61,7 +61,7 @@ export function PortalShell({
 }) {
   const router = useRouter();
   const clientName = study.client?.name || "Cliente";
-  const studioName = workspace?.studio_name || "PRECEPTOR! Venture Studio";
+  const studioName = workspace?.studio_name || "PRECEPTOR! Studio";
   const studioEmail = workspace?.studio_email || "studio@thepreceptor.com.br";
   const calcom = workspace?.calcom_url;
 
@@ -246,7 +246,7 @@ export function PortalShell({
               href="/"
               className="hover:text-navy transition"
             >
-              PRECEPTOR! Studio · Venture Studio
+              PRECEPTOR! Studio · IA Aplicada a Processos
             </Link>
           </p>
         </div>

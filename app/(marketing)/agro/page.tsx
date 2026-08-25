@@ -45,7 +45,7 @@ const CONTENT: SegmentContent = {
     },
     {
       title: "Painel de safra",
-      body: "Custo por talhão e produtividade atualizados durante a safra, não meses depois dela.",
+      body: "Custo por talhão e produtividade atualizados durante a safra, enquanto a decisão ainda vale.",
     },
   ],
   results: [

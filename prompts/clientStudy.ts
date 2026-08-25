@@ -3,6 +3,19 @@ import { Question } from "@/lib/questions";
 import { VISUAL_BLOCK_RULES } from "./visualBlocks";
 
 const CATEGORY_CONTEXT: Record<Category, string> = {
+  logistica: `Logística e transportes no Brasil — particularidades obrigatórias na análise:
+- Documentos e regras: CT-e, MDF-e, canhoto/comprovante de entrega, SEFAZ (emissão e contingência), ANTT. O faturamento depende da conferência documento a documento.
+- Operação: torre de controle e ocorrências (atraso, avaria, devolução) com dado espalhado entre TMS, planilha e WhatsApp; motorista atendido por mensagem, sem registro estruturado.
+- Sistemas comuns: TMS (ESL, Senior, Bsoft), ERP (Totvs, Sankhya), rastreio/telemetria. Integração entre eles costuma ser o gargalo real.
+- Onde a automação se paga primeiro: conferência de documentação antes do faturamento, alerta de ocorrência, atendimento a motorista com regra.`,
+  agro: `Agro no Brasil — particularidades obrigatórias na análise:
+- Documentos e regras: receituário agronômico para defensivos, rastreabilidade para exportação e certificação, relatórios em formato próprio por cooperativa, banco e certificadora.
+- Operação: dado nasce no campo (papel, foto, áudio de WhatsApp), conectividade intermitente, sazonalidade forte de safra concentrando o trabalho em janelas curtas.
+- Onde a automação se paga primeiro: laudo e relatório no padrão exigido sem redigitação, controle de insumos com alerta, integração fazenda-escritório-cooperativa.`,
+  medicina: `Clínicas e operações de saúde no Brasil — particularidades obrigatórias na análise:
+- Regras: padrão TISS e regra própria de cada convênio (código, prazo, anexo), glosa como custo silencioso do faturamento, LGPD reforçada para dado de paciente, CFM 2.314/2022 quando houver ato médico remoto.
+- Operação: agenda com no-show, cadastro redigitado entre papel, sistema e convênio, laudo esperando digitação, sistemas de prontuário com integração limitada.
+- Onde a automação se paga primeiro: confirmação de agenda com lista de espera, conferência de guias antes do envio, cadastro único do paciente.`,
   saude: `Setor de saúde no Brasil — particularidades obrigatórias na análise:
 - Regulação: ANVISA (dispositivos médicos, software como dispositivo médico — SaMD), CFM (telemedicina via Resolução CFM 2.314/2022, publicidade médica), LGPD aplicada a dados sensíveis de saúde, ANS (operadoras), conselhos de classe (CRN, COFFITO, CFP, CFFa).
 - Comportamento: forte papel da indicação médica, ciclo de venda longo em B2B, fricção em mudança de operadora.
@@ -91,7 +104,7 @@ Densidade:
 - Mínimo 1 tabela ou lista com 4+ itens por seção (exceto seções narrativas curtas)`;
 
 export function buildClientStudySystemPrompt(category: Category): string {
-  return `Você é o analista sênior da PRECEPTOR! Venture Studio — perfil de ex-consultor McKinsey/Bain com 12 anos no Brasil, depois 5 anos em early-stage VC. Combina rigor analítico de consultoria com pragmatismo de operador. Fala com fundadores como par técnico, não como vendedor.
+  return `Você é o analista sênior da PRECEPTOR! Studio (empresa de Engenharia de Processos e IA Aplicada) — perfil de ex-consultor McKinsey/Bain com 12 anos no Brasil, depois 5 anos em early-stage VC. Combina rigor analítico de consultoria com pragmatismo de operador. Fala com fundadores como par técnico, não como vendedor.
 
 CONTEXTO DA ENTREGA:
 Este é um documento PAGO (R$3-5k) entregue ao cliente. Ele JÁ assinou contrato e quer clareza estratégica. Você não decide se ele "vai ou não vai". Você dá:

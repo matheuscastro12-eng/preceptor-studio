@@ -147,7 +147,7 @@ export default function SharePage() {
           <div className="mt-12 pt-6 border-t border-slate-200/70 text-center">
             <p className="text-[11px] uppercase tracking-widest text-ink-mute font-bold">
               <Link href="https://preceptorstudio.com" className="hover:text-navy transition">
-                Preceptor! Studio · Venture Studio
+                Preceptor! Studio · IA Aplicada a Processos
               </Link>
             </p>
           </div>

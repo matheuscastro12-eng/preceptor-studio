@@ -1,6 +1,14 @@
 import type { CSSProperties } from "react";
 
-export type DashCategory = "saude" | "educacao" | "juridico" | "tech" | "outro";
+export type DashCategory =
+  | "logistica"
+  | "agro"
+  | "medicina"
+  | "outro"
+  | "saude"
+  | "educacao"
+  | "juridico"
+  | "tech";
 export type DashStatus =
   | "draft"
   | "questionnaire"
@@ -9,6 +17,9 @@ export type DashStatus =
   | "archived";
 
 export const SECTORS_LABEL: Record<DashCategory, string> = {
+  logistica: "Logística e Transportes",
+  agro: "Agro",
+  medicina: "Medicina",
   saude: "Saúde",
   educacao: "Educação",
   juridico: "Jurídico",
@@ -56,6 +67,9 @@ export function StatusPill({ status }: { status: DashStatus | string }) {
 }
 
 const CATEGORY_GRADIENT: Record<DashCategory, { bg: string; letter: string }> = {
+  logistica: { bg: "linear-gradient(135deg,#3BCACE,#12888E)", letter: "L" },
+  agro: { bg: "linear-gradient(135deg,#34D399,#059669)", letter: "A" },
+  medicina: { bg: "linear-gradient(135deg,#60A5FA,#2563EB)", letter: "M" },
   saude: { bg: "linear-gradient(135deg,#34D399,#059669)", letter: "S" },
   educacao: { bg: "linear-gradient(135deg,#60A5FA,#2563EB)", letter: "E" },
   juridico: { bg: "linear-gradient(135deg,#B964FF,#5D57EB)", letter: "J" },

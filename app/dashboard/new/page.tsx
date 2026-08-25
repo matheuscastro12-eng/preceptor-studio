@@ -28,28 +28,33 @@ type CategoryOption = {
 
 const CATEGORY_OPTIONS: CategoryOption[] = [
   {
-    value: "saude",
-    label: "Saúde",
-    description: "Telemed, regtech clínica, software para operadoras.",
+    value: "logistica",
+    label: "Logística e Transportes",
+    description: "Documentação de carga, torre de controle, faturamento, motorista.",
   },
   {
-    value: "educacao",
-    label: "Educação",
-    description: "Edtech, plataformas de ensino, formação corporativa.",
+    value: "agro",
+    label: "Agro",
+    description: "Laudos, insumos, integração fazenda, escritório e cooperativa.",
   },
   {
-    value: "juridico",
-    label: "Jurídico",
-    description: "Lawtech, automação contratual, compliance.",
-  },
-  {
-    value: "tech",
-    label: "Tech",
-    description: "SaaS B2B, infra, dev tools, AI nativo.",
+    value: "medicina",
+    label: "Medicina",
+    description: "Agenda, guias de convênio, cadastro, laudos.",
   },
 ];
 
-const VALID_CATS = new Set<Category>(["saude", "educacao", "juridico", "tech", "outro"]);
+const VALID_CATS = new Set<Category>([
+  "logistica",
+  "agro",
+  "medicina",
+  "outro",
+  // legados (leads e estudos antigos)
+  "saude",
+  "educacao",
+  "juridico",
+  "tech",
+]);
 
 type LeadLite = {
   id: string;

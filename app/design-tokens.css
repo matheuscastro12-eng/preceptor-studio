@@ -4,20 +4,20 @@
    ───────────────────────────────────────────────────────────────────────── */
 
 :root {
-  /* ─── Brand: Navy (dominant) ─────────────────────────────────────────── */
-  --navy:           #0A1F44;
-  --navy-deep:      #06122A;
-  --navy-soft:      #1B2F5C;
+  /* ─── Brand: Navy (dominant, manual da marca) ────────────────────────── */
+  --navy:           #00033D;
+  --navy-deep:      #010226;
+  --navy-soft:      #001060;
 
-  /* ─── Brand: Cyan (accent / signature) ───────────────────────────────── */
-  --cyan:           #52E1E7;
-  --cyan-soft:      #A8EFF2;
-  --cyan-deep:      #3BC8CF;
+  /* ─── Brand: Teal (accent / signature, manual da marca) ──────────────── */
+  --cyan:           #3BCACE;
+  --cyan-soft:      #9FE7E9;
+  --cyan-deep:      #12888E;
 
   /* ─── Brand: Secondary accents (sparingly) ───────────────────────────── */
-  --purple:         #B964FF;
-  --purple-soft:    #E0BCFF;
-  --blue:           #5D57EB;
+  --purple:         #3BCACE;
+  --purple-soft:    #9FE7E9;
+  --blue:           #12888E;
 
   /* ─── Neutrals: Ink + light ground ───────────────────────────────────── */
   --ink:            #0F1729;
@@ -39,7 +39,8 @@
   --danger-soft:    #FEE2E2;
 
   /* ─── Typography ─────────────────────────────────────────────────────── */
-  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: "Instrument Sans", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Bricolage Grotesque", "Instrument Sans", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
   --fs-display-2xl: clamp(3rem, 5.2vw, 4.5rem);

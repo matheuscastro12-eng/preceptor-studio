@@ -51,7 +51,7 @@ const CONTENT: SegmentContent = {
   results: [
     { v: "Menos glosa", l: "guia conferida antes do envio, retrabalho de faturamento em queda." },
     { v: "Menos furo", l: "confirmação automática e lista de espera preenchendo a agenda." },
-    { v: "Mais paciente", l: "recepção e equipe olhando pra quem está na frente, não pra tela." },
+    { v: "Mais paciente", l: "recepção e equipe com tempo pra quem está na frente da mesa." },
   ],
   ctaLine:
     "Conta pra gente como a rotina da clínica roda hoje. A gente mostra onde a automação se paga primeiro.",

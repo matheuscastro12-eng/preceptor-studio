@@ -1,6 +1,14 @@
 import { Category } from "@/lib/store";
 
-export type SectorTemplateKey = "saude" | "educacao" | "juridico" | "tech";
+// Segmentos atuais + legados (estudos antigos seguem renderizando).
+export type SectorTemplateKey =
+  | "logistica"
+  | "agro"
+  | "medicina"
+  | "saude"
+  | "educacao"
+  | "juridico"
+  | "tech";
 
 export interface SectorTemplate {
   key: SectorTemplateKey;
@@ -12,6 +20,75 @@ export interface SectorTemplate {
 }
 
 export const STUDY_TEMPLATES: Record<SectorTemplateKey, SectorTemplate> = {
+  logistica: {
+    key: "logistica",
+    label: "Logística e Transportes",
+    defaultTitle: "Estudo de automação em operação logística",
+    contextNotes: `**Contexto operacional obrigatório de logística e transportes:**
+
+- **Documentação de carga.** CT-e, MDF-e, canhoto e comprovante de entrega são o coração do faturamento. Mapeie onde cada documento nasce, quem digita e onde ele some.
+- **SEFAZ e ANTT.** Emissão fiscal e regras de transporte definem prazos duros. Automação que toca documento fiscal precisa respeitar contingência e validação.
+- **Torre de controle e ocorrências.** Atraso, avaria e devolução costumam chegar pelo cliente antes do painel. O dado de rastreio vive espalhado entre TMS, planilha e WhatsApp.
+- **Faturamento por conferência.** O fechamento depende de bater pedido contra canhoto. É o processo de maior volume e maior retrabalho na maioria das transportadoras.
+- **Motorista no WhatsApp.** Adiantamento, comprovante e agenda de carga consomem o time por mensagem, sem registro estruturado.`,
+    suggestedQuestions: [
+      "Qual o volume mensal de embarques e quantos documentos cada embarque gera?",
+      "Onde vive o comprovante de entrega hoje, e quanto tempo leva do canhoto ao faturamento?",
+      "Quais sistemas rodam a operação (TMS, ERP, rastreio) e quais não conversam entre si?",
+      "Quantas pessoas o fechamento de faturamento ocupa, e com que frequência ele atrasa?",
+    ],
+    commonRisks: [
+      "Dado preso em papel e foto de WhatsApp, sem fonte estruturada pra automação ler.",
+      "Integração TMS-ERP subestimada, travando a conferência automática de documentos.",
+      "Dependência de conferentes específicos que carregam a regra de cabeça.",
+    ],
+  },
+  agro: {
+    key: "agro",
+    label: "Agro",
+    defaultTitle: "Estudo de automação em operação do agro",
+    contextNotes: `**Contexto operacional obrigatório do agro:**
+
+- **Laudos e relatórios multiformato.** Cooperativa, banco, certificadora e cliente exigem o mesmo dado em formatos diferentes. A redigitação é a regra, não a exceção.
+- **Receituário e insumos.** Defensivos exigem receituário agronômico e controle de estoque rastreável. Falha de registro vira passivo regulatório.
+- **Sazonalidade de safra.** O volume de trabalho concentra em janelas curtas. Automação precisa estar pronta antes da janela, não durante.
+- **Conectividade no campo.** Parte do registro nasce offline ou por foto de WhatsApp. O fluxo precisa aguentar registro assíncrono.
+- **Rastreabilidade.** Exportação e certificação exigem trilha do talhão à entrega.`,
+    suggestedQuestions: [
+      "Como o dado sai do campo hoje (papel, foto, app), e quanto tempo leva até virar laudo?",
+      "Quais formatos de relatório cada cooperativa, banco ou certificadora exige?",
+      "Como é controlado o estoque de insumos e o receituário dos defensivos?",
+      "Qual a janela de safra e o que precisa estar rodando antes dela abrir?",
+    ],
+    commonRisks: [
+      "Conectividade rural quebrando fluxos que assumem registro online em tempo real.",
+      "Adoção baixa pelo time de campo quando o registro exige mais passos que o caderno.",
+      "Multiplicação de formatos por cooperativa tornando o padrão único inviável sem mapeamento.",
+    ],
+  },
+  medicina: {
+    key: "medicina",
+    label: "Medicina",
+    defaultTitle: "Estudo de automação em clínica ou operação de saúde",
+    contextNotes: `**Contexto operacional obrigatório de clínicas e saúde:**
+
+- **TISS e convênios.** Cada convênio tem regra própria de código, prazo e anexo. A glosa é o custo silencioso do faturamento e aparece semanas depois do envio.
+- **LGPD para dados sensíveis.** Dado de paciente tem proteção reforçada. Toda automação precisa de base legal, trilha de acesso e armazenamento adequado.
+- **CFM 2.314/2022.** Se houver ato médico remoto (teleconsulta, laudo a distância), as regras de telemedicina se aplicam.
+- **Agenda e no-show.** Furo de agenda é perda direta de receita. Confirmação e lista de espera são a automação de retorno mais rápido.
+- **Prontuário e sistemas fechados.** Muitos sistemas de clínica têm integração limitada. Mapear o que expõe API antes de prometer fluxo automático.`,
+    suggestedQuestions: [
+      "Qual o volume mensal de guias por convênio e a taxa atual de glosa?",
+      "Quais sistemas rodam a clínica (agenda, prontuário, faturamento) e o que cada um expõe de integração?",
+      "Onde o cadastro do paciente é redigitado hoje, e por quantas mãos ele passa?",
+      "Como funciona a confirmação de agenda e qual a taxa de no-show?",
+    ],
+    commonRisks: [
+      "Tratamento de dado sensível sem base legal clara, com exposição sob LGPD.",
+      "Sistema de prontuário fechado inviabilizando a integração prometida.",
+      "Regra de convênio mudando sem aviso e quebrando a conferência automática de guias.",
+    ],
+  },
   saude: {
     key: "saude",
     label: "Saúde",
@@ -108,7 +185,7 @@ export const STUDY_TEMPLATES: Record<SectorTemplateKey, SectorTemplate> = {
 
 export function getTemplate(category: Category): SectorTemplate | null {
   if (category === "outro") return null;
-  return STUDY_TEMPLATES[category] ?? null;
+  return STUDY_TEMPLATES[category as SectorTemplateKey] ?? null;
 }
 
 export interface SectorContext {

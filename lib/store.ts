@@ -1,6 +1,15 @@
 "use client";
 
-export type Category = "saude" | "educacao" | "juridico" | "tech" | "outro";
+// Segmentos atuais + valores legados (estudos antigos continuam validos).
+export type Category =
+  | "logistica"
+  | "agro"
+  | "medicina"
+  | "outro"
+  | "saude"
+  | "educacao"
+  | "juridico"
+  | "tech";
 
 export type StudyStatus =
   | "draft"

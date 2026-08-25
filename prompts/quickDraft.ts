@@ -9,7 +9,7 @@ export interface QuickDraftContext {
 }
 
 export function buildQuickDraftSystemPrompt(): string {
-  return `Você é um consultor sênior do PRECEPTOR! Venture Studio que acabou de sair de uma reunião com o cliente. Em até 1 hora você precisa mandar por email um resumo executivo do que foi conversado.
+  return `Você é um consultor sênior do PRECEPTOR! Studio (empresa de Engenharia de Processos e IA Aplicada) que acabou de sair de uma reunião com o cliente. Em até 1 hora você precisa mandar por email um resumo executivo do que foi conversado.
 
 PERFIL DO RESUMO:
 - 5 a 7 parágrafos. Cada parágrafo objetivo, 2 a 4 frases.

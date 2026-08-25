@@ -2,7 +2,15 @@
 // PRECEPTOR STUDIO - Banco de Perguntas (versão enxuta, majoritariamente fechada)
 // ════════════════════════════════════════════════════════════════════════════
 
-export type Category = "saude" | "educacao" | "juridico" | "tech" | "outro";
+export type Category =
+  | "logistica"
+  | "agro"
+  | "medicina"
+  | "outro"
+  | "saude"
+  | "educacao"
+  | "juridico"
+  | "tech";
 
 export type QuestionType =
   | "text_short"
@@ -358,7 +366,188 @@ const UNIVERSAL_QUESTIONS: Question[] = [
   },
 ];
 
-// ─── CATEGORIA: SAÚDE ────────────────────────────────────────────────
+// ─── CATEGORIA: LOGÍSTICA E TRANSPORTES ──────────────────────────────
+const LOGISTICA_QUESTIONS: Question[] = [
+  {
+    id: "log_volume",
+    section: "Específicas: Logística e Transportes",
+    order: 20,
+    type: "single",
+    question: "Qual o volume mensal de embarques ou entregas?",
+    options: [
+      "Até 500 por mês",
+      "500 a 5 mil por mês",
+      "5 mil a 50 mil por mês",
+      "Mais de 50 mil por mês",
+    ],
+    required: true,
+  },
+  {
+    id: "log_documentacao",
+    section: "Específicas: Logística e Transportes",
+    order: 21,
+    type: "single",
+    question: "Onde vive o comprovante de entrega hoje?",
+    options: [
+      "Papel físico que volta com o motorista",
+      "Foto no WhatsApp",
+      "App próprio ou do TMS",
+      "Misto: parte papel, parte digital",
+    ],
+    required: true,
+  },
+  {
+    id: "log_sistemas",
+    section: "Específicas: Logística e Transportes",
+    order: 22,
+    type: "multi",
+    allow_other: true,
+    question: "Quais sistemas rodam a operação? (marque os que usa)",
+    options: [
+      "TMS",
+      "ERP",
+      "Rastreamento / telemetria",
+      "Planilhas",
+      "WhatsApp como ferramenta de trabalho",
+    ],
+    required: true,
+  },
+  {
+    id: "log_faturamento",
+    section: "Específicas: Logística e Transportes",
+    order: 23,
+    type: "single",
+    question: "Como funciona a conferência antes do faturamento?",
+    options: [
+      "Manual, documento a documento",
+      "Parte no sistema, parte na planilha",
+      "Quase toda no sistema",
+      "Automática",
+    ],
+    required: true,
+  },
+];
+
+// ─── CATEGORIA: AGRO ─────────────────────────────────────────────────
+const AGRO_QUESTIONS: Question[] = [
+  {
+    id: "agro_registro_campo",
+    section: "Específicas: Agro",
+    order: 20,
+    type: "single",
+    question: "Como o dado sai do campo hoje?",
+    options: [
+      "Papel ou caderno",
+      "Foto e áudio no WhatsApp",
+      "App de campo",
+      "Misto",
+    ],
+    required: true,
+  },
+  {
+    id: "agro_relatorios",
+    section: "Específicas: Agro",
+    order: 21,
+    type: "multi",
+    allow_other: true,
+    question: "Pra quem a operação produz relatório ou laudo? (marque os que se aplicam)",
+    options: [
+      "Cooperativa",
+      "Banco ou financiadora",
+      "Certificadora",
+      "Cliente ou trading",
+      "Uso interno",
+    ],
+    required: true,
+  },
+  {
+    id: "agro_insumos",
+    section: "Específicas: Agro",
+    order: 22,
+    type: "single",
+    question: "Como é controlado o estoque de insumos e defensivos?",
+    options: [
+      "Caderno ou memória",
+      "Planilha",
+      "Sistema, mas incompleto",
+      "Sistema com rastreabilidade",
+    ],
+    required: true,
+  },
+  {
+    id: "agro_janela",
+    section: "Específicas: Agro",
+    order: 23,
+    type: "text_short",
+    question: "Qual a janela de safra e o que precisa estar rodando antes dela?",
+    required: false,
+  },
+];
+
+// ─── CATEGORIA: MEDICINA ─────────────────────────────────────────────
+const MEDICINA_QUESTIONS: Question[] = [
+  {
+    id: "med_guias",
+    section: "Específicas: Medicina",
+    order: 20,
+    type: "single",
+    question: "Qual o volume mensal de guias de convênio?",
+    options: [
+      "Até 200 por mês",
+      "200 a 1 mil por mês",
+      "1 mil a 5 mil por mês",
+      "Mais de 5 mil por mês",
+      "Não atendemos convênio",
+    ],
+    required: true,
+  },
+  {
+    id: "med_glosa",
+    section: "Específicas: Medicina",
+    order: 21,
+    type: "single",
+    question: "Qual a situação da glosa hoje?",
+    options: [
+      "Não medimos",
+      "Baixa, sob controle",
+      "Relevante, com retrabalho frequente",
+      "Crítica, afeta o caixa",
+    ],
+    required: true,
+  },
+  {
+    id: "med_sistemas",
+    section: "Específicas: Medicina",
+    order: 22,
+    type: "multi",
+    allow_other: true,
+    question: "Quais sistemas rodam a clínica? (marque os que usa)",
+    options: [
+      "Agenda / confirmação",
+      "Prontuário eletrônico",
+      "Faturamento de convênio",
+      "Planilhas",
+      "WhatsApp como ferramenta de trabalho",
+    ],
+    required: true,
+  },
+  {
+    id: "med_noshow",
+    section: "Específicas: Medicina",
+    order: 23,
+    type: "single",
+    question: "Como funciona a confirmação de agenda?",
+    options: [
+      "A recepção liga um a um",
+      "Mensagem manual no WhatsApp",
+      "Confirmação automática simples",
+      "Automática com lista de espera",
+    ],
+    required: true,
+  },
+];
+
+// ─── CATEGORIA: SAÚDE (legado) ───────────────────────────────────────
 const SAUDE_QUESTIONS: Question[] = [
   {
     id: "saude_publico",
@@ -756,6 +945,9 @@ const OUTRO_QUESTIONS: Question[] = [
 // ─── EXPORTAÇÃO ─────────────────────────────────────────────────────────────
 export function getQuestions(category: Category): Question[] {
   const specific = {
+    logistica: LOGISTICA_QUESTIONS,
+    agro: AGRO_QUESTIONS,
+    medicina: MEDICINA_QUESTIONS,
     saude: SAUDE_QUESTIONS,
     educacao: EDUCACAO_QUESTIONS,
     juridico: JURIDICO_QUESTIONS,
@@ -767,9 +959,8 @@ export function getQuestions(category: Category): Question[] {
 }
 
 export const CATEGORIES: { value: Category; label: string; description: string }[] = [
-  { value: "saude", label: "Saúde", description: "Médicos, clínicas, fisioterapia, nutrição, healthtech" },
-  { value: "educacao", label: "Educação", description: "Cursos, plataformas, mentorias, edtech" },
-  { value: "juridico", label: "Jurídico", description: "Advocacia, legaltech, consultoria jurídica" },
-  { value: "tech", label: "Tech", description: "SaaS, apps, plataformas, marketplaces" },
-  { value: "outro", label: "Outro Setor", description: "Alimentação, moda, fitness, varejo, serviços" },
+  { value: "logistica", label: "Logística e Transportes", description: "Transportadoras, frotas, operadores logísticos" },
+  { value: "agro", label: "Agro", description: "Fazendas, agroindústrias, cooperativas" },
+  { value: "medicina", label: "Medicina", description: "Clínicas, consultórios, operações de saúde" },
+  { value: "outro", label: "Outro Segmento", description: "Operações com processo pesado em outros setores" },
 ];
