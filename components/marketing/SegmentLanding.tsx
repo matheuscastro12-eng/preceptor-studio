@@ -72,22 +72,6 @@ export function SegmentLanding({ content }: { content: SegmentContent }) {
                 →
               </span>
             </a>
-            <a
-              href="https://wa.me/5535999191919?text=Ol%C3%A1!%20Quero%20fazer%20o%20diagn%C3%B3stico%20da%20minha%20opera%C3%A7%C3%A3o."
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mkt-btn mkt-btn--lg"
-              style={{ color: "#fff", border: "1px solid rgba(255,255,255,0.3)" }}
-            >
-              Fazer o diagnóstico
-              <span
-                className="mkt-btn__icon"
-                aria-hidden="true"
-                style={{ background: "rgba(255,255,255,0.12)", color: "#fff" }}
-              >
-                →
-              </span>
-            </a>
           </div>
         </div>
       </main>

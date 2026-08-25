@@ -40,13 +40,13 @@ export function Nav() {
         </div>
         <div className="mkt-nav__actions">
           <a
-            href="https://wa.me/5535999191919?text=Ol%C3%A1!%20Quero%20fazer%20o%20diagn%C3%B3stico%20da%20minha%20opera%C3%A7%C3%A3o."
+            href="https://wa.me/5535999191919?text=Ol%C3%A1!%20Quero%20falar%20sobre%20a%20opera%C3%A7%C3%A3o%20da%20minha%20empresa."
             target="_blank"
             rel="noopener noreferrer"
             className="mkt-nav__cta"
-            aria-label="Fazer o diagnóstico da operação pelo WhatsApp"
+            aria-label="Entrar em contato pelo WhatsApp"
           >
-            Diagnóstico da operação
+            Entrar em contato
             <span className="ic" aria-hidden="true">
               →
             </span>

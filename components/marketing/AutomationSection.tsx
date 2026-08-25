@@ -112,27 +112,15 @@ export function AutomationSection() {
                   borderTop: "1px solid rgba(255,255,255,0.14)",
                 }}
               >
-                <p
-                  style={{
-                    margin: "0 0 14px",
-                    fontSize: 14,
-                    color: "rgba(255,255,255,0.6)",
-                    maxWidth: 380,
-                  }}
-                >
-                  Ainda não sabe por onde começar? Responda o diagnóstico da
-                  operação e receba na hora um retrato de onde a automação se
-                  paga primeiro.
-                </p>
                 <a
-                  href="https://wa.me/5535999191919?text=Ol%C3%A1!%20Quero%20fazer%20o%20diagn%C3%B3stico%20da%20minha%20opera%C3%A7%C3%A3o."
+                  href="https://wa.me/5535999191919?text=Ol%C3%A1!%20Quero%20falar%20sobre%20a%20opera%C3%A7%C3%A3o%20da%20minha%20empresa."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mkt-btn"
                   style={{ background: "#fff", color: "var(--navy)" }}
-                  aria-label="Fazer o diagnóstico da operação pelo WhatsApp"
+                  aria-label="Entrar em contato pelo WhatsApp"
                 >
-                  Fazer o diagnóstico da operação
+                  Entrar em contato
                   <span className="mkt-btn__icon" aria-hidden="true">
                     →
                   </span>
