@@ -70,7 +70,7 @@ export default function PrivacidadePage() {
             </P>
             <P>
               Identificação do controlador:{" "}
-              <strong>[preencher: razão social completa e CNPJ]</strong>, com sede em
+              <strong>PRECEPTOR! Studio</strong>, com sede em
               Itajubá/MG. Contato do encarregado (DPO) e canal de privacidade:{" "}
               <a href={`mailto:${STUDIO_EMAIL}`} style={linkStyle}>
                 {STUDIO_EMAIL}

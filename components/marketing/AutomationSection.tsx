@@ -25,7 +25,7 @@ export function AutomationSection() {
         <Reveal>
           <div className="mkt-sec-head" style={{ marginBottom: 56 }}>
             <div>
-              <span className="eyebrow">Soluções em IA</span>
+              <span className="eyebrow">Contato · Soluções em IA</span>
               <h2 className="mkt-h2" style={{ marginTop: 20 }}>
                 A gente corta o custo
                 <br />
@@ -37,51 +37,6 @@ export function AutomationSection() {
               implementamos a automação que se paga em poucos meses. O retorno
               fica visível em painel.
             </p>
-          </div>
-        </Reveal>
-
-        <Reveal delay={100}>
-          <div
-            className="mkt-grid-3"
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
-              gap: 40,
-              marginBottom: 72,
-            }}
-          >
-            {SCOPES.map((c) => (
-              <div
-                key={c.title}
-                style={{
-                  paddingTop: 20,
-                  borderTop: "1px solid rgba(255,255,255,0.16)",
-                }}
-              >
-                <h3
-                  style={{
-                    margin: "0 0 8px",
-                    fontFamily: "var(--font-head)",
-                    fontSize: 17,
-                    fontWeight: 630,
-                    letterSpacing: "-0.015em",
-                    color: "#fff",
-                  }}
-                >
-                  {c.title}
-                </h3>
-                <p
-                  style={{
-                    margin: 0,
-                    fontSize: 14,
-                    lineHeight: 1.65,
-                    color: "rgba(255,255,255,0.66)",
-                  }}
-                >
-                  {c.body}
-                </p>
-              </div>
-            ))}
           </div>
         </Reveal>
 
@@ -186,7 +141,52 @@ export function AutomationSection() {
             <AutomationContactForm />
           </Reveal>
         </div>
-      </div>
+
+        <Reveal delay={100}>
+          <div
+            className="mkt-grid-3"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: 40,
+              marginTop: 88,
+            }}
+          >
+            {SCOPES.map((c) => (
+              <div
+                key={c.title}
+                style={{
+                  paddingTop: 20,
+                  borderTop: "1px solid rgba(255,255,255,0.16)",
+                }}
+              >
+                <h3
+                  style={{
+                    margin: "0 0 8px",
+                    fontFamily: "var(--font-head)",
+                    fontSize: 17,
+                    fontWeight: 630,
+                    letterSpacing: "-0.015em",
+                    color: "#fff",
+                  }}
+                >
+                  {c.title}
+                </h3>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: 14,
+                    lineHeight: 1.65,
+                    color: "rgba(255,255,255,0.66)",
+                  }}
+                >
+                  {c.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </Reveal>
+     </div>
     </section>
   );
 }
