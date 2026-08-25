@@ -1,13 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 const EXPERIMENT = "hero_cta";
 const SID_KEY = "preceptor_sid";
 const VARIANT_KEY = "preceptor_ab_hero_cta";
 const IMPRESSION_KEY = "preceptor_ab_hero_cta_imp";
-const HREF = "/diagnostico?start=1";
+const HREF =
+  "https://wa.me/5535999191919?text=Ol%C3%A1!%20Quero%20descobrir%20onde%20a%20IA%20se%20paga%20na%20minha%20opera%C3%A7%C3%A3o.";
 
 type Variant = "A" | "B";
 
@@ -112,8 +112,10 @@ export function HeroCta() {
   const label = VARIANT_LABEL[variant];
 
   return (
-    <Link
+    <a
       href={HREF}
+      target="_blank"
+      rel="noopener noreferrer"
       className="mkt-btn mkt-btn--cyan mkt-btn--lg"
       aria-label={label}
       data-ab-variant={variant}
@@ -121,6 +123,6 @@ export function HeroCta() {
     >
       {label}
       <span className="mkt-btn__icon" aria-hidden="true">→</span>
-    </Link>
+    </a>
   );
 }

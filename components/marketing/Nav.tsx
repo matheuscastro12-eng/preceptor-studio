@@ -39,16 +39,18 @@ export function Nav() {
           ))}
         </div>
         <div className="mkt-nav__actions">
-          <Link
-            href="/diagnostico?start=1"
+          <a
+            href="https://wa.me/5535999191919?text=Ol%C3%A1!%20Quero%20fazer%20o%20diagn%C3%B3stico%20da%20minha%20opera%C3%A7%C3%A3o."
+            target="_blank"
+            rel="noopener noreferrer"
             className="mkt-nav__cta"
-            aria-label="Fazer o diagnóstico da operação"
+            aria-label="Fazer o diagnóstico da operação pelo WhatsApp"
           >
             Diagnóstico da operação
             <span className="ic" aria-hidden="true">
               →
             </span>
-          </Link>
+          </a>
           <button
             type="button"
             className="mkt-nav__burger"

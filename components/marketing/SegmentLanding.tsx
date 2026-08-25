@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Nav } from "./Nav";
 import { Footer } from "./Footer";
 import { Reveal } from "./Reveal";
@@ -61,8 +60,10 @@ export function SegmentLanding({ content }: { content: SegmentContent }) {
           <div
             style={{ display: "flex", flexWrap: "wrap", gap: 14, marginTop: 32 }}
           >
-            <Link
-              href="/#contato"
+            <a
+              href="https://wa.me/5535999191919?text=Ol%C3%A1!%20Quero%20falar%20sobre%20a%20opera%C3%A7%C3%A3o%20da%20minha%20empresa."
+              target="_blank"
+              rel="noopener noreferrer"
               className="mkt-btn mkt-btn--lg"
               style={{ background: "#fff", color: "var(--navy)" }}
             >
@@ -70,9 +71,11 @@ export function SegmentLanding({ content }: { content: SegmentContent }) {
               <span className="mkt-btn__icon" aria-hidden="true">
                 →
               </span>
-            </Link>
-            <Link
-              href="/diagnostico?start=1"
+            </a>
+            <a
+              href="https://wa.me/5535999191919?text=Ol%C3%A1!%20Quero%20fazer%20o%20diagn%C3%B3stico%20da%20minha%20opera%C3%A7%C3%A3o."
+              target="_blank"
+              rel="noopener noreferrer"
               className="mkt-btn mkt-btn--lg"
               style={{ color: "#fff", border: "1px solid rgba(255,255,255,0.3)" }}
             >
@@ -84,7 +87,7 @@ export function SegmentLanding({ content }: { content: SegmentContent }) {
               >
                 →
               </span>
-            </Link>
+            </a>
           </div>
         </div>
       </main>
@@ -250,8 +253,10 @@ export function SegmentLanding({ content }: { content: SegmentContent }) {
               >
                 {content.ctaLine}
               </p>
-              <Link
-                href="/#contato"
+              <a
+                href="https://wa.me/5535999191919?text=Ol%C3%A1!%20Quero%20falar%20com%20a%20equipe%20sobre%20a%20minha%20opera%C3%A7%C3%A3o."
+                target="_blank"
+                rel="noopener noreferrer"
                 className="mkt-btn mkt-btn--lg"
                 style={{ background: "#fff", color: "var(--navy)", flexShrink: 0 }}
               >
@@ -259,7 +264,7 @@ export function SegmentLanding({ content }: { content: SegmentContent }) {
                 <span className="mkt-btn__icon" aria-hidden="true">
                   →
                 </span>
-              </Link>
+              </a>
             </div>
           </Reveal>
         </div>
