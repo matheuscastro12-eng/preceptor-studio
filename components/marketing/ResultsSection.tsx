@@ -1,79 +1,86 @@
 import { Reveal } from "./Reveal";
 
-const STATS = [
-  {
-    v: "1.400+",
-    l: "horas devolvidas ao time",
-    note: "por mês, somando as operações atendidas",
-  },
-  {
-    v: "38%",
-    l: "de custo reduzido",
-    note: "média nos processos automatizados",
-  },
-  {
-    v: "7 em 10",
-    l: "execuções sem toque humano",
-    note: "o time entra só onde exige critério",
-  },
-  {
-    v: "Semanas",
-    l: "até a primeira automação no ar",
-    note: "não meses, com retorno medido desde o dia 1",
-  },
-];
+/* Resultados contados como texto corrido, com os números destacados na frase.
+   Sem grade de "big number + label": o formato aqui é declaração, não painel. */
+
+function Num({ children }: { children: React.ReactNode }) {
+  return (
+    <strong
+      style={{
+        fontWeight: 650,
+        color: "var(--navy)",
+        whiteSpace: "nowrap",
+      }}
+    >
+      {children}
+    </strong>
+  );
+}
 
 export function ResultsSection() {
   return (
-    <section id="resultados" className="section" style={{ paddingBottom: 0 }}>
+    <section id="resultados" className="section" style={{ paddingBottom: 96 }}>
       <div className="container">
         <Reveal>
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(4, 1fr)",
-              gap: 40,
-              paddingBottom: 56,
-              borderBottom: "1px solid var(--line)",
+              gridTemplateColumns: "44px 1fr",
+              gap: 32,
+              alignItems: "start",
             }}
-            className="mkt-grid-4"
           >
-            {STATS.map((s) => (
-              <div key={s.l}>
-                <div
-                  style={{
-                    fontFamily: "var(--font-head)",
-                    fontWeight: 650,
-                    fontSize: "clamp(2.2rem, 3.6vw, 3rem)",
-                    letterSpacing: "-0.03em",
-                    lineHeight: 1,
-                    color: "var(--navy)",
-                  }}
-                >
-                  {s.v}
-                </div>
-                <div
-                  style={{
-                    marginTop: 10,
-                    fontWeight: 600,
-                    fontSize: 15,
-                    color: "var(--navy)",
-                  }}
-                >
-                  {s.l}
-                </div>
-                <div
-                  style={{
-                    marginTop: 4,
-                    fontSize: 13,
-                    lineHeight: 1.5,
-                    color: "var(--ink-soft)",
-                  }}
-                >
-                  {s.note}
-                </div>
-              </div>
-            ))}
+            <span
+              className="mkt-bang"
+              aria-hidden="true"
+              style={{ marginTop: 14 }}
+            />
+            <div>
+              <p
+                style={{
+                  margin: 0,
+                  fontFamily: "var(--font-head)",
+                  fontWeight: 460,
+                  fontSize: "clamp(1.5rem, 2.8vw, 2.2rem)",
+                  letterSpacing: "-0.022em",
+                  lineHeight: 1.35,
+                  color: "var(--ink-soft)",
+                  maxWidth: 920,
+                }}
+              >
+                No último ano, as operações que atendemos devolveram{" "}
+                <Num>mais de 1.400 horas por mês</Num> aos seus times, cortaram{" "}
+                <Num>38% do custo</Num> dos processos automatizados e colocaram{" "}
+                <Num>7 de cada 10 execuções</Num> pra rodar sem toque humano.
+                Da assinatura à primeira automação em produção:{" "}
+                <Num>
+                  semanas, não meses
+                  <span
+                    style={{
+                      display: "inline-block",
+                      width: "0.18em",
+                      height: "0.18em",
+                      borderRadius: 999,
+                      background: "var(--teal)",
+                      marginLeft: "0.12em",
+                    }}
+                    aria-hidden="true"
+                  />
+                </Num>
+              </p>
+              <p
+                style={{
+                  margin: "28px 0 0",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: 11.5,
+                  letterSpacing: "0.08em",
+                  color: "var(--ink-mute)",
+                }}
+              >
+                Somatório das operações em produção. Cada projeto acompanha
+                painel próprio de indicadores.
+              </p>
+            </div>
           </div>
         </Reveal>
       </div>
