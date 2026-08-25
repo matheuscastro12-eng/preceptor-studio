@@ -10,7 +10,7 @@ const LAST_UPDATED = "02 de junho de 2026";
 export const metadata: Metadata = {
   title: "Termos de Uso",
   description:
-    "Termos de Uso do site e do diagnóstico gratuito da PRECEPTOR! Studio.",
+    "Termos de Uso do site e do diagnóstico de operação da PRECEPTOR! Studio.",
   alternates: { canonical: "/termos" },
   openGraph: {
     type: "website",
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/termos`,
     siteName: "PRECEPTOR! Studio",
     title: "Termos de Uso · PRECEPTOR! Studio",
-    description: "As regras de uso do nosso site e do diagnóstico gratuito.",
+    description: "As regras de uso do nosso site e do diagnóstico de operação.",
   },
 };
 
@@ -63,7 +63,7 @@ export default function TermosPage() {
         <div className="container" style={{ maxWidth: 820 }}>
           <Block title="1. Aceitação">
             <P>
-              Ao acessar e usar este site e o diagnóstico gratuito da PRECEPTOR!
+              Ao acessar e usar este site e o diagnóstico de operação da PRECEPTOR!
               Studio, você concorda com estes Termos de Uso. Se não
               concordar, por favor não utilize o serviço.
             </P>
@@ -72,7 +72,7 @@ export default function TermosPage() {
           <Block title="2. O que oferecemos">
             <P>
               Oferecemos conteúdo informativo sobre o estúdio e um diagnóstico
-              estratégico gratuito que gera um score e insights a partir das suas
+              estratégico, oferecido sem cobrança neste momento, que gera um score e insights a partir das suas
               respostas. O serviço é fornecido como uma ferramenta de orientação
               inicial, não como consultoria formal, auditoria, parecer jurídico,
               contábil ou financeiro.

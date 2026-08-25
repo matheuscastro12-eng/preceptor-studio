@@ -117,7 +117,7 @@ export function ResultScreen({
               position: "absolute",
               inset: 0,
               background:
-                "radial-gradient(closest-side at 20% 50%, rgba(82,225,231,0.18), transparent 60%)",
+                "radial-gradient(closest-side at 20% 50%, rgba(59,202,206,0.18), transparent 60%)",
               pointerEvents: "none",
             }}
           />
@@ -202,7 +202,7 @@ export function ResultScreen({
           }}
         >
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 14 }}>
-            <span className="overline" style={{ color: "#B964FF" }}>
+            <span className="overline" style={{ color: "#3BCACE" }}>
               Recomendação interna
             </span>
             <span
@@ -517,7 +517,7 @@ export function ResultScreen({
             const rest = ins.body.slice(firstSentence.length);
             const color = ins.kind === "warning" ? "#F59E0B" : "var(--cyan)";
             const bg =
-              ins.kind === "warning" ? "rgba(245,158,11,0.08)" : "rgba(82,225,231,0.08)";
+              ins.kind === "warning" ? "rgba(245,158,11,0.08)" : "rgba(59,202,206,0.08)";
             return (
               <div
                 key={idx}
@@ -789,7 +789,7 @@ export function ResultScreen({
           }}
         >
           <div style={{ marginBottom: 18 }}>
-            <span className="overline" style={{ color: "#B964FF" }}>
+            <span className="overline" style={{ color: "#3BCACE" }}>
               Tese interna
             </span>
             <h2
@@ -914,7 +914,7 @@ export function ResultScreen({
                 maxWidth: 560,
               }}
             >
-              Diagnóstico técnico ao vivo, sem custo, sem compromisso.
+              Conversa técnica sobre a sua operação, sem compromisso.
             </p>
           </div>
           <iframe
@@ -937,8 +937,8 @@ export function ResultScreen({
           style={{
             padding: "28px 36px",
             borderRadius: 22,
-            background: "linear-gradient(135deg, rgba(82,225,231,0.1), rgba(93,87,235,0.1))",
-            border: "1px solid rgba(82,225,231,0.3)",
+            background: "linear-gradient(135deg, rgba(59,202,206,0.1), rgba(18,136,142,0.1))",
+            border: "1px solid rgba(59,202,206,0.3)",
             display: "grid",
             gridTemplateColumns: "1fr auto",
             gap: 24,
@@ -1014,7 +1014,7 @@ function ContactDoneBadge() {
         alignItems: "center",
         gap: 10,
         padding: "10px 16px",
-        background: "rgba(82,225,231,0.12)",
+        background: "rgba(59,202,206,0.12)",
         border: "1px solid var(--cyan)",
         borderRadius: 999,
         boxShadow: "var(--glow-cyan)",

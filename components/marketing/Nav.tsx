@@ -42,9 +42,9 @@ export function Nav() {
           <Link
             href="/diagnostico?start=1"
             className="mkt-nav__cta"
-            aria-label="Fazer diagnóstico grátis"
+            aria-label="Fazer o diagnóstico da operação"
           >
-            Diagnóstico grátis
+            Diagnóstico da operação
             <span className="ic" aria-hidden="true">
               →
             </span>

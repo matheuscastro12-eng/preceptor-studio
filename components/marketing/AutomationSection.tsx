@@ -29,7 +29,7 @@ export function AutomationSection() {
               <h2 className="mkt-h2" style={{ marginTop: 20 }}>
                 A gente corta o custo
                 <br />
-                <span className="bang">que trava o seu time</span>
+                que trava o seu <span className="bang">time</span>
               </h2>
             </div>
             <p className="mkt-lead">
@@ -120,16 +120,17 @@ export function AutomationSection() {
                     maxWidth: 380,
                   }}
                 >
-                  Ainda não sabe por onde começar? Responda o diagnóstico
-                  grátis e receba na hora um retrato da sua operação.
+                  Ainda não sabe por onde começar? Responda o diagnóstico da
+                  operação e receba na hora um retrato de onde a automação se
+                  paga primeiro.
                 </p>
                 <Link
                   href="/diagnostico?start=1"
                   className="mkt-btn"
                   style={{ background: "#fff", color: "var(--navy)" }}
-                  aria-label="Fazer o diagnóstico grátis"
+                  aria-label="Fazer o diagnóstico da operação"
                 >
-                  Fazer o diagnóstico grátis
+                  Fazer o diagnóstico da operação
                   <span className="mkt-btn__icon" aria-hidden="true">
                     →
                   </span>

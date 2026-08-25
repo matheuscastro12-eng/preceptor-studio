@@ -9,18 +9,17 @@ const COLUMNS: { title: string; items: FooterLink[]; mono?: boolean }[] = [
   {
     title: "Estúdio",
     items: [
-      { label: "O método", href: "/#como" },
-      { label: "Segmentos", href: "/#segmentos" },
-      { label: "O que entregamos", href: "/#entregas" },
+      { label: "Resultados", href: "/#resultados" },
+      { label: "Como sustentamos", href: "/#como" },
       { label: "Contato", href: "/#contato" },
     ],
   },
   {
-    title: "Diagnóstico",
+    title: "Segmentos",
     items: [
-      { label: "Fazer grátis", href: "/diagnostico?start=1" },
-      { label: "Como funciona", href: "/diagnostico" },
-      { label: "Falar com especialista", href: "/diagnostico?start=1" },
+      { label: "Logística e Transportes", href: "/transporte" },
+      { label: "Agro", href: "/agro" },
+      { label: "Clínicas e Medicina", href: "/clinicas" },
     ],
   },
   {
@@ -45,7 +44,7 @@ export function Footer() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1.6fr 1fr 1fr 1fr",
+            gridTemplateColumns: "1.5fr 1fr 1.1fr 1.1fr",
             gap: 40,
             marginBottom: 56,
           }}
@@ -69,9 +68,9 @@ export function Footer() {
                 maxWidth: 380,
               }}
             >
-              Somos uma empresa de engenharia de processos que usa Inteligência
-              Artificial como ferramenta. A tecnologia é o caminho, o destino
-              são as pessoas.
+              Uma equipe de Engenharia de Processos e uma frente de
+              Inteligência Artificial Aplicada, no mesmo nível. A tecnologia é
+              o caminho, o destino são as pessoas.
             </p>
           </div>
           {COLUMNS.map((col) => (

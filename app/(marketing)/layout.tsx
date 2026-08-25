@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     template: "%s · PRECEPTOR!",
   },
   description:
-    "Antes de automatizar, a gente conserta o processo. Diagnóstico, redesenho e automação com IA, com resultado medido em produção. Diagnóstico grátis da operação.",
+    "Antes de automatizar, a gente conserta o processo. Engenharia de Processos e Inteligência Artificial aplicada, com resultado medido em produção.",
   keywords: [
     "ia aplicada",
     "automação de processos",
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "PRECEPTOR! Studio · IA aplicada a processos",
     description:
-      "Processo primeiro, IA depois. Automação que se paga, com diagnóstico grátis da operação.",
+      "Processo primeiro, Inteligência Artificial depois. Automação que se paga, medida em produção.",
     images: ["/opengraph-image"],
   },
   robots: { index: true, follow: true },

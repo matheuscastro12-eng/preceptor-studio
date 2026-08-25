@@ -775,14 +775,14 @@ export function scoreLabel(v: number): DiagnosticBucket {
 
 export function scoreHex(v: number): string {
   if (v >= 75) return "#10B981";
-  if (v >= 50) return "#52E1E7";
+  if (v >= 50) return "#3BCACE";
   if (v >= 25) return "#F59E0B";
   return "#E11D48";
 }
 
 export function scoreInk(v: number): string {
   if (v >= 75) return "#10B981";
-  if (v >= 50) return "#3BC8CF";
+  if (v >= 50) return "#12888E";
   if (v >= 25) return "#B45309";
   return "#E11D48";
 }

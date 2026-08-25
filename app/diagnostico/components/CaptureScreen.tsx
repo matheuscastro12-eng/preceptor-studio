@@ -196,9 +196,9 @@ export function CaptureScreen({
           style={{
             position: "relative",
             background:
-              "radial-gradient(ellipse 70% 50% at 30% 0%, rgba(82,225,231,0.16), transparent 60%)," +
-              "radial-gradient(ellipse 60% 50% at 100% 100%, rgba(93,87,235,0.18), transparent 60%)," +
-              "linear-gradient(160deg, #0F2A55 0%, #06122A 70%)",
+              "radial-gradient(ellipse 70% 50% at 30% 0%, rgba(59,202,206,0.16), transparent 60%)," +
+              "radial-gradient(ellipse 60% 50% at 100% 100%, rgba(18,136,142,0.18), transparent 60%)," +
+              "linear-gradient(160deg, #001060 0%, #010226 70%)",
             color: "#fff",
             padding: "48px 48px 56px",
             overflow: "hidden",
@@ -251,8 +251,8 @@ export function CaptureScreen({
                       width: 28,
                       height: 28,
                       borderRadius: 8,
-                      background: "rgba(82,225,231,0.12)",
-                      border: "1px solid rgba(82,225,231,0.3)",
+                      background: "rgba(59,202,206,0.12)",
+                      border: "1px solid rgba(59,202,206,0.3)",
                       color: "var(--cyan)",
                       display: "inline-flex",
                       alignItems: "center",

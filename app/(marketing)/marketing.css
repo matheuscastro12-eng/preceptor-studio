@@ -189,6 +189,7 @@
 }
 
 /* Pontuacao da marca: headline termina no ponto turquesa, como "Preceptor!" */
+.bang { white-space: nowrap; }
 .bang::after {
   content: "";
   display: inline-block;
@@ -487,6 +488,17 @@
   background: var(--teal);
 }
 .mkt-contact__phone:hover { color: var(--teal); }
+
+/* Grades utilitarias */
+.mkt-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.mkt-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+.mkt-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
+@media (max-width: 980px) {
+  .mkt-grid-3, .mkt-grid-4 { grid-template-columns: 1fr 1fr !important; }
+}
+@media (max-width: 640px) {
+  .mkt-grid-2, .mkt-grid-3, .mkt-grid-4 { grid-template-columns: 1fr !important; }
+}
 
 /* Divisor e overline */
 .mkt-hr { height: 1px; background: var(--line); border: none; }

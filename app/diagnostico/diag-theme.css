@@ -1,0 +1,64 @@
+/* Re-skin do diagnóstico para a direção de design atual da marca:
+   navy #00033D + teal #3BCACE, Bricolage Grotesque no display e
+   Instrument Sans no corpo. Escopado em .diag-v2 para não afetar o
+   /dashboard, que compartilha os tokens de globals.css. */
+
+.diag-v2 {
+  --navy: #00033D;
+  --navy-deep: #010226;
+  --navy-soft: #001060;
+  --cyan: #3BCACE;
+  --cyan-soft: #9FE7E9;
+  --cyan-deep: #12888E;
+  --purple: #3BCACE;
+  --purple-soft: #9FE7E9;
+  --blue: #12888E;
+  --ink: #16203C;
+  --ink-soft: #4C5670;
+  --ink-mute: #8A93A8;
+
+  --font-sans: var(--font-diag-body), "Instrument Sans", system-ui, sans-serif;
+}
+
+.diag-v2 .display,
+.diag-v2 .display-md,
+.diag-v2 .bar__word {
+  font-family: var(--font-diag-head), "Bricolage Grotesque", system-ui, sans-serif;
+}
+.diag-v2 .display {
+  font-weight: 650;
+  letter-spacing: -0.032em;
+  line-height: 1.02;
+}
+.diag-v2 .display-md {
+  font-weight: 650;
+  letter-spacing: -0.028em;
+}
+.diag-v2 .display .it,
+.diag-v2 .display-md .it {
+  font-style: normal;
+  font-weight: 420;
+  color: var(--ink-soft);
+}
+.diag-v2 .screen--dark .display .it,
+.diag-v2 .screen--dark .display-md .it {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.diag-v2 .bar__logo img {
+  height: 24px;
+  width: auto;
+  display: block;
+}
+.diag-v2 .screen--dark .bar__logo img {
+  filter: brightness(0) invert(1);
+}
+
+.diag-v2 .btn-pill {
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+.diag-v2 .btn-pill--cyan {
+  font-weight: 600;
+  color: var(--navy);
+}

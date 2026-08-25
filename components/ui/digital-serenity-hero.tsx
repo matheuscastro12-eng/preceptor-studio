@@ -226,8 +226,9 @@ export default function DigitalSerenityHero() {
               <div className="ds-h1-sub text-2xl leading-relaxed text-slate-200 sm:text-3xl md:text-4xl">
                 <W d={1700}>depois</W>
                 <W d={1850}>a</W>
-                <W d={2000}>
-                  inteligência<span className="ds-dot" aria-hidden="true" />
+                <W d={2000}>Inteligência</W>
+                <W d={2200}>
+                  Artificial<span className="ds-dot" aria-hidden="true" />
                 </W>
               </div>
             </h1>
@@ -237,8 +238,8 @@ export default function DigitalSerenityHero() {
               style={{ animationDelay: "2.6s" }}
             >
               Automatizar um processo errado só faz o erro acontecer mais
-              rápido. A gente estuda a sua operação, redesenha o fluxo e aplica
-              IA onde o retorno aparece.
+              rápido. A gente redesenha o fluxo, coloca a automação em produção
+              em semanas e devolve horas e margem pra sua operação.
             </p>
 
             <div
@@ -247,12 +248,12 @@ export default function DigitalSerenityHero() {
             >
               <HeroCta />
               <a
-                href="#como"
+                href="#resultados"
                 className="mkt-btn mkt-btn--ghost"
-                aria-label="Ver o método"
+                aria-label="Ver resultados"
                 style={{ color: "#fff", borderColor: "rgba(255,255,255,0.3)" }}
               >
-                Ver o método
+                Ver resultados
                 <span
                   className="mkt-btn__icon"
                   aria-hidden="true"

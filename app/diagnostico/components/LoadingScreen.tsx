@@ -43,7 +43,7 @@ export function LoadingScreen({ onHome }: { onHome: () => void }) {
           width: 64px;
           height: 64px;
           border-radius: 50%;
-          border: 4px solid rgba(82,225,231,0.18);
+          border: 4px solid rgba(59,202,206,0.18);
           border-top-color: var(--cyan);
           animation: diag-spin 1.1s linear infinite;
         }
@@ -99,7 +99,7 @@ export function LoadingScreen({ onHome }: { onHome: () => void }) {
               marginInline: "auto",
             }}
           >
-            O modelo está analisando o que você escreveu, ponderando contra operações parecidas e
+            Estamos comparando a sua rotina com operações parecidas e
             montando o plano de 90 dias.
           </p>
         </div>
@@ -134,7 +134,7 @@ export function LoadingScreen({ onHome }: { onHome: () => void }) {
                 gap: 12,
                 padding: "14px 18px",
                 background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(82,225,231,0.25)",
+                border: "1px solid rgba(59,202,206,0.25)",
                 borderRadius: 14,
                 color: "#fff",
                 fontFamily: "var(--font-sans)",

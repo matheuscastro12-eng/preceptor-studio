@@ -23,7 +23,7 @@ export function LikertField({
               style={{
                 padding: "14px 8px 10px",
                 border: `2px solid ${checked ? "var(--cyan)" : "rgba(15,23,41,0.08)"}`,
-                background: checked ? "rgba(82,225,231,0.1)" : "#fff",
+                background: checked ? "rgba(59,202,206,0.1)" : "#fff",
                 borderRadius: 12,
                 cursor: "pointer",
                 display: "flex",
@@ -97,7 +97,7 @@ export function SingleChoice({
               padding: "14px 16px",
               borderRadius: 12,
               border: `2px solid ${checked ? "var(--cyan)" : "rgba(15,23,41,0.08)"}`,
-              background: checked ? "rgba(82,225,231,0.05)" : "#fff",
+              background: checked ? "rgba(59,202,206,0.05)" : "#fff",
               boxShadow: checked ? "var(--glow-cyan)" : "none",
               textAlign: "left",
               cursor: "pointer",

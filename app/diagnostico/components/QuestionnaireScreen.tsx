@@ -295,7 +295,7 @@ export function QuestionnaireScreen({
               style={{
                 height: "100%",
                 width: `${pct}%`,
-                background: "linear-gradient(90deg,#52E1E7,#5D57EB)",
+                background: "linear-gradient(90deg,#3BCACE,#12888E)",
                 transition: "width 500ms var(--ease-out)",
               }}
             />
@@ -308,10 +308,10 @@ export function QuestionnaireScreen({
                   flex: 1,
                   padding: "8px 10px",
                   borderRadius: 10,
-                  background: i === currentSection ? "rgba(82,225,231,0.1)" : "transparent",
+                  background: i === currentSection ? "rgba(59,202,206,0.1)" : "transparent",
                   border:
                     i === currentSection
-                      ? "1px solid rgba(82,225,231,0.4)"
+                      ? "1px solid rgba(59,202,206,0.4)"
                       : "1px solid rgba(15,23,41,0.06)",
                 }}
               >

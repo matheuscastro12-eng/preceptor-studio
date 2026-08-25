@@ -1,6 +1,22 @@
 import type { Metadata } from "next";
+import { Bricolage_Grotesque, Instrument_Sans } from "next/font/google";
 import { DiagnosticApp } from "./DiagnosticApp";
 import { createSupabaseServiceClient } from "@/lib/supabase";
+import "./diag-theme.css";
+
+const diagHead = Bricolage_Grotesque({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-diag-head",
+  display: "swap",
+});
+
+const diagBody = Instrument_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-diag-body",
+  display: "swap",
+});
 
 export const dynamic = "force-dynamic";
 
@@ -33,7 +49,7 @@ export const metadata: Metadata = {
     locale: "pt_BR",
     url: `${SITE_URL}/diagnostico`,
     siteName: "PRECEPTOR! Studio",
-    title: "Diagnóstico técnico e empreendedor · PRECEPTOR! Studio",
+    title: "Diagnóstico da operação · PRECEPTOR! Studio",
     description:
       "Poucos minutos, sem login. Score da sua operação na hora e por onde a automação deveria começar.",
     images: [
@@ -47,7 +63,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Diagnóstico técnico e empreendedor · PRECEPTOR! Studio",
+    title: "Diagnóstico da operação · PRECEPTOR! Studio",
     description:
       "Poucos minutos, sem login. Score da sua operação na hora e por onde a automação deveria começar.",
     images: ["/opengraph-image"],
@@ -60,7 +76,7 @@ const WEBPAGE_JSONLD = {
   name: "Diagnóstico PRECEPTOR! Studio",
   url: `${SITE_URL}/diagnostico`,
   description:
-    "Diagnóstico gratuito de operação da PRECEPTOR! Studio. Poucos minutos, score na hora e por onde a automação se paga primeiro.",
+    "Diagnóstico de operação da PRECEPTOR! Studio. Poucos minutos, score na hora e por onde a automação se paga primeiro.",
   inLanguage: "pt-BR",
   isPartOf: {
     "@type": "WebSite",
@@ -89,7 +105,9 @@ export default async function DiagnosticoPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBPAGE_JSONLD) }}
       />
-      <DiagnosticApp calcomUrl={calcomUrl} />
+      <div className={`diag-v2 ${diagHead.variable} ${diagBody.variable}`}>
+        <DiagnosticApp calcomUrl={calcomUrl} />
+      </div>
     </>
   );
 }

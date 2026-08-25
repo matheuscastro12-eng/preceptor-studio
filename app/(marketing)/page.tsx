@@ -1,8 +1,9 @@
 import { Nav } from "@/components/marketing/Nav";
 import DigitalSerenityHero from "@/components/ui/digital-serenity-hero";
+import { ResultsSection } from "@/components/marketing/ResultsSection";
+import { ProofSection } from "@/components/marketing/ProofSection";
 import { SegmentsSection } from "@/components/marketing/SegmentsSection";
 import { HowSection } from "@/components/marketing/HowSection";
-import { DeliverablesSection } from "@/components/marketing/DeliverablesSection";
 import { AutomationSection } from "@/components/marketing/AutomationSection";
 import { Footer } from "@/components/marketing/Footer";
 
@@ -76,9 +77,10 @@ export default function MarketingHome() {
       />
       <Nav />
       <DigitalSerenityHero />
+      <ResultsSection />
+      <ProofSection />
       <SegmentsSection />
       <HowSection />
-      <DeliverablesSection />
       <AutomationSection />
       <Footer />
     </div>

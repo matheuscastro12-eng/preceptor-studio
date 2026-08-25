@@ -30,17 +30,18 @@ export function HowSection() {
         <Reveal>
           <div className="mkt-sec-head">
             <div>
-              <span className="eyebrow">O método</span>
+              <span className="eyebrow">O que sustenta o resultado</span>
               <h2 className="mkt-h2" style={{ marginTop: 20 }}>
-                A IA entra depois
+                Engenharia de Processos
                 <br />
-                <span className="bang">da engenharia</span>
+                e Inteligência Artificial <span className="bang">Aplicada</span>
               </h2>
             </div>
             <p className="mkt-lead">
-              Não começamos pela ferramenta. Primeiro entendemos como o
-              trabalho acontece, cortamos o que não gera valor e só então
-              aplicamos tecnologia.
+              O resultado vem na frente. O que faz ele se repetir é uma equipe
+              de Engenharia de Processos redesenhando o fluxo e uma frente de
+              Inteligência Artificial Aplicada colocando a automação em
+              produção. Uma não anda sem a outra.
             </p>
           </div>
         </Reveal>

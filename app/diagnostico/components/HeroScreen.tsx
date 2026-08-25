@@ -37,10 +37,10 @@ function HeroLeft({ onStart }: { onStart: () => void }) {
             height: 6,
             borderRadius: 999,
             background: "var(--cyan-deep)",
-            boxShadow: "0 0 0 4px rgba(82,225,231,0.18)",
+            boxShadow: "0 0 0 4px rgba(59,202,206,0.18)",
           }}
         />
-        Diagnóstico grátis, sem login
+        Diagnóstico da operação, sem login
       </span>
 
       <h1 className="display" style={{ marginTop: 4 }}>
@@ -54,7 +54,7 @@ function HeroLeft({ onStart }: { onStart: () => void }) {
       <p className="lead">
         Responda 11 perguntas sobre a sua rotina e veja onde a operação perde
         tempo e dinheiro, e por onde a automação deveria começar. Score na
-        hora, sem login, sem custo.
+        hora, sem login.
       </p>
 
       <div
@@ -67,7 +67,7 @@ function HeroLeft({ onStart }: { onStart: () => void }) {
         }}
       >
         <button type="button" className="btn-pill btn-pill--primary" onClick={onStart}>
-          Fazer diagnóstico grátis
+          Fazer o diagnóstico
           <span className="btn-pill__icon">→</span>
         </button>
         <button type="button" className="btn-pill btn-pill--ghost">
@@ -79,10 +79,10 @@ function HeroLeft({ onStart }: { onStart: () => void }) {
       <div style={{ marginTop: "auto", paddingTop: 32 }}>
         <div className="avatars">
           <div className="avatars__stack" aria-hidden="true">
-            <div style={{ background: "linear-gradient(135deg,#52E1E7,#3BC8CF)" }} />
-            <div style={{ background: "linear-gradient(135deg,#5D57EB,#B964FF)" }} />
-            <div style={{ background: "linear-gradient(135deg,#0A1F44,#1B2F5C)" }} />
-            <div style={{ background: "linear-gradient(135deg,#10B981,#3BC8CF)" }} />
+            <div style={{ background: "linear-gradient(135deg,#3BCACE,#12888E)" }} />
+            <div style={{ background: "linear-gradient(135deg,#12888E,#3BCACE)" }} />
+            <div style={{ background: "linear-gradient(135deg,#00033D,#001060)" }} />
+            <div style={{ background: "linear-gradient(135deg,#10B981,#12888E)" }} />
           </div>
           <div className="avatars__meta">
             <span className="avatars__count">247 operações</span>
@@ -124,7 +124,7 @@ function HeroRight() {
           width: 320,
           maxWidth: "calc(100% - 80px)",
           boxShadow:
-            "0 30px 60px -30px rgba(0,0,0,0.6), 0 0 0 1px rgba(82,225,231,0.18) inset",
+            "0 30px 60px -30px rgba(0,0,0,0.6), 0 0 0 1px rgba(59,202,206,0.18) inset",
         }}
       >
         <div
@@ -254,10 +254,10 @@ function HeroRight() {
             height: 8,
             borderRadius: 999,
             background: "var(--cyan)",
-            boxShadow: "0 0 0 4px rgba(82,225,231,0.25)",
+            boxShadow: "0 0 0 4px rgba(59,202,206,0.25)",
           }}
         />
-        IA Claude por baixo, engenharia humana por cima
+        Tecnologia por baixo, engenharia humana no comando
       </div>
     </div>
   );
