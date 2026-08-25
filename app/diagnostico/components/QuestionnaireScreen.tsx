@@ -19,131 +19,133 @@ interface Section {
 
 const QUESTIONS: Section[] = [
   {
-    name: "Sua ideia",
-    helper: "O que é, para quem.",
+    name: "Sua operação",
+    helper: "O que a empresa faz, onde dói.",
     items: [
       {
-        id: "ideia",
+        id: "operacao",
         kind: "long",
-        q: "Em uma frase, qual é a sua ideia?",
-        helper: "Quem é, o que faz e pra quem.",
+        q: "Em uma frase, o que a sua empresa faz e pra quem?",
+        helper: "Segmento, o que entrega e pra que tipo de cliente.",
         placeholder:
-          "Plataforma de teleconsulta para nutricionistas e operadoras de saúde corporativa.",
+          "Transportadora de carga fracionada atendendo indústrias do Sul de Minas.",
       },
       {
-        id: "problema",
+        id: "processo_critico",
         kind: "long",
-        q: "Qual problema você resolve, e por que dói hoje?",
-        helper: "Quanto mais concreto, melhor.",
+        q: "Qual processo mais consome tempo do seu time hoje, e como ele funciona?",
+        helper: "Descreva a rotina como ela acontece de verdade, sem embelezar.",
         placeholder:
-          "Operadoras gastam tempo em agendamento manual; pacientes desistem antes da consulta.",
+          "Conferência de canhotos e faturamento: o motorista entrega o papel, alguém digita no sistema, outra pessoa confere na planilha antes de faturar.",
       },
     ],
   },
   {
-    name: "Mercado e cliente",
-    helper: "Quem paga e qual o tamanho.",
+    name: "Rotina e sistemas",
+    helper: "Ferramentas, retrabalho, volume.",
     items: [
       {
-        id: "cliente",
-        kind: "long",
-        q: "Quem é o cliente que paga, e qual o tamanho dele?",
-        helper: "Persona, porte (número de vidas, receita ou volume).",
-        placeholder: "Operadoras de médio porte, 50 a 500 mil vidas.",
-      },
-      {
-        id: "mercado_tamanho",
+        id: "sistemas",
         kind: "single",
-        q: "Quantos clientes em potencial existem no Brasil?",
-        helper: "Estimativa do universo total endereçável.",
+        q: "O que roda a sua operação hoje?",
         options: [
-          "Menos de 10 mil",
-          "10 mil a 100 mil",
-          "100 mil a 1 milhão",
-          "Mais de 1 milhão",
-          "Ainda não sei medir",
+          "Papel, caderno e WhatsApp",
+          "Principalmente planilhas",
+          "Planilhas + um sistema (ERP ou CRM)",
+          "Vários sistemas que não conversam entre si",
+          "Sistemas integrados",
         ],
       },
       {
-        id: "demanda",
+        id: "retrabalho",
         kind: "likert",
-        q: "Já temos sinais concretos de demanda (pilotos, conversas, lista de espera).",
+        q: "Meu time digita o mesmo dado em mais de um lugar (planilha, sistema, WhatsApp).",
       },
-    ],
-  },
-  {
-    name: "Modelo e execução",
-    helper: "Como cobra, como entrega.",
-    items: [
       {
-        id: "receita",
+        id: "volume",
         kind: "single",
-        q: "Como você cobra hoje (ou pretende cobrar)?",
+        q: "Quantas vezes esse processo crítico roda por mês?",
+        helper: "Pedidos, cargas, laudos, atendimentos, o que fizer sentido.",
         options: [
-          "Assinatura mensal (SaaS)",
-          "Cobrança por uso ou por consulta",
-          "Licenciamento anual",
-          "Comissão sobre transações",
-          "Modelo híbrido (serviço + software)",
-        ],
-      },
-      {
-        id: "execucao",
-        kind: "likert",
-        q: "Já temos clareza técnica de como construir nos próximos 90 dias.",
-      },
-      {
-        id: "capital",
-        kind: "single",
-        q: "Quanto capital você tem disponível pra próxima fase?",
-        helper: "Caixa próprio ou já comprometido.",
-        options: [
-          "Menos de R$ 20k (bootstrap)",
-          "R$ 20k a 100k (próprio ou amigos)",
-          "R$ 100k a 500k (anjo/pre-seed)",
-          "Mais de R$ 500k (seed+)",
-          "Ainda captando",
+          "Até 100 por mês",
+          "100 a 1 mil por mês",
+          "1 mil a 10 mil por mês",
+          "Mais de 10 mil por mês",
+          "Não sei medir",
         ],
       },
     ],
   },
   {
-    name: "Diferencial e risco",
-    helper: "Defesa, regulação, timing.",
+    name: "Dados e medição",
+    helper: "Onde o dado vive, quem responde por ele.",
     items: [
       {
-        id: "diferencial",
+        id: "indicadores",
         kind: "likert",
-        q: "Temos uma vantagem defensável que concorrentes levariam mais de 12 meses para copiar.",
+        q: "Sei quanto custa uma execução desse processo, em tempo e dinheiro.",
       },
       {
-        id: "regulacao",
+        id: "dados",
         kind: "single",
-        q: "Qual o nível de regulação no seu setor?",
+        q: "Onde vivem os dados da sua operação?",
         options: [
-          "Nenhuma / muito leve",
-          "Média (precisa de adaptação)",
-          "Alta (LGPD, CFM, ANVISA, etc.)",
-          "Crítica (saúde, financeiro pesado)",
+          "Na cabeça das pessoas",
+          "Em planilhas espalhadas",
+          "Num sistema, mas incompletos",
+          "Centralizados e confiáveis",
+        ],
+      },
+      {
+        id: "dependencia",
+        kind: "likert",
+        q: "Se uma pessoa específica faltar, uma parte da operação para.",
+      },
+    ],
+  },
+  {
+    name: "Prontidão para IA",
+    helper: "Histórico, porte, urgência.",
+    items: [
+      {
+        id: "tentativas",
+        kind: "single",
+        q: "Qual a sua experiência com automação até aqui?",
+        options: [
+          "Nunca tentamos automatizar",
+          "Tentamos e não pegou",
+          "Temos algumas automações simples",
+          "Já usamos IA em parte da operação",
+        ],
+      },
+      {
+        id: "equipe",
+        kind: "single",
+        q: "Quantas pessoas trabalham na operação?",
+        options: [
+          "Até 5 pessoas",
+          "6 a 20 pessoas",
+          "21 a 100 pessoas",
+          "Mais de 100 pessoas",
         ],
       },
       {
         id: "urgencia",
         kind: "likert",
-        q: "Existe uma janela de mercado que vai fechar nos próximos 12 meses se a gente não agir.",
+        q: "Se nada mudar, o custo desse processo vira um problema sério nos próximos 12 meses.",
       },
     ],
   },
 ];
 
 function sectionLead(name: string): string {
-  if (name === "Sua ideia")
-    return "Quanto mais concreto você for, melhor a leitura que a IA devolve. Não precisa de pitch perfeito.";
-  if (name === "Mercado e cliente")
-    return "A gente quer entender se já existe demanda de verdade ou se ainda é hipótese.";
-  if (name === "Modelo e execução")
-    return "Aqui medimos modelo de receita, capital disponível e quanto da entrega você já consegue desenhar tecnicamente.";
-  return "Defensibilidade, regulação e timing. Os 3 que mais derrubam tese boa em fase inicial.";
+  if (name === "Sua operação")
+    return "Quanto mais concreto você for, melhor a leitura que a IA devolve. Descreva a rotina como ela é, não como deveria ser.";
+  if (name === "Rotina e sistemas")
+    return "A gente quer entender o que já roda em ferramenta e onde o time ainda paga o preço do manual.";
+  if (name === "Dados e medição")
+    return "Automação boa depende de dado confiável. Aqui medimos onde o dado vive e se alguém mede o custo do processo.";
+  return "Histórico de automação, porte do time e urgência. É o que define por onde a IA deveria começar na sua operação.";
 }
 
 export function QuestionnaireScreen({
@@ -238,24 +240,24 @@ export function QuestionnaireScreen({
             Diagnóstico, parte {currentSection + 1} de {total}
           </span>
           <h1 className="display-md" style={{ marginTop: 14 }}>
-            {section.name === "Sua ideia" && (
+            {section.name === "Sua operação" && (
               <>
-                Conta pra gente sobre <span className="it">a sua ideia.</span>
+                Conta pra gente sobre <span className="it">a sua operação.</span>
               </>
             )}
-            {section.name === "Mercado e cliente" && (
+            {section.name === "Rotina e sistemas" && (
               <>
-                Quem paga, <span className="it">e quanto vale.</span>
+                O que roda em ferramenta, <span className="it">o que roda na mão.</span>
               </>
             )}
-            {section.name === "Modelo e execução" && (
+            {section.name === "Dados e medição" && (
               <>
-                Como cobra, <span className="cyan">como entrega.</span>
+                Onde o dado vive, <span className="cyan">quem mede o custo.</span>
               </>
             )}
-            {section.name === "Diferencial e risco" && (
+            {section.name === "Prontidão para IA" && (
               <>
-                Defesa, regulação, <span className="cyan">timing.</span>
+                Histórico, porte, <span className="cyan">urgência.</span>
               </>
             )}
           </h1>

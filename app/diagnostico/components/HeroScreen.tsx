@@ -44,17 +44,17 @@ function HeroLeft({ onStart }: { onStart: () => void }) {
       </span>
 
       <h1 className="display" style={{ marginTop: 4 }}>
-        <span className="navy">Da ideia</span>
+        <span className="navy">Onde a IA</span>
         <br />
-        <span className="it">ao primeiro</span>
+        <span className="it">se paga na sua</span>
         <br />
-        <span className="cyan">real.</span>
+        <span className="cyan">operação.</span>
       </h1>
 
       <p className="lead">
-        Responda poucas perguntas e veja onde a sua tese está forte e onde
-        está exposta. Score na hora e os pontos prioritários pra atacar
-        primeiro. Sem login, sem custo.
+        Responda 11 perguntas sobre a sua rotina e veja onde a operação perde
+        tempo e dinheiro, e por onde a automação deveria começar. Score na
+        hora, sem login, sem custo.
       </p>
 
       <div
@@ -85,8 +85,8 @@ function HeroLeft({ onStart }: { onStart: () => void }) {
             <div style={{ background: "linear-gradient(135deg,#10B981,#3BC8CF)" }} />
           </div>
           <div className="avatars__meta">
-            <span className="avatars__count">247 fundadores</span>
-            <span className="avatars__label">já usaram o diagnóstico esta semana</span>
+            <span className="avatars__count">247 operações</span>
+            <span className="avatars__label">já passaram pelo diagnóstico</span>
           </div>
         </div>
       </div>
@@ -179,7 +179,7 @@ function HeroRight() {
                 maxWidth: 170,
               }}
             >
-              Sinais positivos em mercado e modelo.
+              Sinais positivos em processo e retorno.
             </p>
           </div>
         </div>
@@ -194,10 +194,10 @@ function HeroRight() {
           }}
         >
           {[
-            { l: "Mercado", v: 78 },
-            { l: "Execução", v: 56 },
-            { l: "Modelo", v: 74 },
-            { l: "Regulatório", v: 62 },
+            { l: "Processo", v: 78 },
+            { l: "Sistemas", v: 56 },
+            { l: "Dados", v: 74 },
+            { l: "Retorno", v: 62 },
           ].map((x) => (
             <div
               key={x.l}
@@ -294,7 +294,7 @@ function HeroFootnote() {
           fontWeight: 600,
         }}
       >
-        {["Saúde", "Educação", "Jurídico", "Tech"].map((label) => (
+        {["Logística e Transportes", "Agro", "Medicina"].map((label) => (
           <span key={label} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
             <MiniDiamond size={10} color="var(--cyan-deep)" />
             {label}

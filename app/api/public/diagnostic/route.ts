@@ -20,7 +20,7 @@ export const dynamic = "force-dynamic";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const RATE_LIMIT_HITS = 3;
 const RATE_LIMIT_WINDOW_HOURS = 24;
-const ALLOWED_CATEGORIES: LeadCategory[] = ["saude", "educacao", "juridico", "tech", "outro"];
+const ALLOWED_CATEGORIES: LeadCategory[] = ["logistica", "agro", "medicina", "outro"];
 
 function getIp(req: NextRequest): string {
   const fwd = req.headers.get("x-forwarded-for");

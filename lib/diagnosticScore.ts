@@ -1,5 +1,6 @@
 // Diagnostic scoring (rule-based, deterministic).
-// v2: 11 perguntas, 4 seções, paywall com lockedAxes/lockedInsights/recommendation/nextSteps/strategicQuestions/benchmark.
+// v3: diagnóstico processual (automação com IA). 11 perguntas, 4 seções, paywall
+// com lockedAxes/lockedInsights/recommendation/nextSteps/strategicQuestions/benchmark.
 
 export type LikertValue =
   | "Discordo"
@@ -9,20 +10,20 @@ export type LikertValue =
   | "Concordo";
 
 export interface DiagnosticAnswers {
-  // Seção 1
-  ideia?: string;
-  problema?: string;
-  // Seção 2
-  cliente?: string;
-  mercado_tamanho?: string;
-  demanda?: LikertValue | string;
-  // Seção 3
-  receita?: string;
-  execucao?: LikertValue | string;
-  capital?: string;
-  // Seção 4
-  diferencial?: LikertValue | string;
-  regulacao?: string;
+  // Seção 1: a operação
+  operacao?: string;
+  processo_critico?: string;
+  // Seção 2: rotina e sistemas
+  sistemas?: string;
+  retrabalho?: LikertValue | string;
+  volume?: string;
+  // Seção 3: dados e medição
+  indicadores?: LikertValue | string;
+  dados?: string;
+  dependencia?: LikertValue | string;
+  // Seção 4: prontidão para IA
+  tentativas?: string;
+  equipe?: string;
   urgencia?: LikertValue | string;
 }
 
@@ -90,43 +91,51 @@ function textScore(v: unknown): number {
   return 38;
 }
 
-function mercadoTamanhoScore(v: unknown): number {
+function sistemasScore(v: unknown): number {
   if (typeof v !== "string") return 40;
-  if (v === "Menos de 10 mil") return 40;
-  if (v === "10 mil a 100 mil") return 60;
-  if (v === "100 mil a 1 milhão") return 78;
-  if (v === "Mais de 1 milhão") return 88;
-  if (v === "Ainda não sei medir") return 30;
+  if (v === "Papel, caderno e WhatsApp") return 25;
+  if (v === "Principalmente planilhas") return 40;
+  if (v === "Planilhas + um sistema (ERP ou CRM)") return 55;
+  if (v === "Vários sistemas que não conversam entre si") return 45;
+  if (v === "Sistemas integrados") return 85;
   return 40;
 }
 
-function capitalScore(v: unknown): number {
+function volumeScore(v: unknown): number {
   if (typeof v !== "string") return 40;
-  if (v === "Menos de R$ 20k (bootstrap)") return 35;
-  if (v === "R$ 20k a 100k (próprio ou amigos)") return 55;
-  if (v === "R$ 100k a 500k (anjo/pre-seed)") return 72;
-  if (v === "Mais de R$ 500k (seed+)") return 85;
-  if (v === "Ainda captando") return 40;
+  if (v === "Até 100 por mês") return 40;
+  if (v === "100 a 1 mil por mês") return 60;
+  if (v === "1 mil a 10 mil por mês") return 80;
+  if (v === "Mais de 10 mil por mês") return 90;
+  if (v === "Não sei medir") return 30;
   return 40;
 }
 
-function receitaScore(v: unknown): number {
-  if (typeof v !== "string") return 50;
-  if (v === "Assinatura mensal (SaaS)") return 82;
-  if (v === "Cobrança por uso ou por consulta") return 78;
-  if (v === "Licenciamento anual") return 68;
-  if (v === "Comissão sobre transações") return 70;
-  if (v === "Modelo híbrido (serviço + software)") return 72;
-  return 50;
+function dadosScore(v: unknown): number {
+  if (typeof v !== "string") return 40;
+  if (v === "Na cabeça das pessoas") return 20;
+  if (v === "Em planilhas espalhadas") return 40;
+  if (v === "Num sistema, mas incompletos") return 60;
+  if (v === "Centralizados e confiáveis") return 88;
+  return 40;
 }
 
-function regulacaoScore(v: unknown): number {
-  if (typeof v !== "string") return 60;
-  if (v === "Nenhuma / muito leve") return 80;
-  if (v === "Média (precisa de adaptação)") return 65;
-  if (v === "Alta (LGPD, CFM, ANVISA, etc.)") return 48;
-  if (v === "Crítica (saúde, financeiro pesado)") return 30;
-  return 60;
+function tentativasScore(v: unknown): number {
+  if (typeof v !== "string") return 40;
+  if (v === "Nunca tentamos automatizar") return 35;
+  if (v === "Tentamos e não pegou") return 45;
+  if (v === "Temos algumas automações simples") return 65;
+  if (v === "Já usamos IA em parte da operação") return 85;
+  return 40;
+}
+
+function equipeScore(v: unknown): number {
+  if (typeof v !== "string") return 45;
+  if (v === "Até 5 pessoas") return 45;
+  if (v === "6 a 20 pessoas") return 60;
+  if (v === "21 a 100 pessoas") return 75;
+  if (v === "Mais de 100 pessoas") return 85;
+  return 45;
 }
 
 // Hash determinístico simples para variar benchmark.
@@ -144,31 +153,29 @@ function clamp(v: number, min = 0, max = 100): number {
 }
 
 export function makeResultFallback(answers: DiagnosticAnswers): DiagnosticResult {
-  const lDemanda = likertScore(answers.demanda);
-  const lExec = likertScore(answers.execucao);
-  const lDif = likertScore(answers.diferencial);
-  const lUrg = likertScore(answers.urgencia);
+  const lRetrab = likertScore(answers.retrabalho); // alto = muito retrabalho
+  const lInd = likertScore(answers.indicadores); // alto = processo medido
+  const lDep = likertScore(answers.dependencia); // alto = refém de pessoas-chave
+  const lUrg = likertScore(answers.urgencia); // alto = custo vira problema em 12 meses
 
-  const sCliente = textScore(answers.cliente);
-  const sIdeia = textScore(answers.ideia);
-  const sProblema = textScore(answers.problema);
+  const sOper = textScore(answers.operacao);
+  const sProc = textScore(answers.processo_critico);
 
-  const sMerc = mercadoTamanhoScore(answers.mercado_tamanho);
-  const sCap = capitalScore(answers.capital);
-  const sRec = receitaScore(answers.receita);
-  const sReg = regulacaoScore(answers.regulacao);
+  const sSist = sistemasScore(answers.sistemas);
+  const sVol = volumeScore(answers.volume);
+  const sDados = dadosScore(answers.dados);
+  const sTent = tentativasScore(answers.tentativas);
+  const sEq = equipeScore(answers.equipe);
 
   // Eixos principais (visíveis).
-  const mercado = clamp(sCliente * 0.4 + lDemanda * 0.4 + sMerc * 0.2);
-  const execucao = clamp(lExec * 0.6 + sCap * 0.4);
-  const difer = clamp(sIdeia * 0.3 + sProblema * 0.2 + lDif * 0.5);
-  const modelo = clamp(sRec * 0.7 + sCap * 0.3);
-  // Regulatório: regulação alta com capital baixo piora; capital alto compensa.
-  const regAjuste = (sCap - 50) * 0.2;
-  const regulatorio = clamp(sReg + regAjuste);
+  const processo = clamp(sProc * 0.4 + (100 - lRetrab) * 0.4 + sOper * 0.2);
+  const sistemas = clamp(sSist * 0.7 + sTent * 0.3);
+  const dados = clamp(sDados * 0.6 + lInd * 0.4);
+  const pessoas = clamp((100 - lDep) * 0.6 + sEq * 0.4);
+  const retorno = clamp(sVol * 0.4 + lUrg * 0.3 + sEq * 0.3);
 
   const overall = clamp(
-    mercado * 0.25 + execucao * 0.2 + difer * 0.25 + modelo * 0.2 + regulatorio * 0.1
+    processo * 0.25 + sistemas * 0.2 + dados * 0.2 + pessoas * 0.15 + retorno * 0.2
   );
 
   const bucket: DiagnosticBucket =
@@ -182,61 +189,61 @@ export function makeResultFallback(answers: DiagnosticAnswers): DiagnosticResult
 
   const headline =
     overall >= 75
-      ? "Tese com sinais fortes. Vale acelerar agora, com foco em diferenciação e canal."
+      ? "Operação com base pronta. Dá pra automatizar agora e medir retorno no primeiro trimestre."
       : overall >= 50
-        ? "Sinais positivos com pontos a validar nos próximos 60 a 90 dias."
+        ? "A automação se paga aqui, mas 2 ou 3 pontos do processo precisam de redesenho antes."
         : overall >= 25
-          ? "Em desenvolvimento: a tese existe, mas falta clareza em mercado ou modelo."
-          : "Tese desafiadora hoje, vale recomeçar pelo problema antes da solução.";
+          ? "Existe desperdício claro, mas o processo precisa de arrumação antes de receber tecnologia."
+          : "Automatizar agora só aceleraria o erro. O primeiro passo é organizar processo e dado.";
 
   const axes: DiagnosticAxis[] = [
     {
-      label: "Mercado",
-      value: mercado,
-      hint: "Demanda mencionada, com porte de cliente bem delimitado.",
+      label: "Processo",
+      value: processo,
+      hint: "Clareza do fluxo e nível de retrabalho na rotina descrita.",
     },
     {
-      label: "Execução",
-      value: execucao,
-      hint: "Clareza técnica autodeclarada para os próximos 90 dias.",
+      label: "Sistemas",
+      value: sistemas,
+      hint: "Quanto da operação já roda em ferramenta versus papel e planilha.",
     },
-    { label: "Diferenciação", value: difer },
-    { label: "Modelo", value: modelo },
-    { label: "Regulatório", value: regulatorio },
+    { label: "Dados", value: dados, hint: "Onde o dado vive e se ele é confiável para decidir." },
+    { label: "Pessoas", value: pessoas, hint: "Dependência de pessoas-chave versus porte do time." },
+    { label: "Retorno", value: retorno, hint: "Volume e urgência indicam quanto a automação devolve." },
   ];
 
   // lockedAxes: 5 eixos secundários.
-  const defensabilidade = clamp(lDif * 0.7 + sProblema * 0.3);
-  const timeToMarket = clamp(lUrg * 0.5 + lExec * 0.5);
-  const capitalEficiente = clamp(sCap * 0.6 + (100 - sMerc) * 0.4 * 0.5 + sMerc * 0.2);
-  const canalAquisicao = clamp(sRec * 0.4 + lDemanda * 0.6);
-  const riscoRegulatorio = clamp(100 - sReg + (sCap - 50) * 0.1);
+  const prontidaoIa = clamp(sDados * 0.4 + sSist * 0.3 + sTent * 0.3);
+  const custoRetrabalho = clamp(lRetrab * 0.5 + sVol * 0.3 + sEq * 0.2);
+  const dependenciaPessoas = clamp(lDep * 0.7 + (100 - sDados) * 0.3);
+  const ordemAutomacao = clamp(lUrg * 0.4 + sVol * 0.3 + sProc * 0.3);
+  const payback = clamp(sVol * 0.4 + sEq * 0.3 + lRetrab * 0.3);
 
   const lockedAxes: DiagnosticAxis[] = [
     {
-      label: "Defensabilidade",
-      value: defensabilidade,
-      hint: "Quão difícil seria para um concorrente copiar em 12 meses.",
+      label: "Prontidão para IA",
+      value: prontidaoIa,
+      hint: "O quanto dado e sistema atuais aguentam um agente de IA em produção.",
     },
     {
-      label: "Time-to-market",
-      value: timeToMarket,
-      hint: "Janela de mercado vs capacidade de execução.",
+      label: "Custo do retrabalho",
+      value: custoRetrabalho,
+      hint: "Horas perdidas por mês redigitando e conferindo dado.",
     },
     {
-      label: "Capital eficiente",
-      value: capitalEficiente,
-      hint: "Caixa disponível vs tamanho do mercado a conquistar.",
+      label: "Dependência de pessoas",
+      value: dependenciaPessoas,
+      hint: "Risco de a operação parar quando alguém específico falta.",
     },
     {
-      label: "Canal de aquisição",
-      value: canalAquisicao,
-      hint: "Modelo de receita vs sinais de demanda já validados.",
+      label: "Ordem de automação",
+      value: ordemAutomacao,
+      hint: "Qual frente automatizar primeiro para o retorno aparecer rápido.",
     },
     {
-      label: "Risco regulatório",
-      value: riscoRegulatorio,
-      hint: "Exposição regulatória ponderada por capital disponível.",
+      label: "Payback",
+      value: payback,
+      hint: "Estimativa de quando a automação se paga nessa operação.",
     },
   ];
 
@@ -247,50 +254,50 @@ export function makeResultFallback(answers: DiagnosticAnswers): DiagnosticResult
       label: "Insight",
       body:
         overall >= 50
-          ? "Sua descrição de cliente já passa a régua, porte e segmento estão claros. Escreva um pitch de 2 linhas que isole esse cliente e use no próximo contato comercial."
-          : "Falta concretude na descrição do cliente que paga. Antes de seguir, defina um único perfil ideal com porte, dor e canal de aquisição.",
+          ? "O processo crítico que você descreveu tem volume e repetição suficientes para automação com retorno mensurável. Comece por ele: uma frente só, medida de ponta a ponta, antes de espalhar tecnologia pela operação."
+          : "O processo crítico ainda está descrito de forma genérica. Antes de qualquer ferramenta, desenhe o fluxo como ele acontece hoje, com etapas, donos e tempo de cada passo. Esse desenho é o que separa automação que se paga de piloto abandonado.",
     },
     {
       kind: "warning",
       label: "Atenção",
       body:
-        execucao < 60
-          ? "Você sinalizou pouca clareza técnica de execução. Esse é o eixo que mais derruba teses em estágio inicial: feche um plano técnico de 90 dias antes de captar."
-          : "Diferenciação ainda parece incremental. Investigue uma vantagem defensável (dado proprietário, integração, regulação) que faça o concorrente demorar 12 meses pra copiar.",
+        dados < 55
+          ? "O dado da operação vive espalhado ou na cabeça do time. Automatizar em cima de dado ruim multiplica o erro: centralize o registro do processo crítico primeiro, nem que seja numa planilha única com dono definido."
+          : "O retrabalho declarado indica que o mesmo dado é digitado mais de uma vez. Cada redigitação é custo e fonte de erro: a integração entre as ferramentas atuais tende a se pagar antes de qualquer IA nova.",
     },
   ];
 
   // Insights locked (3 a 4): conteúdo de valor que fica atrás do paywall.
   const lockedInsights: DiagnosticInsight[] = [];
-  if (riscoRegulatorio > 55) {
+  if (custoRetrabalho > 55) {
     lockedInsights.push({
       kind: "warning",
-      label: "Risco regulatório",
+      label: "Custo do retrabalho",
       body:
-        "O nível de regulação do setor combinado com o seu caixa disponível indica exposição relevante. Mapeamos no diagnóstico completo as 3 frentes de compliance que mais consomem capital em estágio inicial e o cronograma realista de adequação.",
+        "Pelo volume e porte declarados, o retrabalho dessa operação consome horas relevantes todo mês. No diagnóstico completo estimamos esse custo em reais por mês e mostramos quais 2 integrações eliminam a maior parte dele.",
     });
   }
-  if (canalAquisicao < 65) {
+  if (prontidaoIa < 65) {
     lockedInsights.push({
       kind: "insight",
-      label: "Canal de aquisição",
+      label: "Prontidão para IA",
       body:
-        "Seu modelo de receita exige um canal de aquisição específico para funcionar economicamente. No diagnóstico completo detalhamos os 2 canais que historicamente performam pra esse tipo de tese e o CAC esperado nos primeiros 12 meses.",
+        "Agente de IA em produção exige dado acessível e sistema que aceite integração. No diagnóstico completo mapeamos o que precisa mudar na sua base atual antes do primeiro agente, e o que dá pra automatizar já, sem mexer em nada.",
     });
   }
-  if (defensabilidade < 70) {
+  if (dependenciaPessoas > 55) {
     lockedInsights.push({
       kind: "warning",
-      label: "Defensabilidade",
+      label: "Dependência de pessoas",
       body:
-        "A vantagem defensável que você descreveu pode ser copiada em menos de 12 meses. Identificamos 4 vetores de defensa (dado, rede, regulação, custo de troca) e qual deles é viável construir antes do próximo ciclo de captação.",
+        "Parte relevante do processo vive na cabeça de pessoas específicas. Isso trava férias, escala e venda da empresa. No diagnóstico completo mostramos como transformar esse conhecimento em fluxo documentado e automatizável.",
     });
   }
   lockedInsights.push({
     kind: "insight",
-    label: "Estrutura societária",
+    label: "Ordem de automação",
     body:
-      "Cap table e estrutura jurídica influenciam diretamente a capacidade de captar nos próximos 18 meses. No diagnóstico completo revisamos vesting, opções e a tese de equity para o seu estágio.",
+      "Automatizar na ordem errada queima orçamento e a confiança do time. No diagnóstico completo entregamos a sequência recomendada para a sua operação: o que vem primeiro, o que espera, e o indicador que prova cada etapa.",
   });
 
   // Recomendação.
@@ -298,71 +305,71 @@ export function makeResultFallback(answers: DiagnosticAnswers): DiagnosticResult
     overall >= 75 ? "ENTRAR" : overall >= 50 ? "OBSERVAR" : "NAO_ENTRAR";
   const recommendationReason =
     recommendation === "ENTRAR"
-      ? "Sinais sólidos em mercado, modelo e diferenciação. Vale acelerar agora."
+      ? "Processo, dado e volume dão base para automatizar agora, com retorno mensurável no primeiro ciclo."
       : recommendation === "OBSERVAR"
-        ? "Tese promissora, mas com 2 a 3 pontos a validar nos próximos 60 dias antes de comprometer capital."
-        : "Recomendamos repensar o problema ou o cliente antes de seguir com investimento de tempo ou capital.";
+        ? "A automação se paga nessa operação, mas o processo pede redesenho em 2 ou 3 pontos antes de receber tecnologia."
+        : "Antes de investir em ferramenta, organize o processo e o dado. Automatizar agora só faria o erro acontecer mais rápido.";
 
   // Next steps (3) por bucket.
   let nextSteps: DiagnosticNextStep[];
   if (bucket === "Forte") {
     nextSteps = [
       {
-        title: "Acelerar canal de aquisição com 10 contas-alvo",
-        body: "Lista nominal de prospects com porte e ponto de entrada definidos.",
+        title: "Escolher o processo de maior volume para automatizar primeiro",
+        body: "Uma frente só, com indicador de antes e depois definido no dia 1.",
       },
       {
-        title: "Estruturar deck de captação de pre-seed",
-        body: "Narrativa, métricas e tese de retorno alinhadas ao tipo de fundo certo.",
+        title: "Medir o custo atual do processo em horas por semana",
+        body: "O número que vai provar o retorno da automação em 90 dias.",
       },
       {
-        title: "Fechar ICP final e proibir desvios por 90 dias",
-        body: "Foco em um único perfil para validar economics antes de expandir.",
+        title: "Listar as integrações entre os sistemas que já existem",
+        body: "O que já conversa, o que precisa de ponte, o que dá pra aposentar.",
       },
     ];
   } else if (bucket === "Promissor") {
     nextSteps = [
       {
-        title: "Validar canal com 5 entrevistas pagas",
-        body: "Cliente real, problema real, disposição a pagar testada na prática.",
+        title: "Desenhar o processo crítico como ele acontece hoje",
+        body: "Etapas, donos, sistemas e tempo de cada passo, sem embelezar.",
       },
       {
-        title: "Fechar plano técnico de 90 dias",
-        body: "Backlog priorizado, riscos técnicos mapeados e marcos semanais.",
+        title: "Cortar as etapas que não geram valor antes de automatizar",
+        body: "Automatizar etapa inútil é pagar para errar mais rápido.",
       },
       {
-        title: "Mapear 3 concorrentes diretos e indiretos",
-        body: "Posicionamento, preço e gaps de produto para isolar vantagem.",
+        title: "Centralizar o dado do processo num lugar só, com dono",
+        body: "Uma fonte de verdade, mesmo que seja uma planilha bem cuidada.",
       },
     ];
   } else if (bucket === "Em desenvolvimento") {
     nextSteps = [
       {
-        title: "Refinar ICP com 10 conversas qualitativas",
-        body: "Quem paga, qual o porte e qual o canal possível.",
+        title: "Registrar uma semana do processo crítico em detalhe",
+        body: "Quantas vezes rodou, quanto tempo levou, onde travou.",
       },
       {
-        title: "Construir MVP enxuto em 6 semanas",
-        body: "Hipótese central isolada, sem features secundárias.",
+        title: "Definir um dono para cada dado que circula na operação",
+        body: "Sem dono, o dado apodrece e nenhuma automação segura.",
       },
       {
-        title: "Definir métrica única de validação",
-        body: "Um número que prova ou derruba a tese nos próximos 90 dias.",
+        title: "Eliminar uma redigitação por semana, manualmente",
+        body: "Antes de ferramenta nova, pare de pagar duas vezes pelo mesmo dado.",
       },
     ];
   } else {
     nextSteps = [
       {
-        title: "Voltar ao problema, sem solução em mente",
-        body: "5 entrevistas abertas com clientes potenciais antes de codar nada.",
+        title: "Escrever o passo a passo do processo mais doloroso",
+        body: "No papel mesmo. O que não está escrito não pode ser melhorado.",
       },
       {
-        title: "Testar 2 hipóteses alternativas em paralelo",
-        body: "Reduzir custo de descobrir que a tese atual não fecha.",
+        title: "Tirar a operação do WhatsApp e do caderno, um fluxo por vez",
+        body: "Uma planilha estruturada já muda o jogo nesse estágio.",
       },
       {
-        title: "Estabelecer critério de parada honesto",
-        body: "O sinal mínimo que precisa aparecer em 60 dias pra seguir investindo.",
+        title: "Medir uma coisa só por 30 dias",
+        body: "Volume ou tempo do processo crítico. Um número honesto pra começar.",
       },
     ];
   }
@@ -371,15 +378,15 @@ export function makeResultFallback(answers: DiagnosticAnswers): DiagnosticResult
   let strategicQuestions: string[];
   if (bucket === "Forte" || bucket === "Promissor") {
     strategicQuestions = [
-      "Quem é o decisor real de compra na conta-alvo, e quanto tempo dura o ciclo de venda?",
-      "Qual o CAC esperado nos primeiros 12 meses, e como ele se compara ao LTV projetado?",
-      "Que evidência você tem de que o problema vale pelo menos 10x o preço cobrado?",
+      "Quantas horas por mês o time gasta no processo crítico, e quanto custa essa hora?",
+      "Se a automação eliminar metade do trabalho manual, o que o time passa a fazer com o tempo livre?",
+      "Qual sistema atual vira a fonte de verdade, e quem responde pela qualidade do dado nele?",
     ];
   } else {
     strategicQuestions = [
-      "Qual a evidência mais forte que você tem hoje de que esse cliente paga por essa solução?",
-      "Se a tese estiver errada, qual o sinal que faria você mudar de direção nos próximos 60 dias?",
-      "Quem na sua mesa vai construir isso, e por que essa pessoa é a certa pra esse problema?",
+      "Se a pessoa que mais conhece o processo sair amanhã, quanto tempo a operação leva para se recuperar?",
+      "Quanto custou, no último ano, o erro causado por dado redigitado ou planilha desatualizada?",
+      "Qual processo, se rodasse sozinho, liberaria mais tempo do dono ou do gestor?",
     ];
   }
 
@@ -423,13 +430,13 @@ const VALID_RECOMMENDATIONS: DiagnosticRecommendation[] = [
   "OBSERVAR",
   "NAO_ENTRAR",
 ];
-const REQUIRED_AXES = ["Mercado", "Execução", "Diferenciação", "Modelo", "Regulatório"];
+const REQUIRED_AXES = ["Processo", "Sistemas", "Dados", "Pessoas", "Retorno"];
 const REQUIRED_LOCKED_AXES = [
-  "Defensabilidade",
-  "Time-to-market",
-  "Capital eficiente",
-  "Canal de aquisição",
-  "Risco regulatório",
+  "Prontidão para IA",
+  "Custo do retrabalho",
+  "Dependência de pessoas",
+  "Ordem de automação",
+  "Payback",
 ];
 
 function isIntInRange(v: unknown, min: number, max: number): v is number {

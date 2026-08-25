@@ -17,7 +17,7 @@ REGRAS DE SAÍDA:
 - Retorne SOMENTE a frase, sem aspas, sem markdown, sem prefixos.
 - Uma única frase, no máximo 140 caracteres.
 - NÃO use travessão nem meia-risca. Use vírgula, ponto ou parênteses.
-- Inclua, nesta lógica: setor/segmento, porte ou faixa de capital, score do diagnóstico, e a intenção principal (o que a pessoa quer construir ou resolver).
+- Inclua, nesta lógica: segmento, porte do time ou volume do processo, score do diagnóstico, e a intenção principal (o que a operação precisa resolver).
 - Se a pessoa pediu contato, termine com "Pediu contato.".
 - Sem clichês de empreendedorismo. Linguagem concreta.
 - Sempre que citar a marca, escreva PRECEPTOR! com exclamação.`;
@@ -31,11 +31,15 @@ interface LeadSummaryInput {
 }
 
 const CATEGORY_LABEL: Record<string, string> = {
+  logistica: "Logística e Transportes",
+  agro: "Agro",
+  medicina: "Medicina",
+  outro: "Outro segmento",
+  // legados (leads antigos)
   saude: "Saúde",
   educacao: "Educação",
   juridico: "Jurídico",
   tech: "Tech",
-  outro: "Outro setor",
 };
 
 function categoryLabel(cat: string | null): string {
@@ -53,14 +57,13 @@ export function buildLeadSummaryUserPrompt(input: LeadSummaryInput): string {
   lines.push("");
   lines.push("Respostas do diagnóstico:");
   const fields: Array<[keyof DiagnosticAnswers, string]> = [
-    ["ideia", "Ideia"],
-    ["problema", "Problema"],
-    ["cliente", "Cliente"],
-    ["mercado_tamanho", "Tamanho de mercado"],
-    ["receita", "Modelo de receita"],
-    ["capital", "Capital disponível"],
-    ["diferencial", "Diferencial"],
-    ["regulacao", "Regulação"],
+    ["operacao", "Operação"],
+    ["processo_critico", "Processo crítico"],
+    ["sistemas", "Sistemas"],
+    ["volume", "Volume do processo"],
+    ["dados", "Onde vivem os dados"],
+    ["equipe", "Tamanho do time"],
+    ["tentativas", "Experiência com automação"],
   ];
   for (const [key, label] of fields) {
     const v = a[key];
@@ -78,11 +81,11 @@ export function buildLeadSummaryFallback(input: LeadSummaryInput): string {
   const setor = categoryLabel(input.category as string | null);
   const score =
     typeof input.score === "number" ? `score ${input.score}` : "sem score";
-  const capital =
-    typeof input.answers?.capital === "string" && input.answers.capital.trim()
-      ? `capital ${input.answers.capital.trim()}`
-      : "capital não informado";
-  let line = `${setor}, ${score}, ${capital}.`;
+  const porte =
+    typeof input.answers?.equipe === "string" && input.answers.equipe.trim()
+      ? `time ${input.answers.equipe.trim().toLowerCase()}`
+      : "porte não informado";
+  let line = `${setor}, ${score}, ${porte}.`;
   if (input.requestedContact) line += " Pediu contato.";
   return line.slice(0, 140);
 }

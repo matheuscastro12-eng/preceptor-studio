@@ -65,16 +65,16 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
     // Remove os campos meta para mandar só as 11 respostas ao modelo.
     const answers: DiagnosticAnswers = {};
     const DIAGNOSTIC_KEYS: Array<keyof DiagnosticAnswers> = [
-      "ideia",
-      "problema",
-      "cliente",
-      "mercado_tamanho",
-      "demanda",
-      "receita",
-      "execucao",
-      "capital",
-      "diferencial",
-      "regulacao",
+      "operacao",
+      "processo_critico",
+      "sistemas",
+      "retrabalho",
+      "volume",
+      "indicadores",
+      "dados",
+      "dependencia",
+      "tentativas",
+      "equipe",
       "urgencia",
     ];
     for (const key of DIAGNOSTIC_KEYS) {

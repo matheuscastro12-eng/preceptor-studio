@@ -10,7 +10,16 @@ export type LeadStatus =
 
 export type LeadSource = "diagnostic_public" | "manual" | "indicacao" | "automacao";
 
-export type LeadCategory = "saude" | "educacao" | "juridico" | "tech" | "outro";
+// Segmentos atuais + valores legados (leads antigos no banco continuam validos).
+export type LeadCategory =
+  | "logistica"
+  | "agro"
+  | "medicina"
+  | "outro"
+  | "saude"
+  | "educacao"
+  | "juridico"
+  | "tech";
 
 export const LEAD_STATUSES: { value: LeadStatus; label: string; color: string; soft: string }[] = [
   { value: "novo", label: "Novo", color: "#5D57EB", soft: "#EEF2FF" },
@@ -22,12 +31,19 @@ export const LEAD_STATUSES: { value: LeadStatus; label: string; color: string; s
 ];
 
 export const LEAD_CATEGORIES: { value: LeadCategory; label: string }[] = [
-  { value: "saude", label: "Saúde" },
-  { value: "educacao", label: "Educação" },
-  { value: "juridico", label: "Jurídico" },
-  { value: "tech", label: "Tech" },
+  { value: "logistica", label: "Logística e Transportes" },
+  { value: "agro", label: "Agro" },
+  { value: "medicina", label: "Medicina" },
   { value: "outro", label: "Outro" },
 ];
+
+// Labels de categorias legadas (leads criados antes do reposicionamento).
+const LEGACY_CATEGORY_LABELS: Record<string, string> = {
+  saude: "Saúde",
+  educacao: "Educação",
+  juridico: "Jurídico",
+  tech: "Tech",
+};
 
 export interface Lead {
   id: string;
@@ -62,5 +78,9 @@ export function statusMeta(status: LeadStatus) {
 
 export function categoryLabel(cat: string | null | undefined): string {
   if (!cat) return "Sem categoria";
-  return LEAD_CATEGORIES.find((c) => c.value === cat)?.label ?? cat;
+  return (
+    LEAD_CATEGORIES.find((c) => c.value === cat)?.label ??
+    LEGACY_CATEGORY_LABELS[cat] ??
+    cat
+  );
 }

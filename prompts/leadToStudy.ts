@@ -70,11 +70,15 @@ QUESTION_ID MAPEÁVEIS (do questionário do estudo):
 Retorne SOMENTE o objeto JSON, sem fences, sem comentários, sem texto antes ou depois.`;
 
 const CATEGORY_LABEL: Record<string, string> = {
+  logistica: "Logística e Transportes",
+  agro: "Agro",
+  medicina: "Medicina",
+  outro: "Outro segmento",
+  // legados (leads antigos)
   saude: "Saúde",
   educacao: "Educação",
   juridico: "Jurídico",
   tech: "Tech",
-  outro: "Outro setor",
 };
 
 interface InternalInterpretation {
@@ -107,17 +111,17 @@ export function buildLeadToStudyUserPrompt(input: LeadToStudyInput): string {
   lines.push("RESPOSTAS DO DIAGNÓSTICO:");
 
   const fields: Array<[keyof DiagnosticAnswers, string]> = [
-    ["ideia", "Ideia"],
-    ["problema", "Problema"],
-    ["cliente", "Cliente"],
-    ["mercado_tamanho", "Tamanho de mercado"],
-    ["demanda", "Sinais de demanda"],
-    ["receita", "Modelo de receita"],
-    ["execucao", "Clareza de execução"],
-    ["capital", "Capital disponível"],
-    ["diferencial", "Diferencial"],
-    ["regulacao", "Regulação"],
-    ["urgencia", "Urgência do problema"],
+    ["operacao", "Operação"],
+    ["processo_critico", "Processo crítico"],
+    ["sistemas", "Sistemas em uso"],
+    ["retrabalho", "Retrabalho (Likert)"],
+    ["volume", "Volume do processo"],
+    ["indicadores", "Custo medido (Likert)"],
+    ["dados", "Onde vivem os dados"],
+    ["dependencia", "Dependência de pessoas (Likert)"],
+    ["tentativas", "Experiência com automação"],
+    ["equipe", "Tamanho do time"],
+    ["urgencia", "Urgência (Likert)"],
   ];
   for (const [key, label] of fields) {
     const v = a[key];

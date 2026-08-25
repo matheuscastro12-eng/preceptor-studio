@@ -90,7 +90,7 @@ export function CaptureScreen({
             <Field label="Empresa ou projeto" required>
               <input
                 className="input"
-                placeholder="Nome da sua startup ou ideia"
+                placeholder="Nome da sua empresa"
                 value={contact.empresa}
                 onChange={setField("empresa")}
               />
@@ -103,7 +103,7 @@ export function CaptureScreen({
                 onChange={setField("telefone")}
               />
             </Field>
-            <Field label="Categoria">
+            <Field label="Segmento">
               <select
                 className="input"
                 value={category}

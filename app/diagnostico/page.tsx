@@ -25,7 +25,7 @@ const SITE_URL = "https://preceptorstudio.com";
 export const metadata: Metadata = {
   title: "Diagnóstico PRECEPTOR! Studio",
   description:
-    "Faça o diagnóstico técnico e empreendedor da sua ideia em poucos minutos. Score da sua tese na hora e os pontos prioritários pra atacar, sem login.",
+    "Descubra onde a IA se paga na sua operação. Score na hora, os pontos onde o processo perde tempo e dinheiro, e por onde a automação deveria começar. Sem login.",
   alternates: { canonical: "/diagnostico" },
   robots: { index: true, follow: true },
   openGraph: {
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     siteName: "PRECEPTOR! Studio",
     title: "Diagnóstico técnico e empreendedor · PRECEPTOR! Studio",
     description:
-      "Poucos minutos, sem login. Score da sua tese na hora e os pontos prioritários pra atacar primeiro.",
+      "Poucos minutos, sem login. Score da sua operação na hora e por onde a automação deveria começar.",
     images: [
       {
         url: "/opengraph-image",
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Diagnóstico técnico e empreendedor · PRECEPTOR! Studio",
     description:
-      "Poucos minutos, sem login. Score da sua tese na hora e os pontos prioritários pra atacar.",
+      "Poucos minutos, sem login. Score da sua operação na hora e por onde a automação deveria começar.",
     images: ["/opengraph-image"],
   },
 };
@@ -60,7 +60,7 @@ const WEBPAGE_JSONLD = {
   name: "Diagnóstico PRECEPTOR! Studio",
   url: `${SITE_URL}/diagnostico`,
   description:
-    "Diagnóstico técnico e empreendedor gratuito da PRECEPTOR! Studio. Poucos minutos, score da sua tese na hora e os pontos prioritários pra atacar.",
+    "Diagnóstico gratuito de operação da PRECEPTOR! Studio. Poucos minutos, score na hora e por onde a automação se paga primeiro.",
   inLanguage: "pt-BR",
   isPartOf: {
     "@type": "WebSite",

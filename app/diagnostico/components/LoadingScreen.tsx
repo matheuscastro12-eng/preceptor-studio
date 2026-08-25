@@ -5,9 +5,9 @@ import { Sparkle, CircleRing, DoubleCircle, MeshTexture } from "@/components/Orn
 
 const PHASES = [
   "Lendo as 11 respostas",
-  "Avaliando 5 eixos",
-  "Gerando plano de 90 dias",
-  "Calculando benchmark do setor",
+  "Avaliando os 5 eixos da operação",
+  "Estimando onde a automação se paga",
+  "Calculando benchmark do segmento",
 ];
 
 const PHASE_DURATION = 1.6; // segundos por fase
@@ -76,7 +76,7 @@ export function LoadingScreen({ onHome }: { onHome: () => void }) {
 
         <div>
           <span className="eyebrow" style={{ color: "var(--cyan)" }}>
-            Analisando sua tese
+            Analisando sua operação
           </span>
           <h1
             className="display-md"
@@ -99,7 +99,7 @@ export function LoadingScreen({ onHome }: { onHome: () => void }) {
               marginInline: "auto",
             }}
           >
-            O modelo está analisando o que você escreveu, ponderando contra teses similares e
+            O modelo está analisando o que você escreveu, ponderando contra operações parecidas e
             montando o plano de 90 dias.
           </p>
         </div>

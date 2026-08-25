@@ -57,10 +57,10 @@ export function ResultScreen({
   const radarData = result.axes;
   const recoLabel =
     result.recommendation === "ENTRAR"
-      ? "ENTRAR"
+      ? "AUTOMATIZAR"
       : result.recommendation === "OBSERVAR"
-        ? "OBSERVAR"
-        : "NAO ENTRAR";
+        ? "REDESENHAR ANTES"
+        : "ORGANIZAR A BASE";
 
   return (
     <div className="screen screen--dark" data-screen-label="04 Resultado">
@@ -74,7 +74,7 @@ export function ResultScreen({
 
       {/* 1. Title strip */}
       <div className="padx" style={{ paddingTop: 24, paddingBottom: 28, position: "relative", zIndex: 1 }}>
-        <span className="eyebrow">Diagnóstico de {contact.empresa || "sua ideia"}</span>
+        <span className="eyebrow">Diagnóstico de {contact.empresa || "sua operação"}</span>
         <div
           style={{
             marginTop: 14,
@@ -91,7 +91,7 @@ export function ResultScreen({
           </h1>
           <p className="lead" style={{ color: "rgba(255,255,255,0.7)", maxWidth: 380 }}>
             Resultado gerado pela ferramenta da PRECEPTOR! com base nas suas 11 respostas. Para os
-            10 eixos completos, plano de execução e benchmark, fale com a gente.
+            10 eixos completos, o plano de automação e o benchmark, fale com a gente.
           </p>
         </div>
       </div>
@@ -950,7 +950,7 @@ export function ResultScreen({
               Diagnóstico completo
             </span>
             <h2 className="display-md" style={{ fontSize: "1.6rem", color: "#fff", marginTop: 8 }}>
-              10 eixos, 5 documentos, plano de execução e cronograma.
+              10 eixos, mapa da operação, plano de automação e ordem de implementação.
             </h2>
             <p
               style={{
@@ -961,8 +961,8 @@ export function ResultScreen({
                 maxWidth: 580,
               }}
             >
-              Engenharia humana de verdade, com IA por baixo. Apenas para teses onde fizer sentido
-              para os dois lados.
+              Engenharia humana de verdade, com IA por baixo. Apenas para operações onde fizer
+              sentido para os dois lados.
             </p>
           </div>
           {contactState === "done" ? (
