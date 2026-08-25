@@ -12,8 +12,8 @@ const HREF = "/diagnostico?start=1";
 type Variant = "A" | "B";
 
 const VARIANT_LABEL: Record<Variant, string> = {
-  A: "Descobrir se a minha ideia dá dinheiro",
-  B: "Fazer o diagnóstico do meu negócio",
+  A: "Descobrir onde a IA se paga",
+  B: "Mapear a minha operação",
 };
 
 function readStorage(key: string): string | null {
@@ -114,7 +114,7 @@ export function HeroCta() {
   return (
     <Link
       href={HREF}
-      className="mkt-btn mkt-btn--primary mkt-btn--lg"
+      className="mkt-btn mkt-btn--cyan mkt-btn--lg"
       aria-label={label}
       data-ab-variant={variant}
       onClick={handleClick}

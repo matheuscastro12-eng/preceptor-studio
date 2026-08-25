@@ -10,14 +10,14 @@ const LAST_UPDATED = "02 de junho de 2026";
 export const metadata: Metadata = {
   title: "Política de Privacidade",
   description:
-    "Como a PRECEPTOR! Venture Studio coleta, usa e protege os seus dados pessoais, em conformidade com a LGPD (Lei 13.709/2018).",
+    "Como a PRECEPTOR! Studio coleta, usa e protege os seus dados pessoais, em conformidade com a LGPD (Lei 13.709/2018).",
   alternates: { canonical: "/privacidade" },
   openGraph: {
     type: "website",
     locale: "pt_BR",
     url: `${SITE_URL}/privacidade`,
-    siteName: "PRECEPTOR! Venture Studio",
-    title: "Política de Privacidade · PRECEPTOR! Venture Studio",
+    siteName: "PRECEPTOR! Studio",
+    title: "Política de Privacidade · PRECEPTOR! Studio",
     description: "Como tratamos os seus dados pessoais, em conformidade com a LGPD.",
   },
 };
@@ -43,7 +43,7 @@ export default function PrivacidadePage() {
             Política de <span className="cyan">Privacidade.</span>
           </h1>
           <p className="mkt-lead" style={{ marginTop: 18, maxWidth: 640 }}>
-            Levamos os seus dados tão a sério quanto a sua tese. Aqui está, em
+            Levamos os seus dados tão a sério quanto a sua operação. Aqui está, em
             português claro, o que coletamos, por que coletamos e o que você pode
             exigir de nós a qualquer momento.
           </p>
@@ -64,13 +64,13 @@ export default function PrivacidadePage() {
         <div className="container" style={{ maxWidth: 820 }}>
           <Block title="1. Quem é o controlador">
             <P>
-              A <strong>PRECEPTOR! Venture Studio</strong> é a controladora dos
+              A <strong>PRECEPTOR! Studio</strong> é a controladora dos
               dados pessoais tratados neste site, nos termos da Lei Geral de
-              Proteção de Dados (Lei nº 13.709/2018 — LGPD).
+              Proteção de Dados (Lei nº 13.709/2018, a LGPD).
             </P>
             <P>
               Identificação do controlador:{" "}
-              <strong>[preencher: razão social completa e CNPJ]</strong> — sede em
+              <strong>[preencher: razão social completa e CNPJ]</strong>, com sede em
               Itajubá/MG. Contato do encarregado (DPO) e canal de privacidade:{" "}
               <a href={`mailto:${STUDIO_EMAIL}`} style={linkStyle}>
                 {STUDIO_EMAIL}

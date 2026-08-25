@@ -1,26 +1,21 @@
 import { Nav } from "@/components/marketing/Nav";
-import { Hero } from "@/components/marketing/Hero";
-import { ProductSignpost } from "@/components/marketing/ProductSignpost";
-import { Marquee } from "@/components/marketing/Marquee";
+import DigitalSerenityHero from "@/components/ui/digital-serenity-hero";
+import { SegmentsSection } from "@/components/marketing/SegmentsSection";
 import { HowSection } from "@/components/marketing/HowSection";
 import { DeliverablesSection } from "@/components/marketing/DeliverablesSection";
 import { AutomationSection } from "@/components/marketing/AutomationSection";
-import { SectorsSection } from "@/components/marketing/SectorsSection";
-import { StatsSection } from "@/components/marketing/StatsSection";
-import { CTASection } from "@/components/marketing/CTASection";
 import { Footer } from "@/components/marketing/Footer";
-import { ScreenIndicator } from "@/components/marketing/ScreenIndicator";
 
 const SITE_URL = "https://preceptorstudio.com";
 
 const ORG_JSONLD = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "PRECEPTOR! Venture Studio",
+  name: "PRECEPTOR! Studio",
   url: SITE_URL,
-  logo: `${SITE_URL}/icon`,
+  logo: `${SITE_URL}/brand/p-mark-teal.png`,
   description:
-    "Venture Studio brasileiro que constrói produtos digitais e soluções de IA com engenharia humana, em camadas.",
+    "Empresa brasileira de engenharia de processos que usa Inteligência Artificial como ferramenta. Diagnóstico, redesenho e automação medida em produção.",
   foundingDate: "2026",
   address: {
     "@type": "PostalAddress",
@@ -30,6 +25,14 @@ const ORG_JSONLD = {
   },
   sameAs: ["https://instagram.com/preceptorstudio"],
   contactPoint: [
+    {
+      "@type": "ContactPoint",
+      email: "thiago@ospreceptores.com",
+      telephone: "+5535999191919",
+      contactType: "customer support",
+      areaServed: "BR",
+      availableLanguage: ["pt-BR"],
+    },
     {
       "@type": "ContactPoint",
       email: "thiago@ospreceptores.com",
@@ -72,17 +75,12 @@ export default function MarketingHome() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(BREADCRUMB_JSONLD) }}
       />
       <Nav />
-      <Hero />
-      <ProductSignpost />
-      <Marquee />
+      <DigitalSerenityHero />
+      <SegmentsSection />
       <HowSection />
       <DeliverablesSection />
       <AutomationSection />
-      <SectorsSection />
-      <StatsSection />
-      <CTASection />
       <Footer />
-      <ScreenIndicator />
     </div>
   );
 }

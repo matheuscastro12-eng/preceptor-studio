@@ -6,34 +6,11 @@ import { fbqTrack } from "@/lib/metaEvents";
 
 const SETORES = [
   { value: "", label: "Selecione (opcional)" },
-  { value: "saude", label: "Saúde" },
-  { value: "educacao", label: "Educação" },
-  { value: "juridico", label: "Jurídico" },
-  { value: "tech", label: "Tecnologia" },
+  { value: "logistica", label: "Logística e Transportes" },
+  { value: "agro", label: "Agro" },
+  { value: "medicina", label: "Medicina" },
   { value: "outro", label: "Outro" },
 ];
-
-const inputStyle: React.CSSProperties = {
-  width: "100%",
-  padding: "12px 14px",
-  borderRadius: 10,
-  border: "1px solid rgba(255,255,255,0.18)",
-  background: "rgba(255,255,255,0.06)",
-  color: "#fff",
-  fontSize: 14.5,
-  fontFamily: "var(--font-sans)",
-  outline: "none",
-};
-
-const labelStyle: React.CSSProperties = {
-  display: "block",
-  fontSize: 11,
-  fontWeight: 800,
-  letterSpacing: "0.16em",
-  textTransform: "uppercase",
-  color: "rgba(255,255,255,0.6)",
-  marginBottom: 8,
-};
 
 export function AutomationContactForm() {
   const [nome, setNome] = useState("");
@@ -132,16 +109,15 @@ export function AutomationContactForm() {
     <form
       ref={(node) => { wrapRef.current = node; }}
       onSubmit={submit}
-      className="mkt-card mkt-card--dark"
-      style={{ padding: 28, maxWidth: 560, display: "flex", flexDirection: "column", gap: 16 }}
+      className="mkt-card"
+      style={{ padding: 28, display: "flex", flexDirection: "column", gap: 16 }}
     >
-      <div>
-        <label style={labelStyle} htmlFor="auto-nome">
-          Nome <span style={{ color: "var(--cyan)" }}>*</span>
+      <div className="mkt-field">
+        <label htmlFor="auto-nome">
+          Nome <span style={{ color: "var(--blue)" }}>*</span>
         </label>
         <input
           id="auto-nome"
-          style={inputStyle}
           value={nome}
           onChange={(e) => setNome(e.target.value)}
           placeholder="Seu nome"
@@ -150,27 +126,23 @@ export function AutomationContactForm() {
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-        <div>
-          <label style={labelStyle} htmlFor="auto-email">
-            Email <span style={{ color: "var(--cyan)" }}>*</span>
+        <div className="mkt-field">
+          <label htmlFor="auto-email">
+            Email <span style={{ color: "var(--blue)" }}>*</span>
           </label>
           <input
             id="auto-email"
             type="email"
-            style={inputStyle}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="voce@empresa.com"
             autoComplete="email"
           />
         </div>
-        <div>
-          <label style={labelStyle} htmlFor="auto-tel">
-            Telefone / WhatsApp
-          </label>
+        <div className="mkt-field">
+          <label htmlFor="auto-tel">Telefone / WhatsApp</label>
           <input
             id="auto-tel"
-            style={inputStyle}
             value={telefone}
             onChange={(e) => setTelefone(e.target.value)}
             placeholder="(00) 00000-0000"
@@ -180,31 +152,25 @@ export function AutomationContactForm() {
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-        <div>
-          <label style={labelStyle} htmlFor="auto-empresa">
-            Empresa
-          </label>
+        <div className="mkt-field">
+          <label htmlFor="auto-empresa">Empresa</label>
           <input
             id="auto-empresa"
-            style={inputStyle}
             value={empresa}
             onChange={(e) => setEmpresa(e.target.value)}
             placeholder="Nome da empresa"
             autoComplete="organization"
           />
         </div>
-        <div>
-          <label style={labelStyle} htmlFor="auto-setor">
-            Setor
-          </label>
+        <div className="mkt-field">
+          <label htmlFor="auto-setor">Segmento</label>
           <select
             id="auto-setor"
-            style={inputStyle}
             value={setor}
             onChange={(e) => setSetor(e.target.value)}
           >
             {SETORES.map((s) => (
-              <option key={s.value} value={s.value} style={{ color: "#000" }}>
+              <option key={s.value} value={s.value}>
                 {s.label}
               </option>
             ))}
@@ -212,13 +178,11 @@ export function AutomationContactForm() {
         </div>
       </div>
 
-      <div>
-        <label style={labelStyle} htmlFor="auto-msg">
-          O que você quer automatizar?
-        </label>
+      <div className="mkt-field">
+        <label htmlFor="auto-msg">O que você quer automatizar?</label>
         <textarea
           id="auto-msg"
-          style={{ ...inputStyle, minHeight: 96, resize: "vertical" }}
+          style={{ minHeight: 96, resize: "vertical" }}
           value={mensagem}
           onChange={(e) => setMensagem(e.target.value)}
           placeholder="Ex.: triagem de atendimento no WhatsApp, integração ERP + CRM, relatório automático..."
@@ -231,7 +195,7 @@ export function AutomationContactForm() {
           alignItems: "flex-start",
           gap: 10,
           fontSize: 12.5,
-          color: "rgba(255,255,255,0.7)",
+          color: "var(--ink-soft)",
           lineHeight: 1.5,
           cursor: "pointer",
         }}
@@ -249,7 +213,7 @@ export function AutomationContactForm() {
       </label>
 
       {error && (
-        <div style={{ fontSize: 13, color: "#fca5a5" }} role="alert">
+        <div style={{ fontSize: 13, color: "#DC2626" }} role="alert">
           {error}
         </div>
       )}

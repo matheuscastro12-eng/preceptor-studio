@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "pt_BR",
     url: `${SITE_URL}/diagnostico`,
-    siteName: "PRECEPTOR! Venture Studio",
+    siteName: "PRECEPTOR! Studio",
     title: "Diagnóstico técnico e empreendedor · PRECEPTOR! Studio",
     description:
       "Poucos minutos, sem login. Score da sua tese na hora e os pontos prioritários pra atacar primeiro.",
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "PRECEPTOR! Venture Studio",
+        alt: "PRECEPTOR! Studio",
       },
     ],
   },
@@ -64,7 +64,7 @@ const WEBPAGE_JSONLD = {
   inLanguage: "pt-BR",
   isPartOf: {
     "@type": "WebSite",
-    name: "PRECEPTOR! Venture Studio",
+    name: "PRECEPTOR! Studio",
     url: SITE_URL,
   },
   breadcrumb: {

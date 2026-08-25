@@ -26,17 +26,17 @@ export default function ObrigadoAutomacaoPage() {
         }}
       >
         <div style={{ maxWidth: 560, textAlign: "center" }}>
-          <span className="eyebrow" style={{ color: "var(--cyan-deep, #3BC8CF)" }}>
+          <span className="eyebrow" style={{ color: "var(--teal-ink, #12888E)" }}>
             Automação com IA
           </span>
           <h1
             style={{
               marginTop: 16,
-              fontFamily: "var(--font-sans)",
-              fontWeight: 900,
+              fontFamily: "var(--font-head)",
+              fontWeight: 650,
               fontSize: "clamp(2rem, 4vw, 3rem)",
               letterSpacing: "-0.025em",
-              color: "var(--navy, #0A1F44)",
+              color: "var(--navy, #00033D)",
               lineHeight: 1.08,
             }}
           >

@@ -35,7 +35,7 @@ export default function NotFound() {
               <div style={{ position: "relative", maxWidth: 560 }}>
                 <span
                   className="eyebrow"
-                  style={{ color: "var(--cyan)" }}
+                  style={{ color: "var(--blue, #2154CC)" }}
                 >
                   404 , fora do mapa
                 </span>
@@ -86,8 +86,8 @@ export default function NotFound() {
                     fontSize: 12,
                   }}
                 >
-                  <MiniDiamond size={9} color="var(--cyan)" />
-                  <span>PRECEPTOR! Venture Studio</span>
+                  <MiniDiamond size={9} color="var(--blue, #2154CC)" />
+                  <span>PRECEPTOR! Studio</span>
                 </div>
               </div>
             </div>

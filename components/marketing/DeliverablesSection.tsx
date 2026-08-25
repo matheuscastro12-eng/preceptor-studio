@@ -1,72 +1,63 @@
-import { Sparkle, CircleRing, DoubleCircle, MiniDiamond } from "./MarketingShared";
+import { Reveal } from "./Reveal";
 
 const ITEMS = [
   {
     n: "01",
-    title: "Estudo do Cliente",
-    body: "Quem é o cliente que paga, quanto paga e por quê. Cinco eixos pontuados e a recomendação do próximo passo pra faturar.",
+    title: "Mapa da operação",
+    body: "O processo desenhado de ponta a ponta, com etapas, donos, sistemas e os pontos onde a operação perde dinheiro.",
   },
   {
     n: "02",
-    title: "Brand brief",
-    body: "Identidade, voz, paleta e princípios. Pronto pro designer executar sem achismo.",
+    title: "Processo redesenhado",
+    body: "O fluxo novo, sem as etapas que não geram valor e com responsável definido para cada parte.",
   },
   {
     n: "03",
-    title: "Plano comercial",
-    body: "Canal, pricing, motion de vendas e o plano dos primeiros 100 leads. Como o negócio começa a entrar dinheiro.",
+    title: "Automação em produção",
+    body: "Agentes de IA, integrações entre sistemas e rotinas automáticas rodando na operação real.",
   },
   {
     n: "04",
-    title: "Cronograma de execução",
-    body: "12 semanas em sprints quinzenais, vira quadro de tarefas com responsáveis no dia 1.",
+    title: "Painel de indicadores",
+    body: "O antes e o depois em número: tempo por etapa, custo, erro e volume, visíveis toda semana.",
   },
   {
     n: "05",
-    title: "Diagnóstico contínuo",
-    body: "O score acompanha o negócio durante a obra. Sinal que muda, muda o plano, pra você não jogar dinheiro fora.",
+    title: "Operação assistida",
+    body: "Acompanhamento depois da entrega, com ajustes no processo conforme a operação cresce.",
   },
 ];
 
 export function DeliverablesSection() {
   return (
-    <section
-      id="entregas"
-      className="section section--dark"
-      data-screen-label="03 Entregas"
-    >
-      <Sparkle size={28} style={{ top: 64, left: 40 }} />
-      <CircleRing size={120} dashed style={{ bottom: 80, right: 56 }} />
-      <DoubleCircle size={130} style={{ top: 80, right: 32, opacity: 0.4 }} />
-
-      <div className="container" style={{ position: "relative" }}>
-        <div className="mkt-sec-head">
-          <div>
-            <span className="eyebrow">O que entregamos</span>
-            <h2 className="mkt-h2" style={{ marginTop: 18 }}>
-              Cinco documentos
-              <br />
-              que dizem <span className="it">se o negócio</span> dá dinheiro.
-            </h2>
-          </div>
-          <p className="mkt-lead">
-            A base concreta pra você decidir onde colocar o seu dinheiro. Cada
-            documento responde uma pergunta que custa caro errar.
-          </p>
-        </div>
-
-        <div className="mkt-deliv-card">
-          {ITEMS.map((item) => (
-            <div key={item.n} className="mkt-deliv-row">
-              <span className="mkt-deliv-row__num">{item.n}</span>
-              <div className="mkt-deliv-row__body">
-                <h3 className="mkt-deliv-row__title">{item.title}</h3>
-                <p className="mkt-deliv-row__desc">{item.body}</p>
-              </div>
-              <span className="mkt-deliv-row__mark" aria-hidden="true">
-                <MiniDiamond size={9} color="var(--cyan)" />
-              </span>
+    <section id="entregas" className="section">
+      <div className="container">
+        <Reveal>
+          <div className="mkt-sec-head">
+            <div>
+              <span className="eyebrow">O que entregamos</span>
+              <h2 className="mkt-h2" style={{ marginTop: 20 }}>
+                Cinco entregas que fazem
+                <br />
+                <span className="bang">a IA virar resultado</span>
+              </h2>
             </div>
+            <p className="mkt-lead">
+              Cada entrega responde uma pergunta que custa caro errar: o que
+              automatizar, em que ordem e quanto isso devolve para a operação.
+            </p>
+          </div>
+        </Reveal>
+
+        <div className="mkt-spec">
+          {ITEMS.map((item, i) => (
+            <Reveal key={item.n} delay={i * 70}>
+              <div className="mkt-spec__row">
+                <span className="mkt-spec__num">/ {item.n}</span>
+                <h3 className="mkt-spec__title">{item.title}</h3>
+                <p className="mkt-spec__body">{item.body}</p>
+              </div>
+            </Reveal>
           ))}
         </div>
       </div>

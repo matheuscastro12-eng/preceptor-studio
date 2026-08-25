@@ -10,14 +10,14 @@ const LAST_UPDATED = "02 de junho de 2026";
 export const metadata: Metadata = {
   title: "Termos de Uso",
   description:
-    "Termos de Uso do site e do diagnóstico gratuito da PRECEPTOR! Venture Studio.",
+    "Termos de Uso do site e do diagnóstico gratuito da PRECEPTOR! Studio.",
   alternates: { canonical: "/termos" },
   openGraph: {
     type: "website",
     locale: "pt_BR",
     url: `${SITE_URL}/termos`,
-    siteName: "PRECEPTOR! Venture Studio",
-    title: "Termos de Uso · PRECEPTOR! Venture Studio",
+    siteName: "PRECEPTOR! Studio",
+    title: "Termos de Uso · PRECEPTOR! Studio",
     description: "As regras de uso do nosso site e do diagnóstico gratuito.",
   },
 };
@@ -64,7 +64,7 @@ export default function TermosPage() {
           <Block title="1. Aceitação">
             <P>
               Ao acessar e usar este site e o diagnóstico gratuito da PRECEPTOR!
-              Venture Studio, você concorda com estes Termos de Uso. Se não
+              Studio, você concorda com estes Termos de Uso. Se não
               concordar, por favor não utilize o serviço.
             </P>
           </Block>
@@ -103,7 +103,7 @@ export default function TermosPage() {
           <Block title="5. Propriedade intelectual">
             <P>
               A marca PRECEPTOR!, o conteúdo, o design e os materiais deste site são
-              de titularidade da PRECEPTOR! Venture Studio e protegidos por lei. O
+              de titularidade da PRECEPTOR! Studio e protegidos por lei. O
               resultado do seu diagnóstico é disponibilizado para o seu próprio uso.
             </P>
           </Block>

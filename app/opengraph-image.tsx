@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "PRECEPTOR! Venture Studio";
+export const alt = "PRECEPTOR! Studio";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -13,7 +13,7 @@ export default function OpengraphImage() {
           width: "100%",
           height: "100%",
           background:
-            "radial-gradient(ellipse 60% 50% at 20% 0%, rgba(82,225,231,0.22), transparent 60%), radial-gradient(ellipse 50% 40% at 100% 100%, rgba(93,87,235,0.22), transparent 60%), linear-gradient(180deg, #0A1F44 0%, #06122A 100%)",
+            "radial-gradient(ellipse 60% 50% at 20% 0%, rgba(33,84,204,0.28), transparent 60%), linear-gradient(180deg, #0A1F44 0%, #071633 100%)",
           display: "flex",
           flexDirection: "column",
           padding: 80,
@@ -29,10 +29,10 @@ export default function OpengraphImage() {
             right: 90,
             width: 160,
             height: 160,
-            background: "#52E1E7",
+            background: "#FFFFFF",
             transform: "rotate(45deg)",
             borderRadius: 24,
-            boxShadow: "0 0 120px rgba(82,225,231,0.55)",
+            boxShadow: "0 0 120px rgba(169,195,242,0.5)",
           }}
         />
         <div
@@ -42,7 +42,7 @@ export default function OpengraphImage() {
             gap: 18,
             fontSize: 22,
             letterSpacing: 4,
-            color: "#52E1E7",
+            color: "#A9C3F2",
             fontWeight: 700,
             textTransform: "uppercase",
           }}
@@ -51,11 +51,11 @@ export default function OpengraphImage() {
             style={{
               width: 16,
               height: 16,
-              background: "#52E1E7",
+              background: "#A9C3F2",
               transform: "rotate(45deg)",
             }}
           />
-          Venture Studio
+          IA Aplicada a Processos
         </div>
         <div
           style={{
@@ -81,7 +81,7 @@ export default function OpengraphImage() {
             maxWidth: 900,
           }}
         >
-          Menos pitch, mais produto.
+          Primeiro o processo, depois a inteligência.
         </div>
         <div
           style={{

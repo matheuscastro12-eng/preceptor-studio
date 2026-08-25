@@ -26,17 +26,17 @@ export default function ObrigadoComecarPage() {
         }}
       >
         <div style={{ maxWidth: 560, textAlign: "center" }}>
-          <span className="eyebrow" style={{ color: "var(--cyan-deep, #3BC8CF)" }}>
-            Venture Studio
+          <span className="eyebrow" style={{ color: "var(--teal-ink, #12888E)" }}>
+            IA aplicada a processos
           </span>
           <h1
             style={{
               marginTop: 16,
-              fontFamily: "var(--font-sans)",
-              fontWeight: 900,
+              fontFamily: "var(--font-head)",
+              fontWeight: 650,
               fontSize: "clamp(2rem, 4vw, 3rem)",
               letterSpacing: "-0.025em",
-              color: "var(--navy, #0A1F44)",
+              color: "var(--navy, #00033D)",
               lineHeight: 1.08,
             }}
           >
@@ -50,8 +50,8 @@ export default function ObrigadoComecarPage() {
               lineHeight: 1.6,
             }}
           >
-            O time entra em contato para dar o próximo passo e tirar a sua ideia do
-            papel. Enquanto isso, dá uma olhada em como a gente constrói.
+            O time entra em contato para dar o próximo passo no diagnóstico da sua
+            operação. Enquanto isso, dá uma olhada em como a gente trabalha.
           </p>
           <div
             style={{

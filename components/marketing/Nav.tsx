@@ -3,33 +3,19 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { Mark } from "./MarketingShared";
-
-// Links roteados (SPA, com indicador ativo). Hash anchors ficam como <a> por causa do scroll.
-const ROUTED_LINKS = [
-  { href: "/produtos", label: "Produtos" },
-  { href: "/insights", label: "Insights" },
-];
-
-const ANCHOR_LINKS = [
-  { href: "/#como", label: "Como funciona" },
-  { href: "/#setores", label: "Setores" },
+const LINKS = [
+  { href: "/#como", label: "O método" },
+  { href: "/#segmentos", label: "Segmentos" },
+  { href: "/#contato", label: "Contato" },
 ];
 
 export function Nav() {
   const pathname = usePathname() || "/";
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Fecha o menu mobile ao trocar de rota.
   useEffect(() => {
     setMenuOpen(false);
   }, [pathname]);
-
-  function isActive(href: string) {
-    if (href === "/") return pathname === "/";
-    return pathname === href || pathname.startsWith(href + "/");
-  }
 
   return (
     <>
@@ -40,51 +26,14 @@ export function Nav() {
         <Link
           href="/"
           className="mkt-nav__logo"
-          aria-label="PRECEPTOR! Venture Studio — Início"
+          aria-label="PRECEPTOR! Studio, página inicial"
         >
-          <Mark size={16} />
-          <span className="mkt-nav__word">PRECEPTOR!</span>
-          <span className="mkt-nav__sub">Venture Studio</span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/brand/logo-horizontal.png" alt="PRECEPTOR!" />
         </Link>
         <div className="mkt-nav__links">
-          {ROUTED_LINKS.map((l) => {
-            const active = isActive(l.href);
-            return (
-              <Link
-                key={l.href}
-                href={l.href}
-                aria-current={active ? "page" : undefined}
-                style={{
-                  position: "relative",
-                  padding: "6px 10px",
-                  borderRadius: 999,
-                  display: "inline-flex",
-                  alignItems: "center",
-                  isolation: "isolate",
-                  color: active ? "var(--navy, #0A1F44)" : undefined,
-                  fontWeight: active ? 700 : undefined,
-                }}
-              >
-                {active && (
-                  <motion.span
-                    layoutId="mkt-nav-pill"
-                    aria-hidden
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      borderRadius: 999,
-                      background: "rgba(15, 23, 41, 0.06)",
-                      zIndex: -1,
-                    }}
-                    transition={{ type: "spring", stiffness: 480, damping: 40 }}
-                  />
-                )}
-                <span style={{ position: "relative" }}>{l.label}</span>
-              </Link>
-            );
-          })}
-          {ANCHOR_LINKS.map((l) => (
-            <a key={l.href} href={l.href} style={{ padding: "6px 10px" }}>
+          {LINKS.map((l) => (
+            <a key={l.href} href={l.href}>
               {l.label}
             </a>
           ))}
@@ -134,18 +83,7 @@ export function Nav() {
       </nav>
       {menuOpen && (
         <div className="mkt-nav__mobile" role="menu">
-          {ROUTED_LINKS.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              role="menuitem"
-              aria-current={isActive(l.href) ? "page" : undefined}
-              onClick={() => setMenuOpen(false)}
-            >
-              {l.label}
-            </Link>
-          ))}
-          {ANCHOR_LINKS.map((l) => (
+          {LINKS.map((l) => (
             <a
               key={l.href}
               href={l.href}

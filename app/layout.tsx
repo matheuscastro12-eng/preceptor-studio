@@ -8,11 +8,11 @@ const GA_ID = "G-1B7CCZ2YYK";
 export const metadata: Metadata = {
   metadataBase: new URL("https://preceptorstudio.com"),
   title: {
-    default: "PRECEPTOR! Venture Studio",
+    default: "PRECEPTOR! Studio",
     template: "%s · PRECEPTOR!",
   },
   description:
-    "Venture Studio brasileiro que constrói produtos digitais e soluções de IA com engenharia humana, em camadas. Faça o diagnóstico técnico e empreendedor grátis.",
+    "Empresa brasileira de engenharia de processos que usa Inteligência Artificial como ferramenta. Faça o diagnóstico grátis da sua operação.",
   applicationName: "PRECEPTOR! Studio",
   robots: { index: true, follow: true },
 };

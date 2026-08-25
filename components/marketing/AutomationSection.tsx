@@ -1,172 +1,190 @@
-import { Sparkle, CircleRing, DoubleCircle, MiniDiamond } from "./MarketingShared";
+import Link from "next/link";
 import { AutomationContactForm } from "./AutomationContactForm";
+import { Reveal } from "./Reveal";
 
-const STEPS = [
-  { n: "01", label: "Mapeamos a operação" },
-  { n: "02", label: "Implementamos a automação" },
-  { n: "03", label: "Você economiza" },
-];
-
-const CARDS = [
+const SCOPES = [
   {
-    n: "01",
     title: "Integração de sistemas",
-    body: "Suas ferramentas param de viver em ilhas. ERP, CRM, planilha e WhatsApp passam a trocar dado sozinhos, sem ninguém copiando e colando entre telas o dia inteiro.",
+    body: "ERP, CRM, planilha e WhatsApp passam a trocar dado sozinhos, sem ninguém copiando e colando entre telas.",
   },
   {
-    n: "02",
     title: "Agentes de IA",
-    body: "Atendimento, triagem, qualificação e geração de documento rodando sem operador. O time cuida do que exige cabeça, a máquina cuida do repetitivo.",
+    body: "Atendimento, triagem, qualificação e geração de documento rodando sem operador. O time fica com o que exige critério.",
   },
   {
-    n: "03",
     title: "Painéis e relatórios",
-    body: "O número que decide o seu dia atualizado em tempo real. Fim da planilha montada na mão toda segunda de manhã.",
+    body: "O número que decide o seu dia atualizado em tempo real, sem planilha montada na mão toda segunda.",
   },
 ];
 
 export function AutomationSection() {
   return (
-    <section
-      id="automacao"
-      className="section section--dark"
-      data-screen-label="Automação"
-      style={{ paddingTop: 112, paddingBottom: 112 }}
-    >
-      <Sparkle size={26} style={{ top: 56, left: 44 }} />
-      <CircleRing size={120} dashed style={{ bottom: 70, right: 48 }} />
-      <DoubleCircle size={130} style={{ top: 72, right: 36, opacity: 0.35 }} />
-
+    <section id="contato" className="section section--dark mkt-contact">
+      <div className="mkt-contact__grid-bg" aria-hidden="true" />
       <div className="container" style={{ position: "relative" }}>
-        <span className="eyebrow">Segundo produto · Para empresa que já fatura</span>
-        <h2
-          className="mkt-h2"
-          style={{
-            marginTop: 18,
-            fontSize: "clamp(2.1rem, 4vw, 3.1rem)",
-            maxWidth: 760,
-          }}
-        >
-          Já tem empresa?
-          <br />
-          A gente corta o <span className="cyan">custo</span> que trava o time.
-        </h2>
-        <p className="mkt-lead" style={{ marginTop: 22, maxWidth: 620 }}>
-          Enquanto o Venture Studio constrói do zero, a automação com IA entra na
-          operação que já existe. A gente mapeia onde o seu time perde tempo com
-          tarefa manual e implementa a automação que se paga em poucos meses.
-        </p>
+        <Reveal>
+          <div className="mkt-sec-head" style={{ marginBottom: 56 }}>
+            <div>
+              <span className="eyebrow">Soluções em IA</span>
+              <h2 className="mkt-h2" style={{ marginTop: 20 }}>
+                A gente corta o custo
+                <br />
+                <span className="bang">que trava o seu time</span>
+              </h2>
+            </div>
+            <p className="mkt-lead">
+              Mapeamos onde o time perde tempo com tarefa manual e
+              implementamos a automação que se paga em poucos meses. O retorno
+              fica visível em painel.
+            </p>
+          </div>
+        </Reveal>
 
-        <div className="mkt-flow" style={{ marginTop: 40 }}>
-          {STEPS.map((step, i) => (
-            <span
-              key={step.n}
-              style={{ display: "inline-flex", alignItems: "center", gap: 18 }}
-            >
-              <span className="mkt-flow__step">
-                <span className="mkt-flow__num">{step.n}</span>
-                {step.label}
-              </span>
-              {i < STEPS.length - 1 && (
-                <span className="mkt-flow__arrow" aria-hidden="true">
-                  →
-                </span>
-              )}
-            </span>
-          ))}
-        </div>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: 18,
-          }}
-          className="mkt-auto-cards"
-        >
-          {CARDS.map((c) => (
-            <article
-              key={c.n}
-              className="mkt-card mkt-card--dark"
-              style={{
-                padding: 28,
-                display: "flex",
-                flexDirection: "column",
-                gap: 12,
-                minHeight: 220,
-              }}
-            >
+        <Reveal delay={100}>
+          <div
+            className="mkt-grid-3"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: 40,
+              marginBottom: 72,
+            }}
+          >
+            {SCOPES.map((c) => (
               <div
+                key={c.title}
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
+                  paddingTop: 20,
+                  borderTop: "1px solid rgba(255,255,255,0.16)",
                 }}
               >
-                <span
+                <h3
                   style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: 36,
-                    height: 36,
-                    borderRadius: 10,
-                    background: "rgba(82,225,231,0.12)",
-                    border: "1px solid rgba(82,225,231,0.3)",
-                    color: "var(--cyan)",
-                    fontFamily: "var(--font-mono)",
-                    fontWeight: 700,
-                    fontSize: 13,
+                    margin: "0 0 8px",
+                    fontFamily: "var(--font-head)",
+                    fontSize: 17,
+                    fontWeight: 630,
+                    letterSpacing: "-0.015em",
+                    color: "#fff",
                   }}
                 >
-                  {c.n}
-                </span>
-                <MiniDiamond size={9} color="var(--cyan)" />
+                  {c.title}
+                </h3>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: 14,
+                    lineHeight: 1.65,
+                    color: "rgba(255,255,255,0.66)",
+                  }}
+                >
+                  {c.body}
+                </p>
               </div>
+            ))}
+          </div>
+        </Reveal>
+
+        <div
+          className="mkt-contact-grid"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1.15fr",
+            gap: 56,
+            alignItems: "start",
+          }}
+        >
+          <Reveal delay={150}>
+            <div>
               <h3
                 style={{
-                  margin: 0,
-                  fontFamily: "var(--font-sans)",
-                  fontWeight: 800,
-                  fontSize: 22,
-                  letterSpacing: "-0.02em",
+                  margin: "0 0 12px",
+                  fontFamily: "var(--font-head)",
+                  fontSize: 26,
+                  fontWeight: 650,
+                  letterSpacing: "-0.025em",
                   color: "#fff",
                 }}
               >
-                {c.title}
+                Fale sobre a automação da sua empresa
               </h3>
               <p
                 style={{
-                  margin: 0,
-                  color: "rgba(255,255,255,0.72)",
-                  fontSize: 14.5,
-                  lineHeight: 1.55,
+                  margin: "0 0 28px",
+                  fontSize: 15,
+                  lineHeight: 1.7,
+                  color: "rgba(255,255,255,0.7)",
+                  maxWidth: 400,
                 }}
               >
-                {c.body}
+                Preencha o formulário e o time entra em contato para mapear
+                onde a automação se paga mais rápido na sua operação. Se
+                preferir, chame direto no WhatsApp.
               </p>
-            </article>
-          ))}
-        </div>
-
-        <div style={{ marginTop: 44 }}>
-          <h3
-            style={{
-              margin: "0 0 6px",
-              fontFamily: "var(--font-sans)",
-              fontWeight: 800,
-              fontSize: 20,
-              color: "#fff",
-              letterSpacing: "-0.02em",
-            }}
-          >
-            Fale sobre a automação da sua empresa
-          </h3>
-          <p style={{ margin: "0 0 18px", fontSize: 13.5, color: "rgba(255,255,255,0.6)", maxWidth: 560 }}>
-            Preencha e o time entra em contato para mapear onde a automação se
-            paga mais rápido na sua operação.
-          </p>
-          <AutomationContactForm />
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: 14 }}
+              >
+                <a
+                  className="mkt-contact__phone"
+                  href="https://wa.me/5535999191919"
+                >
+                  <span className="dot" aria-hidden="true" />
+                  +55 35 99919-1919
+                </a>
+                <a
+                  className="mkt-contact__phone"
+                  href="https://wa.me/5535987035957"
+                >
+                  <span className="dot" aria-hidden="true" />
+                  +55 35 98703-5957
+                </a>
+                <a
+                  href="mailto:thiago@ospreceptores.com"
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: 14,
+                    color: "rgba(255,255,255,0.6)",
+                    textDecoration: "none",
+                  }}
+                >
+                  thiago@ospreceptores.com
+                </a>
+              </div>
+              <div
+                style={{
+                  marginTop: 32,
+                  paddingTop: 24,
+                  borderTop: "1px solid rgba(255,255,255,0.14)",
+                }}
+              >
+                <p
+                  style={{
+                    margin: "0 0 14px",
+                    fontSize: 14,
+                    color: "rgba(255,255,255,0.6)",
+                    maxWidth: 380,
+                  }}
+                >
+                  Ainda não sabe por onde começar? Responda o diagnóstico
+                  grátis e receba na hora um retrato da sua operação.
+                </p>
+                <Link
+                  href="/diagnostico?start=1"
+                  className="mkt-btn"
+                  style={{ background: "#fff", color: "var(--navy)" }}
+                  aria-label="Fazer o diagnóstico grátis"
+                >
+                  Fazer o diagnóstico grátis
+                  <span className="mkt-btn__icon" aria-hidden="true">
+                    →
+                  </span>
+                </Link>
+              </div>
+            </div>
+          </Reveal>
+          <Reveal delay={220}>
+            <AutomationContactForm />
+          </Reveal>
         </div>
       </div>
     </section>

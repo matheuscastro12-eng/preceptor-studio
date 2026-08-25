@@ -12,7 +12,7 @@ export function Mark({ size = 16 }: { size?: number }) {
 
 export function Sparkle({
   size = 24,
-  color = "var(--cyan)",
+  color = "var(--blue, #2154CC)",
   style,
 }: {
   size?: number;
@@ -33,7 +33,7 @@ export function Sparkle({
 
 export function CircleRing({
   size = 120,
-  color = "var(--cyan)",
+  color = "var(--blue, #2154CC)",
   strokeWidth = 1.5,
   style,
   dashed,
@@ -68,7 +68,7 @@ export function CircleRing({
 
 export function DoubleCircle({
   size = 160,
-  color = "var(--cyan)",
+  color = "var(--blue, #2154CC)",
   style,
 }: {
   size?: number;
@@ -107,7 +107,7 @@ export function DoubleCircle({
 export function SwoopLine({
   width = 320,
   height = 180,
-  color = "var(--cyan)",
+  color = "var(--blue, #2154CC)",
   style,
 }: {
   width?: number;
@@ -137,7 +137,7 @@ export function SwoopLine({
 
 export function MiniDiamond({
   size = 10,
-  color = "var(--cyan)",
+  color = "var(--blue, #2154CC)",
   style,
 }: {
   size?: number;
@@ -209,7 +209,7 @@ export function ScoreDonutMini({
   const cx = size / 2;
   const C = 2 * Math.PI * r;
   const offset = C - (value / 100) * C;
-  const stroke = "#52E1E7";
+  const stroke = "#A9C3F2";
   const track = light ? "rgba(255,255,255,0.12)" : "#E2E8F0";
   const numColor = light ? "#fff" : "#0A1F44";
   return (
