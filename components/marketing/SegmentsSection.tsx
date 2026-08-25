@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Reveal } from "./Reveal";
+import { SegmentsBeam } from "./SegmentsBeam";
 
 const SEGMENTS = [
   {
@@ -37,9 +38,16 @@ export function SegmentsSection() {
               </h2>
             </div>
             <p className="mkt-lead">
-              Trabalhamos com segmentos onde o processo é o coração do negócio
-              e cada hora de retrabalho custa caro.
+              A operação entra do jeito que ela roda hoje: papel, planilha,
+              sistema. A engenharia redesenha o processo, a automação assume a
+              regra, e o que sai é resultado medido em painel.
             </p>
+          </div>
+        </Reveal>
+
+        <Reveal delay={80}>
+          <div style={{ marginBottom: 64 }}>
+            <SegmentsBeam />
           </div>
         </Reveal>
 
