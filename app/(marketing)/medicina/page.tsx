@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import { SegmentLanding, type SegmentContent } from "@/components/marketing/SegmentLanding";
 
 export const metadata: Metadata = {
-  title: "Clínicas e Medicina",
+  title: "Medicina",
   description:
-    "Automação com Inteligência Artificial para clínicas e operações de saúde: agendamento, confirmação, conferência de guias de convênio e apoio a laudos.",
-  alternates: { canonical: "/clinicas" },
+    "Automação com Inteligência Artificial para operações de medicina: agendamento, confirmação, conferência de guias de convênio e apoio a laudos.",
+  alternates: { canonical: "/medicina" },
 };
 
 const CONTENT: SegmentContent = {
-  eyebrow: "Clínicas e Medicina",
+  eyebrow: "Medicina",
   title: ["Agenda cheia, recepção tranquila,", "glosa em queda"],
   lead: "Agendamento, guia de convênio, cadastro, laudo: a rotina da clínica é feita de regra e repetição. A automação tira isso das costas da equipe e devolve atenção ao paciente.",
   pains: [
@@ -57,6 +57,6 @@ const CONTENT: SegmentContent = {
     "Conta pra gente como a rotina da clínica roda hoje. A gente mostra onde a automação se paga primeiro.",
 };
 
-export default function ClinicasPage() {
+export default function MedicinaPage() {
   return <SegmentLanding content={CONTENT} />;
 }

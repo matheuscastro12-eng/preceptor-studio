@@ -19,7 +19,7 @@ const COLUMNS: { title: string; items: FooterLink[]; mono?: boolean }[] = [
     items: [
       { label: "Logística e Transportes", href: "/transporte" },
       { label: "Agro", href: "/agro" },
-      { label: "Clínicas e Medicina", href: "/clinicas" },
+      { label: "Medicina", href: "/medicina" },
     ],
   },
   {

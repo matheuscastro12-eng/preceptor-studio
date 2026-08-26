@@ -18,7 +18,7 @@ const SEGMENTS = [
   {
     n: "03",
     tag: "Medicina",
-    href: "/clinicas",
+    href: "/medicina",
     body: "Agendamento, triagem de pacientes, laudos e faturamento de convênio com menos trabalho manual da equipe.",
   },
 ];
