@@ -7,6 +7,7 @@ const LINKS = [
   { href: "/#como", label: "O método" },
   { href: "/#segmentos", label: "Segmentos" },
   { href: "/#contato", label: "Contato" },
+  { href: "/opera", label: "Entrar no OPERA" },
 ];
 
 export function Nav() {

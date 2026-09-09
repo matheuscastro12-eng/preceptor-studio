@@ -1,7 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createSupabaseServiceClient } from "@/lib/supabase";
 import { enforceRateLimit, getClientIp } from "@/lib/rateLimit";
-import { GRUPOS, PERGUNTAS, OCORRENCIAS_PEDIDAS, FICHAS, LISTAS_DE_RESPOSTAS, VENTURE } from "@/lib/colheita/oasis";
+import { projetoOpera } from "@/lib/opera/server";
+import { type Colheita, slugValido } from "@/lib/opera/model";
 
 // Recebe uma resposta da colheita de corpus (OPERA) enviada pelo link publico.
 // Rota publica por prefixo /api/public/ (middleware). Escrita so pelo service role.
@@ -21,12 +22,8 @@ function listaDeStrings(v: unknown, max = 12): string[] {
   return v.map((x) => curto(x, 200)).filter(Boolean).slice(0, max);
 }
 
-const PERGUNTA_POR_ID = new Map(PERGUNTAS.map((p) => [p.id, p]));
-const GRUPOS_VALIDOS = new Set(GRUPOS.map((g) => g.id));
-const OCORRENCIAS_VALIDAS = new Set(OCORRENCIAS_PEDIDAS.map((o) => o.id));
-const LISTAS_VALIDAS = new Set(LISTAS_DE_RESPOSTAS.map((l) => l.id));
-
-function limparRespostas(bruto: unknown): Record<string, unknown> {
+function limparRespostas(bruto: unknown, c: Colheita): Record<string, unknown> {
+  const PERGUNTA_POR_ID = new Map(c.perguntas.map((p) => [p.id, p]));
   const out: Record<string, unknown> = {};
   if (typeof bruto !== "object" || bruto === null) return out;
   for (const [id, valor] of Object.entries(bruto as Record<string, unknown>)) {
@@ -52,7 +49,9 @@ function limparRespostas(bruto: unknown): Record<string, unknown> {
   return out;
 }
 
-function limparOcorrencias(bruto: unknown): unknown[] {
+function limparOcorrencias(bruto: unknown, config: Colheita): unknown[] {
+  const OCORRENCIAS_VALIDAS = new Set(config.ocorrencias.map(o => o.id));
+  const FICHAS = config.fichas;
   const out: unknown[] = [];
   if (typeof bruto !== "object" || bruto === null) return out;
   const b = bruto as Record<string, unknown>;
@@ -73,21 +72,26 @@ function limparOcorrencias(bruto: unknown): unknown[] {
     for (const f of b.fichas.slice(0, MAX_FICHAS)) {
       if (typeof f !== "object" || f === null) continue;
       const ficha = f as Record<string, unknown>;
-      const tipo = curto(ficha.tipo, 1) as "A" | "B" | "C";
-      if (!FICHAS[tipo]) continue;
+      const tipo = curto(ficha.tipo, 60);
+      if (!Object.hasOwn(FICHAS, tipo)) continue;
       const campos: Record<string, string> = {};
       const c = (ficha.campos ?? {}) as Record<string, unknown>;
       for (const campo of FICHAS[tipo].campos) {
         const v = curto(c[campo.id], campo.longo ? MAX_LONGO : MAX_CURTO);
         if (v) campos[campo.id] = v;
       }
-      if (Object.keys(campos).length) out.push({ tipo: "ficha", ficha: tipo, campos, viu_sugestao: ficha.viu_sugestao === true });
+      if (Object.keys(campos).length) {
+        const faltam = FICHAS[tipo].campos.filter(c => c.obrigatorio && !campos[c.id]);
+        if (faltam.length) throw new Error(`${FICHAS[tipo].nome}: preencha ${faltam.map(c => c.rotulo).join(", ")}.`);
+        out.push({ tipo: "ficha", ficha: tipo, campos, viu_sugestao: ficha.viu_sugestao === true });
+      }
     }
   }
   return out;
 }
 
-function limparRotulos(bruto: unknown): Record<string, string[]> {
+function limparRotulos(bruto: unknown, c: Colheita): Record<string, string[]> {
+  const LISTAS_VALIDAS = new Set(c.listas.map(l => l.id));
   const out: Record<string, string[]> = {};
   if (typeof bruto !== "object" || bruto === null) return out;
   for (const [id, v] of Object.entries(bruto as Record<string, unknown>)) {
@@ -104,21 +108,34 @@ export async function POST(req: NextRequest) {
 
   let body: Record<string, unknown>;
   try {
-    body = (await req.json()) as Record<string, unknown>;
+    const texto = await req.text();
+    if (texto.length > 1_000_000) return NextResponse.json({ error: "Envio muito grande." }, { status: 413 });
+    body = JSON.parse(texto) as Record<string, unknown>;
+    if (!body || typeof body !== "object" || Array.isArray(body)) throw new Error("Corpo inválido");
   } catch {
     return NextResponse.json({ error: "Corpo inválido" }, { status: 400 });
   }
 
-  const venture = curto(body.venture, 60) || VENTURE.slug;
-  if (venture !== VENTURE.slug) return NextResponse.json({ error: "Venture desconhecida" }, { status: 400 });
+  const venture = body.venture;
+  if (!slugValido(venture)) return NextResponse.json({ error: "Projeto desconhecido" }, { status: 400 });
+  let projeto;
+  try { projeto = await projetoOpera(venture); }
+  catch { return NextResponse.json({ error: "Colheita indisponível. Suas respostas continuam neste navegador." }, { status: 503 }); }
+  if (!projeto?.colheita_publica) return NextResponse.json({ error: "Colheita não encontrada" }, { status: 404 });
+  const config = projeto.colheita;
+  // Old OASIS tabs did not send a version. Preserve only that v1 contract.
+  const versao = body.instrumento_versao ?? (venture === "oasis-cte" ? 1 : null);
+  if (versao !== config.versao) return NextResponse.json({ error: "As perguntas foram atualizadas. Guarde suas respostas e abra a colheita novamente." }, { status: 409 });
 
   const nome = curto(body.nome, 120);
   if (!nome) return NextResponse.json({ error: "Diga seu nome. Resposta sem nome a gente não consegue usar." }, { status: 400 });
 
-  const grupos = listaDeStrings(body.grupos, 5).filter((g) => GRUPOS_VALIDOS.has(g as never));
-  const respostas = limparRespostas(body.respostas);
-  const ocorrencias = limparOcorrencias(body.ocorrencias);
-  const rotulos = limparRotulos(body.rotulos);
+  const grupos = listaDeStrings(body.grupos, 200).filter((g) => config.grupos.some(x => x.id === g));
+  const respostas = limparRespostas(body.respostas, config);
+  let ocorrencias;
+  try { ocorrencias = limparOcorrencias(body.ocorrencias, config); }
+  catch (e) { return NextResponse.json({ error: e instanceof Error ? e.message : "Ficha incompleta." }, { status: 400 }); }
+  const rotulos = limparRotulos(body.rotulos, config);
 
   const temConteudo =
     Object.keys(respostas).length > 0 ||
@@ -133,6 +150,7 @@ export async function POST(req: NextRequest) {
       .from("colheita_respostas")
       .insert({
         venture,
+        ...(venture === "oasis-cte" && config.versao === 1 ? {} : { instrumento_versao: config.versao }),
         respondente_nome: nome,
         respondente_funcao: curto(body.funcao, 120) || null,
         respondente_empresa: curto(body.empresa, 120) || null,

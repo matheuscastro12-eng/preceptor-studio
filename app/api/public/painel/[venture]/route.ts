@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { projetoOpera } from "@/lib/opera/server";
 
 // Painel de construcao do OPERA por venture. O HTML e publicado pelo gerador
 // local da venture (painel/gerar.py --publicar) na tabela painel_construcao;
@@ -28,6 +29,8 @@ export async function GET(_req: NextRequest, { params }: { params: { venture: st
   const venture = String(params?.venture ?? "").toLowerCase();
   if (!SLUG.test(venture)) return new NextResponse("Painel não encontrado.", { status: 404 });
   try {
+    const projeto = await projetoOpera(venture);
+    if (projeto && !projeto.painel_publico) return new NextResponse("Painel não encontrado.", { status: 404 });
     const sb = clienteSemCache();
     const { data, error } = await sb
       .from("painel_construcao")

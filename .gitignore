@@ -13,3 +13,6 @@ dist
 # build artifact
 tsconfig.tsbuildinfo
 scripts/
+!scripts/
+scripts/*
+!scripts/opera-publicar.mjs
