@@ -195,6 +195,7 @@ export function Sidebar({
       label: "Automações",
       icon: <IconBolt />,
     },
+    { k: "opera", href: "/dashboard/opera", label: "OPERA", icon: <IconCompass /> },
     { k: "crm", href: "/dashboard/crm", label: "CRM", icon: <IconPipeline /> },
     { k: "funil", href: "/dashboard/funil", label: "Funil", icon: <IconFunnel /> },
     {

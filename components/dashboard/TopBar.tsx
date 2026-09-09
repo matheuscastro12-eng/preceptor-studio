@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 
 const LABELS: Record<string, string> = {
   "/dashboard": "Home",
+  "/dashboard/opera": "OPERA · Construções",
   "/dashboard/estudos": "Estudos",
   "/dashboard/leads": "Leads",
   "/dashboard/crm": "CRM Pipeline",
@@ -57,6 +58,7 @@ export function TopBar({ sub }: { sub?: string }) {
   if (!current) {
     if (pathname.startsWith("/dashboard/study/")) current = "Estudo";
     else if (pathname.startsWith("/dashboard/leads/")) current = "Lead";
+    else if (pathname.startsWith("/dashboard/opera/")) current = "OPERA · Projeto";
     else current = "Workspace";
   }
 
