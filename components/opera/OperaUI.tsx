@@ -17,7 +17,25 @@ export function Trilha({ etapa }: { etapa?: string }) {
 }
 export function ProjetoCard({ projeto }: { projeto: ProjetoOpera }) {
   const s = projeto.snapshot;
-  return <article className="op-project"><div className="op-project-top"><span className="op-kind">{projeto.tipo === "automacao" ? "Automação" : projeto.tipo === "plataforma" ? "Plataforma" : "Sistema de agentes"}</span><span className={`op-pill ${s ? "teal" : ""}`}>{s ? NOMES[s.etapa] : "Aguardando atualização"}</span></div><h2><Link href={`/dashboard/opera/${projeto.slug}`}>{projeto.nome} <ArrowUpRight size={21} /></Link></h2><p>{projeto.processo}</p><div className="op-project-footer"><span>{projeto.responsavel || "Responsável não informado"}<small>{projeto.cliente}</small></span><Link className="op-circle" aria-label={`Acompanhar ${projeto.nome}`} href={`/dashboard/opera/${projeto.slug}`}><ArrowRight size={19} /></Link></div><div className="op-stamp"><Activity size={13} /><DataOpera valor={s?.atualizadoEm} /></div></article>;
+  return <article className="op-project"><div className="op-project-top"><span className="op-kind">{projeto.tipo === "automacao" ? "Automação" : projeto.tipo === "plataforma" ? "Plataforma" : "Sistema de agentes"}</span><span className={`op-pill ${s ? "teal" : ""}`}>{s ? NOMES[s.etapa] : "Aguardando atualização"}</span></div><h2><Link href={`/dashboard/opera/${projeto.slug}`}>{projeto.nome} <ArrowUpRight size={21} /></Link></h2><p>{projeto.processo}</p><LinksExternos projeto={projeto} /><div className="op-project-footer"><span>{projeto.responsavel || "Responsável não informado"}<small>{projeto.cliente}</small></span><Link className="op-circle" aria-label={`Acompanhar ${projeto.nome}`} href={`/dashboard/opera/${projeto.slug}`}><ArrowRight size={19} /></Link></div><div className="op-stamp"><Activity size={13} /><DataOpera valor={s?.atualizadoEm} /></div></article>;
+}
+
+/**
+ * Os dois endereços que o projeto publica para fora.
+ *
+ * Existiam desde o começo e nada apontava para eles: quem abria o OPERA via o
+ * card, clicava, e caía na página interna — enquanto o painel da venture, com
+ * a evidência inteira, ficava a um endereço que só quem já sabia alcançava.
+ * Só aparece o que está liberado no cadastro.
+ */
+export function LinksExternos({ projeto }: { projeto: ProjetoOpera }) {
+  if (!projeto.painel_publico && !projeto.colheita_publica) return null;
+  // Reusa o estilo da navegação de artefatos em vez de abrir classe nova: é a
+  // mesma forma (uma fila de links curtos) e o opera.css está sendo mexido.
+  return <nav className="op-artifact-nav" aria-label={`Endereços públicos de ${projeto.nome}`}>
+    {projeto.painel_publico && <a href={`/painel/${projeto.slug}`} target="_blank" rel="noreferrer">Painel da construção <ArrowUpRight size={13} /></a>}
+    {projeto.colheita_publica && <a href={`/colheita/${projeto.slug}`} target="_blank" rel="noreferrer">Colheita <ArrowUpRight size={13} /></a>}
+  </nav>;
 }
 export function PainelProjeto({ projeto }: { projeto: ProjetoOpera }) {
   const s = projeto.snapshot;
