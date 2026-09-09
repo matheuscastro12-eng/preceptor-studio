@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createSupabaseServiceClient } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
 
 // Painel de construcao do OPERA por venture. O HTML e publicado pelo gerador
 // local da venture (painel/gerar.py --publicar) na tabela painel_construcao;
@@ -7,6 +7,20 @@ import { createSupabaseServiceClient } from "@/lib/supabase";
 // reescrito em /painel/<venture> (next.config.js).
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
+
+// O cliente de servico padrao deixa o Next guardar a resposta do Supabase no
+// Data Cache; aqui cada pedido precisa ler a ultima versao publicada.
+function clienteSemCache() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) throw new Error("Supabase nao configurado");
+  return createClient(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: { fetch: (input, init) => fetch(input, { ...init, cache: "no-store" }) },
+  });
+}
 
 const SLUG = /^[a-z0-9][a-z0-9-]{1,60}$/;
 
@@ -14,7 +28,7 @@ export async function GET(_req: NextRequest, { params }: { params: { venture: st
   const venture = String(params?.venture ?? "").toLowerCase();
   if (!SLUG.test(venture)) return new NextResponse("Painel não encontrado.", { status: 404 });
   try {
-    const sb = createSupabaseServiceClient();
+    const sb = clienteSemCache();
     const { data, error } = await sb
       .from("painel_construcao")
       .select("html, atualizado_em")
