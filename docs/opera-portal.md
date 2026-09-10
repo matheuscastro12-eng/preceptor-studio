@@ -1,5 +1,7 @@
 # OPERA no preceptorstudio.com
 
+> Histórico da primeira entrega. Para instalação, permissões e publicação atuais, seguir [OPERA conectado](./opera-conexao.md). O contrato v2 substitui os trechos de integração abaixo.
+
 O portal mora neste site. `/opera` encaminha para `/dashboard/opera`, dentro da autenticação e navegação existentes. Comercial e Ventures continuam nas suas áreas atuais.
 
 ## O que acompanha todos os projetos

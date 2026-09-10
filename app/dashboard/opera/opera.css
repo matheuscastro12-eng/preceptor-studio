@@ -1,4 +1,7 @@
 .op-root { --op-line: #e2e7ee; max-width: 1480px; margin: auto; padding: 40px clamp(20px, 4vw, 64px) 70px; color: var(--ink); font-family: var(--font-sans); }
+.op-meeting-field { min-width: 0; border: 1px solid var(--op-line); border-left: 3px solid var(--cyan-deep); padding: 16px; border-radius: 8px; }
+.op-meeting-field legend { color: var(--navy); font-weight: 600; font-size: 13px; padding: 0 6px; }
+.op-meeting-field textarea { min-height: 90px; }
 .op-root * { box-sizing: border-box; }
 .op-root .op-header { display: flex; justify-content: space-between; align-items: center; gap: 24px; margin-bottom: 30px; }
 .op-root h1 { font-family: var(--font-display); font-size: clamp(30px, 4vw, 46px); line-height: 1.1; letter-spacing: -.04em; font-weight: 600; margin: 16px 0 12px; color: var(--navy); }
@@ -88,3 +91,5 @@
 @media (max-width: 1050px) { .op-intro-path { display: none; } .op-project-grid, .op-columns { grid-template-columns: 1fr; } .op-header { flex-wrap: wrap; } }
 @media (max-width: 640px) { .op-root { padding: 26px 18px 45px; } .op-root .op-intro { padding: 22px; } .op-tools, .op-form-grid { grid-template-columns: 1fr; } .op-metrics { grid-template-columns: 1fr; } .op-metrics > div { border-right: 0; border-bottom: 1px solid var(--op-line); } .op-nav { gap: 18px; } .op-section-title { flex-wrap: wrap; } .op-focus { padding: 22px; } }
 @media (prefers-reduced-motion: reduce) { .op-root *, .op-root { scroll-behavior: auto !important; transition: none !important; } }
+.op-review-code { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 65vh; overflow: auto; background: #010226; color: #e4f5f5; padding: 20px; border-radius: 12px; font: 12px/1.7 var(--font-mono), monospace; }
+.op-panel form > .op-button { margin-top: 16px; }

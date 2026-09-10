@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { NextRequest } from "next/server";
 import { POST as cadastrar } from "../app/api/opera/projetos/route";
-import { PATCH as publicar } from "../app/api/opera/projetos/[slug]/route";
+import { POST as publicar } from "../app/api/opera/projetos/[slug]/conexao/route";
 import { POST as colher } from "../app/api/public/colheita/route";
 import { GET as painelLegado } from "../app/api/public/painel/[venture]/route";
 import { colheitaInicial } from "../lib/opera/model";
@@ -15,6 +15,8 @@ test("cadastro → publicação → colheita, com acesso e versões validados", 
   const projetos = new Map<string, any>();
   const respostas: any[] = [];
   let publishFilter = "";
+  const eventos=new Map<string,string>();
+  const construcaoId='22222222-2222-4222-8222-222222222222';
   global.fetch = async (input, init) => {
     const url = new URL(String(input));
     assert.equal(url.origin, "http://127.0.0.1:54329", "teste nunca acessa serviço real");
@@ -25,10 +27,16 @@ test("cadastro → publicação → colheita, com acesso e versões validados", 
     const json = (data: any, status = 200) => new Response(JSON.stringify(data), { status, headers: { "Content-Type": "application/json" } });
     if (path === "/auth/v1/user") return json({ id: headers.get("authorization")?.includes("pending") ? "pending" : "member", email: "fixture@example.invalid" });
     if (path.endsWith("/profiles")) return json({ role: url.searchParams.get("id") === "eq.pending" ? "pending" : "member" });
+    if(path.endsWith('/opera_membros'))return json(null);
+    if(path.endsWith('/rpc/opera_publicar')){
+      if(eventos.has(payload.p_evento))return eventos.get(payload.p_evento)===payload.p_digest?json('pub1'):json({code:'23505'},409);
+      const p=projetos.get(payload.p_projeto);if(p.snapshot&&p.snapshot.atualizadoEm>=payload.p_snapshot.atualizadoEm)return json({code:'23505'},409);
+      p.snapshot=payload.p_snapshot;eventos.set(payload.p_evento,payload.p_digest);return json('pub1');
+    }
     if (path.endsWith("/opera_projetos")) {
       if (method === "POST") {
         if (projetos.has(payload.slug)) return json({ code: "23505" }, 409);
-        projetos.set(payload.slug, payload); return new Response(null, { status: 201 });
+        projetos.set(payload.slug, {...payload,construcao_id:construcaoId}); return new Response(null, { status: 201 });
       }
       const slug = url.searchParams.get("slug")?.slice(3) ?? "";
       const p = projetos.get(slug);
@@ -51,9 +59,10 @@ test("cadastro → publicação → colheita, com acesso e versões validados", 
     assert.equal((await cadastrar(req("POST", projeto))).status, 201);
     assert.equal((await cadastrar(req("POST", projeto))).status, 409);
     const snapshot = { atualizadoEm: "2026-09-09T12:00:00.000Z", etapa: "corpus", resumo: "Coleta iniciada", proximaAcao: "Revisar casos", testes: null, corpus: null, achados: [], atividades: [] };
-    assert.equal((await publicar(req("PATCH", { snapshot }), { params: { slug: projeto.slug } })).status, 200);
-    assert.match(publishFilter, /snapshot\.is\.null,snapshot->>atualizadoEm\.lt\.2026-09-09T12:00:00.000Z/);
-    assert.equal((await publicar(req("PATCH", { snapshot }), { params: { slug: projeto.slug } })).status, 409);
+    const envelope={snapshot,eventoId:'33333333-3333-4333-8333-333333333333',construcaoId,artefatos:[]};
+    assert.equal((await publicar(req("POST", envelope), { params: { slug: projeto.slug } })).status, 200);
+    assert.equal((await publicar(req("POST", envelope), { params: { slug: projeto.slug } })).status, 200);
+    assert.equal((await publicar(req("POST", {...envelope,snapshot:{...snapshot,resumo:'alterado'}}), { params: { slug: projeto.slug } })).status, 409);
     assert.equal((await painelLegado(new NextRequest("http://localhost"), { params: { venture: projeto.slug } })).status, 404);
     const enviar = (body: any) => colher(new NextRequest("http://localhost/api/public/colheita", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }));
     const body = { venture: projeto.slug, instrumento_versao: 1, nome: "Operador", grupos: ["operacao"], respostas: { fluxo: { texto: "O pedido chega e é conferido." }, q1: { texto: "não pertence a este projeto" } } };

@@ -30,15 +30,21 @@ export async function projetoOpera(slug: string): Promise<ProjetoOpera | null> {
   return data ?? (slug === OASIS.slug ? OASIS : null);
 }
 
-export async function listarProjetos(): Promise<{ projetos: ProjetoOpera[]; aviso: string | null }> {
+export async function listarProjetos(membro?: {id:string;role:string}|null): Promise<{ projetos: ProjetoOpera[]; aviso: string | null }> {
   try {
+    const m = membro ?? await membroOpera();
+    if(!m) return {projetos:[],aviso:null};
     const { data, error } = await operaDB().from("opera_projetos").select("*").order("atualizado_em", { ascending: false });
     if (error) throw error;
-    const projetos = (data ?? []) as ProjetoOpera[];
-    if (!projetos.some(p => p.slug === OASIS.slug)) projetos.push(OASIS);
+    let projetos = (data ?? []) as ProjetoOpera[];
+    if(!['owner','admin'].includes(m.role)) {
+      const {data:permissoes,error:e}=await operaDB().from('opera_membros').select('projeto').eq('usuario',m.id);
+      if(e) throw e;
+      projetos=projetos.filter(p=>p.criado_por===m.id||permissoes?.some(x=>x.projeto===p.slug));
+    }
     return { projetos, aviso: null };
   } catch {
-    return { projetos: [OASIS], aviso: "Cadastro de projetos indisponível. A referência OASIS continua acessível; configure o banco e aplique a migração OPERA para cadastrar e acompanhar os demais projetos." };
+    return { projetos: [], aviso: "Cadastro de projetos indisponível. Configure o banco e aplique as migrações OPERA antes de acompanhar os projetos." };
   }
 }
 

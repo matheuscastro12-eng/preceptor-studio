@@ -34,6 +34,7 @@ test("instrumento recusa objetos onde a interface espera texto e chaves perigosa
 test("publicação distingue dado ausente de zero e valida contagens", () => {
   validarSnapshot(snapshot());
   validarSnapshot({ ...snapshot(), testes: { passaram: 0, total: 0 } });
+  validarSnapshot({ ...snapshot(), corpus: { validados: 30, meta: 20 } });
   assert.throws(() => validarSnapshot({ ...snapshot(), testes: { passaram: 4, total: 3 } }));
   assert.throws(() => validarSnapshot({ ...snapshot(), corpus: { validados: -1, meta: 20 } }));
 });

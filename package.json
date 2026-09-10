@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:opera": "tsx --test tests/opera.test.ts tests/opera.integration.test.ts",
+    "test:opera": "tsx --test tests/opera.test.ts tests/opera.integration.test.ts tests/opera.conexao.test.ts tests/opera.reuniao.test.ts",
     "opera:publicar": "node scripts/opera-publicar.mjs"
   },
   "dependencies": {

@@ -30,6 +30,7 @@ export interface Snapshot {
   artefatos?: { id: string; titulo: string; estado: "proposto" | "aprovado" | "recusado" | "informativo"; conteudo: string }[];
 }
 export interface ProjetoOpera {
+  criado_por?: string; construcao_id?: string; venture_id?: string | null; processo_slug?: string | null; ultimo_contato?: string | null;
   slug: string; nome: string; cliente: string; processo: string; responsavel: string;
   tipo: "agente" | "plataforma" | "automacao";
   colheita_publica: boolean; painel_publico: boolean;
@@ -102,7 +103,7 @@ export function validarSnapshot(v: unknown): asserts v is Snapshot {
   if (!obj(v) || !str(v.atualizadoEm) || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(v.atualizadoEm) || !Number.isFinite(Date.parse(v.atualizadoEm)) || new Date(v.atualizadoEm).toISOString() !== v.atualizadoEm || Date.parse(v.atualizadoEm) > Date.now() + 300_000 || !ETAPAS.includes(v.etapa) || !str(v.resumo, 5000) || !str(v.proximaAcao, 2000)) throw new Error("Informe data UTC válida, etapa, resumo e próxima ação do painel.");
   for (const [key, a, b] of [["testes", "passaram", "total"], ["corpus", "validados", "meta"]]) {
     const m = v[key];
-    if (m !== null && (!obj(m) || !Number.isSafeInteger(m[a]) || !Number.isSafeInteger(m[b]) || m[a] < 0 || m[b] < m[a])) throw new Error(`Contagem inválida: ${key}.`);
+    if (m !== null && (!obj(m) || !Number.isSafeInteger(m[a]) || !Number.isSafeInteger(m[b]) || m[a] < 0 || m[b] < 0 || (key==='testes' && m[b] < m[a]))) throw new Error(`Contagem inválida: ${key}.`);
   }
   if (!Array.isArray(v.achados) || v.achados.length > 200 || !v.achados.every((a: any) => obj(a) && str(a.titulo, 2000) && ["alta", "media", "baixa"].includes(a.severidade) && ["aberto", "resolvido"].includes(a.estado))) throw new Error("Achados inválidos.");
   if (!Array.isArray(v.atividades) || v.atividades.length > 100 || !v.atividades.every((a: any) => obj(a) && str(a.titulo) && str(a.detalhe, 5000) && str(a.quando) && Number.isFinite(Date.parse(a.quando)))) throw new Error("Atividades inválidas.");
