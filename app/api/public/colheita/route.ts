@@ -12,6 +12,8 @@ export const dynamic = "force-dynamic";
 const MAX_CURTO = 400;
 const MAX_LONGO = 8000;
 const MAX_FICHAS = 60;
+/** O espaco fechado das perguntas de sim ou nao. Fora dele, a resposta e nula. */
+const SIM_NAO = ["sim", "nao", "nao_sei"];
 
 function curto(v: unknown, max = MAX_CURTO): string {
   return typeof v === "string" ? v.trim().slice(0, max) : "";
@@ -32,8 +34,12 @@ function limparRespostas(bruto: unknown, c: Colheita): Record<string, unknown> {
     const v = valor as Record<string, unknown>;
     if (p.tipo === "simnao") {
       const r = curto(v.resposta, 10);
-      if (!["sim", "nao", "nao_sei"].includes(r) && !curto(v.detalhe)) continue;
-      out[id] = { resposta: r || null, detalhe: curto(v.detalhe, MAX_LONGO) || null };
+      const valida = SIM_NAO.includes(r) ? r : null;
+      if (!valida && !curto(v.detalhe)) continue;
+      // `r || null` gravava o lixo que nao passou no teste acima: com detalhe
+      // preenchido, "ZZZZZZZZZZ" entrava no campo que so aceita sim/nao/nao_sei,
+      // e a contagem de respostas passava a mentir.
+      out[id] = { resposta: valida, detalhe: curto(v.detalhe, MAX_LONGO) || null };
     } else if (p.tipo === "escolha") {
       const escolhidas = listaDeStrings(v.escolhas).filter((e) => p.opcoes?.includes(e));
       const outro = curto(v.outro);
@@ -62,8 +68,9 @@ function limparOcorrencias(bruto: unknown, config: Colheita): unknown[] {
       if (!OCORRENCIAS_VALIDAS.has(id) || typeof v !== "object" || v === null) continue;
       const x = v as Record<string, unknown>;
       const r = curto(x.resposta, 10);
-      if (!["sim", "nao", "nao_sei"].includes(r) && !curto(x.detalhe)) continue;
-      pedidas[id] = { resposta: r || null, quantas: curto(x.quantas, 40) || null, detalhe: curto(x.detalhe, MAX_LONGO) || null };
+      const valida = SIM_NAO.includes(r) ? r : null;
+      if (!valida && !curto(x.detalhe)) continue;
+      pedidas[id] = { resposta: valida, quantas: curto(x.quantas, 40) || null, detalhe: curto(x.detalhe, MAX_LONGO) || null };
     }
   }
   out.push({ tipo: "pedidas", itens: pedidas });
