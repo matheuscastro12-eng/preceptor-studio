@@ -40,7 +40,7 @@ const nextConfig = {
   },
   // Painel de construcao do OPERA: /painel/<venture> serve o HTML publicado pela venture.
   async rewrites() {
-    return { beforeFiles: [{ source: "/painel/oasis-cte", destination: "/api/public/painel/oasis-cte" }] };
+    return { beforeFiles: [{ source: "/painel/oasis-cte", destination: "/api/public/painel/oasis-cte" }, { source: "/painel/mtor", destination: "/api/public/painel/mtor" }] };
   },
   async headers() {
     return [

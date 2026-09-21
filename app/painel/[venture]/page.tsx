@@ -15,9 +15,12 @@ export default async function Painel({ params }: { params: { venture: string } }
     redirect(`/api/public/painel/${params.venture}`);
   }
   if (!p.painel_publico) notFound();
-  // The existing OASIS HTML remains available from its original URL, including #motor.
-  if (p.slug === "oasis-cte" && !p.snapshot) {
-    redirect(`/api/public/painel/${p.slug}`);
+  // Venture sem snapshot no cadastro mas com painel publicado pelo gerador local
+  // (painel/gerar.py --publicar): serve o HTML publicado. Vale para a OASIS
+  // (inclusive #motor) e para toda venture que publique do mesmo jeito.
+  if (!p.snapshot) {
+    const { data } = await operaDB().from("painel_construcao").select("venture").eq("venture", p.slug).maybeSingle();
+    if (data) redirect(`/api/public/painel/${p.slug}`);
   }
   return <main className="op-root"><Link className="op-back" href="/">PRECEPTOR! Studio</Link><OperaHeader titulo={p.nome} descricao={p.processo}>{p.colheita_publica && <Link className="op-button secondary" href={`/colheita/${p.slug}`}>Responder à colheita ↗</Link>}</OperaHeader><PainelProjeto projeto={p} /><p className="op-note">Este painel apresenta a última evidência publicada pela equipe. Decisões de aprovação são registradas no fluxo da construção.</p></main>;
 }
