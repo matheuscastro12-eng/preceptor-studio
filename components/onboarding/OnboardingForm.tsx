@@ -18,9 +18,11 @@ type Linha = Record<string, string>;
 type Arquivo = { campo: string; caminho: string; nome: string; bytes: number };
 type Rascunho = { nome: string; funcao: string; contato: string; valores: Record<string, unknown>; arquivos: Arquivo[] };
 type Envio = { id: number; campo: string; nome: string; estado: "enviando" | "erro"; msg?: string };
+type Prog = { id: string; feitos: number; total: number };
 
 const VAZIO: Rascunho = { nome: "", funcao: "", contato: "", valores: {}, arquivos: [] };
 const chaveRascunho = (o: Onboarding) => `onboarding:${o.slug}:v${o.versao}`;
+const ID_QUEM = "voce";
 
 function preenchido(c: Campo, valores: Record<string, unknown>, arquivos: Arquivo[]): boolean {
   if (arquivos.some((a) => a.campo === c.id)) return true;
@@ -36,9 +38,21 @@ function tamanho(bytes: number): string {
   return `${(bytes / 1024 / 1024).toFixed(1).replace(".", ",")} MB`;
 }
 
+function haQuanto(ts: number | null, agora: number): string {
+  if (!ts) return "Nada preenchido ainda";
+  const seg = Math.round((agora - ts) / 1000);
+  if (seg < 10) return "Rascunho salvo agora";
+  if (seg < 60) return `Rascunho salvo há ${seg} s`;
+  const min = Math.round(seg / 60);
+  return `Rascunho salvo há ${min} min`;
+}
+
 export default function OnboardingForm({ def }: { def: Onboarding }) {
   const [r, setR] = useState<Rascunho>(VAZIO);
   const [carregado, setCarregado] = useState(false);
+  const [salvoEm, setSalvoEm] = useState<number | null>(null);
+  const [agora, setAgora] = useState(() => Date.now());
+  const [ativa, setAtiva] = useState<string>(ID_QUEM);
   const [envios, setEnvios] = useState<Envio[]>([]);
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
@@ -55,22 +69,46 @@ export default function OnboardingForm({ def }: { def: Onboarding }) {
 
   useEffect(() => {
     if (!carregado) return;
-    try { localStorage.setItem(chaveRascunho(def), JSON.stringify(r)); } catch { /* ok */ }
+    try {
+      localStorage.setItem(chaveRascunho(def), JSON.stringify(r));
+      if (r !== VAZIO) setSalvoEm(Date.now());
+    } catch { /* ok */ }
   }, [r, carregado, def]);
+
+  useEffect(() => {
+    const t = setInterval(() => setAgora(Date.now()), 10_000);
+    return () => clearInterval(t);
+  }, []);
+
+  // Seção em foco: a que ocupa a faixa do meio da tela.
+  useEffect(() => {
+    const alvos = [ID_QUEM, ...def.secoes.map((x) => x.id)].map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+    const io = new IntersectionObserver(
+      (es) => { for (const e of es) if (e.isIntersecting) setAtiva(e.target.id); },
+      { rootMargin: "-40% 0px -55% 0px" },
+    );
+    alvos.forEach((a) => io.observe(a));
+    return () => io.disconnect();
+  }, [def, enviado]);
 
   const setValor = (id: string, v: unknown) => setR((a) => ({ ...a, valores: { ...a.valores, [id]: v } }));
 
-  const progresso = useMemo(
-    () =>
-      def.secoes.map((sec) => ({
+  const progresso: Prog[] = useMemo(
+    () => [
+      { id: ID_QUEM, feitos: [r.nome, r.funcao, r.contato].filter((x) => x.trim()).length, total: 3 },
+      ...def.secoes.map((sec) => ({
         id: sec.id,
         feitos: sec.campos.filter((c) => preenchido(c, r.valores, r.arquivos)).length,
         total: sec.campos.length,
       })),
-    [def, r.valores, r.arquivos],
+    ],
+    [def, r],
   );
-  const totalFeitos = progresso.reduce((n, p) => n + p.feitos, 0);
-  const totalCampos = progresso.reduce((n, p) => n + p.total, 0);
+  const doForm = progresso.slice(1);
+  const totalFeitos = doForm.reduce((n, p) => n + p.feitos, 0);
+  const totalCampos = doForm.reduce((n, p) => n + p.total, 0);
+  const pct = totalCampos ? Math.round((totalFeitos / totalCampos) * 100) : 0;
+  const subindo = envios.some((e) => e.estado === "enviando");
 
   async function enviarArquivos(campo: string, lista: FileList | null) {
     if (!lista?.length) return;
@@ -101,8 +139,12 @@ export default function OnboardingForm({ def }: { def: Onboarding }) {
 
   async function enviar() {
     setErro(null);
-    if (!r.nome.trim()) { setErro("Diga seu nome no topo do formulário."); document.getElementById("onb-nome")?.focus(); return; }
-    if (envios.some((e) => e.estado === "enviando")) { setErro("Espere os arquivos terminarem de subir."); return; }
+    if (!r.nome.trim()) {
+      setErro("Diga seu nome em “Quem responde”.");
+      document.getElementById("onb-nome")?.focus();
+      return;
+    }
+    if (subindo) { setErro("Espere os arquivos terminarem de subir."); return; }
     setEnviando(true);
     try {
       const res = await fetch("/api/public/onboarding", {
@@ -124,172 +166,222 @@ export default function OnboardingForm({ def }: { def: Onboarding }) {
 
   if (enviado) {
     return (
-      <main className={s.stage}>
-        <section className={`${s.sheet} ${s.glow} ${s.cover}`}>
-          <div className={s.brand} aria-label="PRECEPTOR!"><span className={s.word} /></div>
-          <p className={s.eyebrow}>Recebido</p>
-          <h1 className={s.h1}>Obrigado, {r.nome.trim().split(/\s+/)[0]}. <span className={s.it}>Está com a gente.</span></h1>
-          <p className={s.lead}>Suas respostas foram gravadas. Se lembrar de mais alguma coisa, ou se outra pessoa da {def.cliente} for responder a parte dela, é só abrir o link de novo: cada envio fica registrado separado.</p>
-          <div>
-            <button type="button" className={s.btnLight} onClick={() => { setEnviado(false); setR({ ...VAZIO, nome: r.nome, funcao: r.funcao, contato: r.contato }); }}>
-              Enviar outra resposta
-            </button>
+      <main className={s.page}>
+        <section className={`${s.hero} ${s.heroDone}`}>
+          <div className={s.heroIn}>
+            <span className={s.word} aria-label="PRECEPTOR!" />
+            <span className={s.doneMark} aria-hidden="true">✓</span>
+            <p className={s.eyebrow}>Recebido</p>
+            <h1 className={s.h1}>Obrigado, {r.nome.trim().split(/\s+/)[0]}. <span className={s.it}>Está com a gente.</span></h1>
+            <p className={s.lead}>Suas respostas foram gravadas. Se lembrar de mais alguma coisa, ou se outra pessoa da {def.cliente} for responder a parte dela, abra o link de novo: cada envio fica registrado separado.</p>
+            <div>
+              <button type="button" className={s.btnCyan} onClick={() => { setEnviado(false); setR({ ...VAZIO, nome: r.nome, funcao: r.funcao, contato: r.contato }); }}>
+                Enviar outra resposta
+              </button>
+            </div>
           </div>
         </section>
       </main>
     );
   }
 
-  return (
-    <main className={s.stage}>
-      <section className={`${s.sheet} ${s.glow} ${s.cover}`}>
-        <div className={s.brand} aria-label="PRECEPTOR!"><span className={s.word} /></div>
-        <p className={s.eyebrow}>Momento 0 · PRECEPTOR! para {def.cliente}</p>
-        <h1 className={s.h1}>O que precisamos da <span className={s.it}>{def.cliente}</span></h1>
-        <p className={s.lead}>{def.introducao}</p>
-        <div className={s.warn} role="note"><b>Senhas ficam fora daqui.</b> {def.avisoCredenciais}</div>
-        <ol className={s.fases} aria-label="Seções do formulário">
-          {def.secoes.map((sec, i) => (
-            <li key={sec.id}>
-              <a href={`#${sec.id}`}>
-                <span className={s.faseNum}>{sec.fase}</span>
-                <span className={s.faseTit}>{sec.titulo}</span>
-                <span className={s.faseProg}>{progresso[i]!.feitos}/{progresso[i]!.total}</span>
-              </a>
-            </li>
-          ))}
-        </ol>
-      </section>
+  const nomes: Record<string, { rot: string; tit: string }> = {
+    [ID_QUEM]: { rot: "Você", tit: "Quem responde" },
+    ...Object.fromEntries(def.secoes.map((x) => [x.id, { rot: x.fase, tit: x.titulo }])),
+  };
+  const atual = nomes[ativa] ?? nomes[ID_QUEM]!;
 
-      <section className={`${s.sheet} ${s.light}`} aria-labelledby="quem">
-        <Trilho def={def} atual={null} />
-        <div className={s.content}>
-          <p className={s.eyebrowDark}>Antes de começar</p>
-          <h2 id="quem" className={s.h2}>Quem está <span className={s.it}>respondendo</span></h2>
-          <div className={s.grid3}>
-            <Rotulo id="onb-nome" rotulo="Seu nome" obrigatorio>
-              <input id="onb-nome" className={s.input} value={r.nome} onChange={(e) => setR({ ...r, nome: e.target.value })} placeholder="Nome e sobrenome" autoComplete="name" />
-            </Rotulo>
-            <Rotulo id="onb-funcao" rotulo="Função">
-              <input id="onb-funcao" className={s.input} value={r.funcao} onChange={(e) => setR({ ...r, funcao: e.target.value })} placeholder="Ex.: gestor de relacionamento" />
-            </Rotulo>
-            <Rotulo id="onb-contato" rotulo="E-mail ou WhatsApp">
-              <input id="onb-contato" className={s.input} value={r.contato} onChange={(e) => setR({ ...r, contato: e.target.value })} placeholder="Para tirar dúvida sobre uma resposta" />
-            </Rotulo>
+  return (
+    <main className={s.page}>
+      <header className={s.hero}>
+        <div className={s.heroIn}>
+          <span className={s.word} aria-label="PRECEPTOR!" />
+          <p className={s.eyebrow}>Momento 0 · PRECEPTOR! para {def.cliente}</p>
+          <h1 className={s.h1}>O que precisamos da <span className={s.it}>{def.cliente}</span></h1>
+          <p className={s.lead}>{def.introducao}</p>
+          <div className={s.heroFoot}>
+            <a className={s.btnCyan} href={`#${ID_QUEM}`}>Começar</a>
+            <p className={s.warn} role="note"><b>Senhas ficam fora daqui.</b> {def.avisoCredenciais}</p>
           </div>
         </div>
-      </section>
+      </header>
 
-      {def.secoes.map((sec, i) => (
-        <SecaoForm
-          key={sec.id}
-          def={def}
-          sec={sec}
-          prog={progresso[i]!}
-          r={r}
-          setValor={setValor}
-          envios={envios.filter((e) => sec.campos.some((c) => c.id === e.campo))}
-          onArquivos={enviarArquivos}
-          onRemoverArquivo={(caminho) => setR((a) => ({ ...a, arquivos: a.arquivos.filter((x) => x.caminho !== caminho) }))}
-          onDescartarEnvio={(id) => setEnvios((e) => e.filter((x) => x.id !== id))}
-        />
-      ))}
+      {/* barra do celular: progresso e seção atual */}
+      <div className={s.mobileBar} aria-hidden="true">
+        <div className={s.mobileRow}><span className={s.mobileSec}>{atual.rot} · {atual.tit}</span><span className={s.mobilePct}>{pct}%</span></div>
+        <div className={s.track}><i style={{ width: `${pct}%` }} /></div>
+      </div>
 
-      <section className={`${s.sheet} ${s.glow} ${s.fecho}`}>
-        <div>
-          <p className={s.eyebrow}>Enviar</p>
-          <p className={s.fechoNum}><span>{totalFeitos}</span> de {totalCampos} itens respondidos</p>
-          <p className={s.small}>Pode enviar o que já tem e voltar depois: cada envio fica registrado separado.</p>
-          {erro && <p role="alert" className={s.erro}>{erro}</p>}
+      <div className={s.shell}>
+        <aside className={s.side} aria-label="Progresso">
+          <div className={s.sideIn}>
+            <div className={s.total}>
+              <span className={s.totalPct}>{pct}<small>%</small></span>
+              <span className={s.totalTxt}>{totalFeitos} de {totalCampos} itens</span>
+            </div>
+            <div className={s.track}><i style={{ width: `${pct}%` }} /></div>
+            <nav>
+              <ol className={s.nav}>
+                {progresso.map((p) => {
+                  const n = nomes[p.id]!;
+                  const completo = p.feitos === p.total;
+                  return (
+                    <li key={p.id}>
+                      <a href={`#${p.id}`} className={`${s.navItem} ${ativa === p.id ? s.navOn : ""}`} aria-current={ativa === p.id ? "location" : undefined}>
+                        <span className={`${s.navDot} ${completo ? s.navDone : p.feitos ? s.navPart : ""}`} aria-hidden="true">{completo ? "✓" : ""}</span>
+                        <span className={s.navTxt}><span className={s.navRot}>{n.rot}</span><span className={s.navTit}>{n.tit}</span></span>
+                        <span className={s.navCount}>{p.feitos}/{p.total}</span>
+                      </a>
+                    </li>
+                  );
+                })}
+              </ol>
+            </nav>
+            <div className={s.sideSend}>
+              <button type="button" className={s.btnCyan} disabled={enviando} onClick={enviar}>{enviando ? "Enviando…" : "Enviar respostas"}</button>
+              <p className={s.saved} aria-live="polite">{subindo ? "Subindo arquivos…" : haQuanto(salvoEm, agora)}</p>
+              {erro && <p role="alert" className={s.erro}>{erro}</p>}
+            </div>
+          </div>
+        </aside>
+
+        <div className={s.form}>
+          <section id={ID_QUEM} className={s.sec} aria-labelledby="quem-t">
+            <SecHead rot="Antes de começar" titulo={<>Quem está <span className={s.it}>respondendo</span></>} idT="quem-t" prog={progresso[0]!} />
+            <div className={s.grid3}>
+              <Rotulo id="onb-nome" rotulo="Seu nome" obrigatorio feito={!!r.nome.trim()}>
+                <input id="onb-nome" className={s.input} value={r.nome} onChange={(e) => setR({ ...r, nome: e.target.value })} placeholder="Nome e sobrenome" autoComplete="name" />
+              </Rotulo>
+              <Rotulo id="onb-funcao" rotulo="Função" feito={!!r.funcao.trim()}>
+                <input id="onb-funcao" className={s.input} value={r.funcao} onChange={(e) => setR({ ...r, funcao: e.target.value })} placeholder="Ex.: gestor de relacionamento" />
+              </Rotulo>
+              <Rotulo id="onb-contato" rotulo="E-mail ou WhatsApp" feito={!!r.contato.trim()}>
+                <input id="onb-contato" className={s.input} value={r.contato} onChange={(e) => setR({ ...r, contato: e.target.value })} placeholder="Para tirar dúvida sobre uma resposta" />
+              </Rotulo>
+            </div>
+          </section>
+
+          {def.secoes.map((sec, i) => (
+            <SecaoForm
+              key={sec.id}
+              sec={sec}
+              prog={progresso[i + 1]!}
+              r={r}
+              setValor={setValor}
+              envios={envios}
+              onArquivos={enviarArquivos}
+              onRemoverArquivo={(caminho) => setR((a) => ({ ...a, arquivos: a.arquivos.filter((x) => x.caminho !== caminho) }))}
+              onDescartarEnvio={(id) => setEnvios((e) => e.filter((x) => x.id !== id))}
+            />
+          ))}
+
+          <section className={s.fim}>
+            <p className={s.fimNum}><span>{totalFeitos}</span> de {totalCampos} itens respondidos</p>
+            <p className={s.body}>Pode enviar o que já tem e voltar depois: cada envio fica registrado separado.</p>
+            {erro && <p role="alert" className={s.erro}>{erro}</p>}
+            <div className={s.fimAcoes}>
+              <button type="button" className={s.btnNavy} disabled={enviando} onClick={enviar}>{enviando ? "Enviando…" : "Enviar respostas"}</button>
+              <p className={s.sign}>Dúvidas: <strong>{def.responsavel.nome}</strong> · {def.responsavel.empresa} · <span className={s.sel}>{def.responsavel.email}</span></p>
+            </div>
+          </section>
         </div>
-        <div className={s.fechoAcoes}>
-          <button type="button" className={s.btnCyan} disabled={enviando} onClick={enviar}>{enviando ? "Enviando…" : "Enviar respostas"}</button>
-          <p className={s.sign}>Dúvidas: <strong>{def.responsavel.nome}</strong> · {def.responsavel.empresa} · <span className={s.sel}>{def.responsavel.email}</span></p>
-        </div>
-      </section>
+      </div>
+
+      {/* envio sempre à mão no celular */}
+      <div className={s.mobileSend}>
+        <button type="button" className={s.btnCyan} disabled={enviando} onClick={enviar}>{enviando ? "Enviando…" : "Enviar respostas"}</button>
+        <span className={s.saved}>{subindo ? "Subindo arquivos…" : haQuanto(salvoEm, agora)}</span>
+      </div>
     </main>
   );
 }
 
-function Trilho({ def, atual }: { def: Onboarding; atual: string | null }) {
+function SecHead({ rot, titulo, idT, prog, destrava, descricao }: { rot: string; titulo: React.ReactNode; idT: string; prog: Prog; destrava?: string; descricao?: string }) {
+  const pct = prog.total ? (prog.feitos / prog.total) * 100 : 0;
+  const completo = prog.feitos === prog.total;
   return (
-    <nav className={s.rail} aria-hidden="true">
-      <span className={s.mark} />
-      <ol>{def.secoes.map((sec) => <li key={sec.id} aria-current={sec.id === atual ? "step" : undefined}>{sec.fase}</li>)}</ol>
-    </nav>
+    <div className={s.secHead}>
+      <div className={s.secHeadTxt}>
+        <p className={s.eyebrowDark}>{rot}{destrava && <> · <span>Destrava: {destrava}</span></>}</p>
+        <h2 id={idT} className={s.h2}>{titulo}</h2>
+        {descricao && <p className={s.body}>{descricao}</p>}
+      </div>
+      <div className={`${s.ring} ${completo ? s.ringDone : ""}`} style={{ ["--p" as string]: `${pct}%` }} aria-label={`${prog.feitos} de ${prog.total} respondidos`}>
+        <span>{completo ? "✓" : `${prog.feitos}/${prog.total}`}</span>
+      </div>
+    </div>
   );
 }
 
-function Rotulo({ id, rotulo, ajuda, obrigatorio, children }: { id: string; rotulo: string; ajuda?: string; obrigatorio?: boolean; children: React.ReactNode }) {
+function Rotulo({ id, rotulo, ajuda, obrigatorio, feito, children }: { id: string; rotulo: string; ajuda?: string; obrigatorio?: boolean; feito?: boolean; children: React.ReactNode }) {
   return (
     <div className={s.field}>
-      <label htmlFor={id} className={s.label}>{rotulo}{obrigatorio && <span className={s.req}> *</span>}</label>
+      <label htmlFor={id} className={s.label}>
+        <Check on={!!feito} />
+        <span>{rotulo}{obrigatorio && <span className={s.req}> *</span>}</span>
+      </label>
       {ajuda && <p className={s.help}>{ajuda}</p>}
       {children}
     </div>
   );
 }
 
+function Check({ on }: { on: boolean }) {
+  return <span className={`${s.check} ${on ? s.checkOn : ""}`} aria-hidden="true">✓</span>;
+}
+
 function SecaoForm(props: {
-  def: Onboarding; sec: Secao; prog: { feitos: number; total: number }; r: Rascunho;
-  setValor: (id: string, v: unknown) => void; envios: Envio[];
+  sec: Secao; prog: Prog; r: Rascunho; setValor: (id: string, v: unknown) => void; envios: Envio[];
   onArquivos: (campo: string, l: FileList | null) => void; onRemoverArquivo: (caminho: string) => void; onDescartarEnvio: (id: number) => void;
 }) {
-  const { def, sec, prog, r, setValor } = props;
+  const { sec, prog, r, setValor } = props;
   return (
-    <section id={sec.id} className={`${s.sheet} ${s.light}`} aria-labelledby={`${sec.id}-t`}>
-      <Trilho def={def} atual={sec.id} />
-      <div className={s.content}>
-        <div className={s.secHead}>
-          <div>
-            <p className={s.eyebrowDark}>{sec.fase} · Destrava: {sec.destrava}</p>
-            <h2 id={`${sec.id}-t`} className={s.h2}>{sec.titulo}</h2>
-            {sec.descricao && <p className={s.body}>{sec.descricao}</p>}
-          </div>
-          <p className={s.secProg}><span>{prog.feitos}</span>/{prog.total}</p>
-        </div>
-        <div className={s.campos}>
-          {sec.campos.map((c) => (
-            <CampoForm
-              key={c.id}
-              c={c}
-              valor={r.valores[c.id]}
-              setValor={(v) => setValor(c.id, v)}
-              arquivos={r.arquivos.filter((a) => a.campo === c.id)}
-              envios={props.envios.filter((e) => e.campo === c.id)}
-              onArquivos={(l) => props.onArquivos(c.id, l)}
-              onRemoverArquivo={props.onRemoverArquivo}
-              onDescartarEnvio={props.onDescartarEnvio}
-            />
-          ))}
-        </div>
+    <section id={sec.id} className={s.sec} aria-labelledby={`${sec.id}-t`}>
+      <SecHead rot={sec.fase} destrava={sec.destrava} titulo={sec.titulo} idT={`${sec.id}-t`} prog={prog} descricao={sec.descricao} />
+      <div className={s.campos}>
+        {sec.campos.map((c) => (
+          <CampoForm
+            key={c.id}
+            c={c}
+            feito={preenchido(c, r.valores, r.arquivos)}
+            valor={r.valores[c.id]}
+            setValor={(v) => setValor(c.id, v)}
+            arquivos={r.arquivos.filter((a) => a.campo === c.id)}
+            envios={props.envios.filter((e) => e.campo === c.id)}
+            onArquivos={(l) => props.onArquivos(c.id, l)}
+            onRemoverArquivo={props.onRemoverArquivo}
+            onDescartarEnvio={props.onDescartarEnvio}
+          />
+        ))}
       </div>
     </section>
   );
 }
 
-function CampoForm({ c, valor, setValor, arquivos, envios, onArquivos, onRemoverArquivo, onDescartarEnvio }: {
-  c: Campo; valor: unknown; setValor: (v: unknown) => void; arquivos: Arquivo[]; envios: Envio[];
+function CampoForm({ c, feito, valor, setValor, arquivos, envios, onArquivos, onRemoverArquivo, onDescartarEnvio }: {
+  c: Campo; feito: boolean; valor: unknown; setValor: (v: unknown) => void; arquivos: Arquivo[]; envios: Envio[];
   onArquivos: (l: FileList | null) => void; onRemoverArquivo: (caminho: string) => void; onDescartarEnvio: (id: number) => void;
 }) {
   const id = `onb-${c.id}`;
   if (c.tipo === "texto") {
-    return <Rotulo id={id} rotulo={c.rotulo} ajuda={c.ajuda}><input id={id} className={s.input} value={(valor as string) ?? ""} placeholder={c.placeholder} onChange={(e) => setValor(e.target.value)} /></Rotulo>;
+    return <Rotulo id={id} rotulo={c.rotulo} ajuda={c.ajuda} feito={feito}><input id={id} className={s.input} value={(valor as string) ?? ""} placeholder={c.placeholder} onChange={(e) => setValor(e.target.value)} /></Rotulo>;
   }
   if (c.tipo === "longo") {
-    return <div className={s.wide}><Rotulo id={id} rotulo={c.rotulo} ajuda={c.ajuda}><textarea id={id} className={`${s.input} ${s.textarea}`} value={(valor as string) ?? ""} placeholder={c.placeholder} onChange={(e) => setValor(e.target.value)} /></Rotulo></div>;
+    return <div className={s.wide}><Rotulo id={id} rotulo={c.rotulo} ajuda={c.ajuda} feito={feito}><textarea id={id} className={`${s.input} ${s.textarea}`} value={(valor as string) ?? ""} placeholder={c.placeholder} onChange={(e) => setValor(e.target.value)} /></Rotulo></div>;
   }
   if (c.tipo === "escolha") {
     const v = (valor as Escolha) ?? {};
     return (
       <fieldset className={`${s.field} ${s.wide} ${s.fieldset}`}>
-        <legend className={s.label}>{c.rotulo}</legend>
+        <legend className={s.label}><Check on={feito} /><span>{c.rotulo}</span></legend>
         {c.ajuda && <p className={s.help}>{c.ajuda}</p>}
         <div className={s.chips}>
           {c.opcoes.map((op) => {
             const on = v.escolha === op;
             return (
-              <button key={op} type="button" aria-pressed={on} className={`${s.chip} ${on ? s.chipOn : ""}`} onClick={() => setValor({ ...v, escolha: on ? undefined : op })}>{op}</button>
+              <button key={op} type="button" aria-pressed={on} className={`${s.chip} ${on ? s.chipOn : ""}`} onClick={() => setValor({ ...v, escolha: on ? undefined : op })}>
+                <span className={s.chipDot} aria-hidden="true" />{op}
+              </button>
             );
           })}
         </div>
@@ -300,9 +392,10 @@ function CampoForm({ c, valor, setValor, arquivos, envios, onArquivos, onRemover
   if (c.tipo === "tabela") {
     const linhas: Linha[] = Array.isArray(valor) && (valor as Linha[]).length ? (valor as Linha[]) : Array.from({ length: c.linhasIniciais ?? 1 }, (): Linha => ({}));
     const setLinha = (i: number, col: Coluna, x: string) => setValor(linhas.map((l, j) => (j === i ? { ...l, [col.id]: x } : l)));
+    const cheias = linhas.filter((l) => Object.values(l).some((x) => x?.trim())).length;
     return (
       <div className={`${s.field} ${s.wide}`}>
-        <p className={s.label}>{c.rotulo}</p>
+        <p className={s.label}><Check on={feito} /><span>{c.rotulo}</span>{cheias > 0 && <span className={s.badge}>{cheias} {cheias === 1 ? "linha" : "linhas"}</span>}</p>
         {c.ajuda && <p className={s.help}>{c.ajuda}</p>}
         <div className={s.tableWrap}>
           <table className={s.table}>
@@ -338,19 +431,36 @@ function CampoForm({ c, valor, setValor, arquivos, envios, onArquivos, onRemover
   }
   return (
     <div className={`${s.field} ${s.wide}`}>
-      <p className={s.label}>{c.rotulo}</p>
+      <p className={s.label}><Check on={feito} /><span>{c.rotulo}</span>{arquivos.length > 0 && <span className={s.badge}>{arquivos.length} {arquivos.length === 1 ? "arquivo" : "arquivos"}</span>}</p>
       {c.ajuda && <p className={s.help}>{c.ajuda}</p>}
-      <Upload id={`${id}-arquivos`} rotulo={`Escolher arquivos (${c.aceita.join(", ")})`} aceita={c.aceita} onArquivos={onArquivos} destaque />
+      <Upload id={`${id}-arquivos`} rotulo="Arraste aqui ou escolha os arquivos" dica={c.aceita.join(" · ")} aceita={c.aceita} onArquivos={onArquivos} destaque />
       <ListaArquivos arquivos={arquivos} envios={envios} onRemover={onRemoverArquivo} onDescartar={onDescartarEnvio} />
     </div>
   );
 }
 
-function Upload({ id, rotulo, aceita, onArquivos, destaque }: { id: string; rotulo: string; aceita: string[]; onArquivos: (l: FileList | null) => void; destaque?: boolean }) {
+function Upload({ id, rotulo, dica, aceita, onArquivos, destaque }: { id: string; rotulo: string; dica?: string; aceita: string[]; onArquivos: (l: FileList | null) => void; destaque?: boolean }) {
+  const [sobre, setSobre] = useState(false);
+  if (!destaque) {
+    return (
+      <label htmlFor={id} className={s.btnGhost}>
+        <input id={id} type="file" multiple className={s.fileInput} accept={aceita.map((x) => `.${x}`).join(",")} onChange={(e) => { onArquivos(e.target.files); e.target.value = ""; }} />
+        {rotulo}
+      </label>
+    );
+  }
   return (
-    <label htmlFor={id} className={destaque ? s.drop : s.btnGhost}>
+    <label
+      htmlFor={id}
+      className={`${s.drop} ${sobre ? s.dropOn : ""}`}
+      onDragOver={(e) => { e.preventDefault(); setSobre(true); }}
+      onDragLeave={() => setSobre(false)}
+      onDrop={(e) => { e.preventDefault(); setSobre(false); onArquivos(e.dataTransfer.files); }}
+    >
       <input id={id} type="file" multiple className={s.fileInput} accept={aceita.map((x) => `.${x}`).join(",")} onChange={(e) => { onArquivos(e.target.files); e.target.value = ""; }} />
-      {rotulo}
+      <span className={s.dropIcon} aria-hidden="true">↑</span>
+      <span className={s.dropTxt}>{rotulo}</span>
+      {dica && <span className={s.dropHint}>{dica}</span>}
     </label>
   );
 }
@@ -360,10 +470,10 @@ function ListaArquivos({ arquivos, envios, onRemover, onDescartar }: { arquivos:
   return (
     <ul className={s.files}>
       {arquivos.map((a) => (
-        <li key={a.caminho}><span className={s.ext}>{extensao(a.nome)}</span><span className={s.fname}>{a.nome}</span><span className={s.fsize}>{tamanho(a.bytes)}</span><button type="button" className={s.rm} aria-label={`Remover ${a.nome}`} onClick={() => onRemover(a.caminho)}>×</button></li>
+        <li key={a.caminho} className={s.fileOk}><span className={s.ext}>{extensao(a.nome)}</span><span className={s.fname}>{a.nome}</span><span className={s.fsize}>{tamanho(a.bytes)}</span><button type="button" className={s.rm} aria-label={`Remover ${a.nome}`} onClick={() => onRemover(a.caminho)}>×</button></li>
       ))}
       {envios.map((e) => (
-        <li key={e.id} className={e.estado === "erro" ? s.fileErr : undefined}>
+        <li key={e.id} className={e.estado === "erro" ? s.fileErr : s.fileUp}>
           <span className={s.ext}>{extensao(e.nome)}</span><span className={s.fname}>{e.nome}</span>
           <span className={s.fsize}>{e.estado === "enviando" ? "enviando…" : e.msg}</span>
           {e.estado === "erro" && <button type="button" className={s.rm} aria-label="Descartar" onClick={() => onDescartar(e.id)}>×</button>}
