@@ -203,6 +203,21 @@ export default function OnboardingForm({ def }: { def: Onboarding }) {
             <a className={s.btnCyan} href={`#${ID_QUEM}`}>Começar</a>
             <p className={s.warn} role="note"><b>Senhas ficam fora daqui.</b> {def.avisoCredenciais}</p>
           </div>
+          <ol className={s.fases} aria-label="Seções do formulário">
+            {def.secoes.map((sec, i) => {
+              const p = progresso[i + 1]!;
+              return (
+                <li key={sec.id}>
+                  <a href={`#${sec.id}`}>
+                    <span className={s.faseNum}>{sec.fase}</span>
+                    <span className={s.faseTit}>{sec.titulo}</span>
+                    <span className={s.faseBar}><i style={{ width: `${p.total ? (p.feitos / p.total) * 100 : 0}%` }} /></span>
+                    <span className={s.faseProg}>{p.feitos}/{p.total}</span>
+                  </a>
+                </li>
+              );
+            })}
+          </ol>
         </div>
       </header>
 
@@ -247,7 +262,7 @@ export default function OnboardingForm({ def }: { def: Onboarding }) {
 
         <div className={s.form}>
           <section id={ID_QUEM} className={s.sec} aria-labelledby="quem-t">
-            <SecHead rot="Antes de começar" titulo={<>Quem está <span className={s.it}>respondendo</span></>} idT="quem-t" prog={progresso[0]!} />
+            <SecHead selo="Você" rot="Antes de começar" titulo={<>Quem está <span className={s.it}>respondendo</span></>} idT="quem-t" prog={progresso[0]!} />
             <div className={s.grid3}>
               <Rotulo id="onb-nome" rotulo="Seu nome" obrigatorio feito={!!r.nome.trim()}>
                 <input id="onb-nome" className={s.input} value={r.nome} onChange={(e) => setR({ ...r, nome: e.target.value })} placeholder="Nome e sobrenome" autoComplete="name" />
@@ -276,11 +291,12 @@ export default function OnboardingForm({ def }: { def: Onboarding }) {
           ))}
 
           <section className={s.fim}>
+            <p className={s.eyebrow}>Enviar</p>
             <p className={s.fimNum}><span>{totalFeitos}</span> de {totalCampos} itens respondidos</p>
-            <p className={s.body}>Pode enviar o que já tem e voltar depois: cada envio fica registrado separado.</p>
+            <p className={s.fimTxt}>Pode enviar o que já tem e voltar depois: cada envio fica registrado separado.</p>
             {erro && <p role="alert" className={s.erro}>{erro}</p>}
             <div className={s.fimAcoes}>
-              <button type="button" className={s.btnNavy} disabled={enviando} onClick={enviar}>{enviando ? "Enviando…" : "Enviar respostas"}</button>
+              <button type="button" className={s.btnCyan} disabled={enviando} onClick={enviar}>{enviando ? "Enviando…" : "Enviar respostas"}</button>
               <p className={s.sign}>Dúvidas: <strong>{def.responsavel.nome}</strong> · {def.responsavel.empresa} · <span className={s.sel}>{def.responsavel.email}</span></p>
             </div>
           </section>
@@ -296,14 +312,15 @@ export default function OnboardingForm({ def }: { def: Onboarding }) {
   );
 }
 
-function SecHead({ rot, titulo, idT, prog, destrava, descricao }: { rot: string; titulo: React.ReactNode; idT: string; prog: Prog; destrava?: string; descricao?: string }) {
+function SecHead({ selo, rot, titulo, idT, prog, destrava, descricao }: { selo: string; rot: string; titulo: React.ReactNode; idT: string; prog: Prog; destrava?: string; descricao?: string }) {
   const pct = prog.total ? (prog.feitos / prog.total) * 100 : 0;
   const completo = prog.feitos === prog.total;
   return (
     <div className={s.secHead}>
       <div className={s.secHeadTxt}>
-        <p className={s.eyebrowDark}>{rot}{destrava && <> · <span>Destrava: {destrava}</span></>}</p>
+        <p className={s.eyebrowDark}><span className={s.selo}>{selo}</span>{destrava ? <span>Destrava: {destrava}</span> : rot !== selo && rot}</p>
         <h2 id={idT} className={s.h2}>{titulo}</h2>
+        <span className={s.fio} aria-hidden="true" />
         {descricao && <p className={s.body}>{descricao}</p>}
       </div>
       <div className={`${s.ring} ${completo ? s.ringDone : ""}`} style={{ ["--p" as string]: `${pct}%` }} aria-label={`${prog.feitos} de ${prog.total} respondidos`}>
@@ -337,7 +354,7 @@ function SecaoForm(props: {
   const { sec, prog, r, setValor } = props;
   return (
     <section id={sec.id} className={s.sec} aria-labelledby={`${sec.id}-t`}>
-      <SecHead rot={sec.fase} destrava={sec.destrava} titulo={sec.titulo} idT={`${sec.id}-t`} prog={prog} descricao={sec.descricao} />
+      <SecHead selo={sec.fase} rot={sec.fase} destrava={sec.destrava} titulo={sec.titulo} idT={`${sec.id}-t`} prog={prog} descricao={sec.descricao} />
       <div className={s.campos}>
         {sec.campos.map((c) => (
           <CampoForm
