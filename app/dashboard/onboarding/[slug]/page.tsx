@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 type Arquivo = { campo: string; caminho: string; nome: string; bytes: number };
 type Linha = {
   id: string; respondente_nome: string; respondente_funcao: string | null; respondente_contato: string | null;
-  criado_em: string; respostas: { valores?: Record<string, unknown>; arquivos?: Arquivo[] } | null;
+  criado_em?: string; created_at?: string; respostas: { valores?: Record<string, unknown>; arquivos?: Arquivo[] } | null;
 };
 
 function mostrar(c: Campo | undefined, v: unknown): React.ReactNode {
@@ -46,11 +46,12 @@ export default async function OnboardingRespostas({ params }: { params: { slug: 
   const db = operaDB();
   const { data, error } = await db
     .from("colheita_respostas")
-    .select("id,respondente_nome,respondente_funcao,respondente_contato,criado_em,respostas")
+    .select("*")
     .eq("venture", ventureDoOnboarding(def.slug))
-    .order("criado_em", { ascending: false })
-    .limit(100);
-  const respostas = (data ?? []) as Linha[];
+    .limit(200);
+  // Ordena no servidor da página: a coluna de data pode ter outro nome ou não existir.
+  const quando = (r: Linha) => r.criado_em ?? r.created_at ?? "";
+  const respostas = ((data ?? []) as Linha[]).sort((x, y) => quando(y).localeCompare(quando(x)));
 
   const caminhos = respostas.flatMap((r) => (r.respostas?.arquivos ?? []).map((a) => a.caminho));
   const links = new Map<string, string>();
@@ -67,11 +68,11 @@ export default async function OnboardingRespostas({ params }: { params: { slug: 
       </OperaHeader>
       <section className="op-panel">
         <div className="op-section-title"><h2>Envios</h2><span>{error ? "erro ao carregar" : `${respostas.length} envio(s)`}</span></div>
-        {error ? <p className="op-note warning">Não foi possível carregar as respostas.</p>
+        {error ? <p className="op-note warning">Não foi possível carregar as respostas: {error.message}</p>
           : !respostas.length ? <p className="op-empty">Nenhum envio ainda. Link para a {def.cliente}: /onboarding/{def.slug}</p>
           : respostas.map((r) => (
             <details className="op-response" key={r.id}>
-              <summary>{r.respondente_nome}<small>{[r.respondente_funcao, r.respondente_contato, new Date(r.criado_em).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })].filter(Boolean).join(" · ")}</small></summary>
+              <summary>{r.respondente_nome}<small>{[r.respondente_funcao, r.respondente_contato, quando(r) && new Date(quando(r)).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })].filter(Boolean).join(" · ")}</small></summary>
               {def.secoes.map((sec) => {
                 const itens = sec.campos.filter((c) => r.respostas?.valores?.[c.id] !== undefined || (r.respostas?.arquivos ?? []).some((a) => a.campo === c.id));
                 if (!itens.length) return null;
