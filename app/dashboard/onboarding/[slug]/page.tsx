@@ -61,7 +61,7 @@ export default async function OnboardingRespostas({ params }: { params: { slug: 
   }
 
   return (
-    <>
+    <main className="op-root">
       <Link className="op-back" href="/dashboard/opera">← OPERA</Link>
       <OperaHeader titulo={`Onboarding ${def.cliente}`} descricao="Respostas do formulário do Momento 0. Cada envio é registrado separado; confira e consolide antes de usar.">
         <a className="op-pill" href={`/onboarding/${def.slug}`} target="_blank" rel="noreferrer">Abrir formulário público <ArrowUpRight size={14} /></a>
@@ -98,6 +98,6 @@ export default async function OnboardingRespostas({ params }: { params: { slug: 
             </details>
           ))}
       </section>
-    </>
+    </main>
   );
 }
