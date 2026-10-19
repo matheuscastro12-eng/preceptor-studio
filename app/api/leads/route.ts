@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/apiAuth";
 import { NextResponse, type NextRequest } from "next/server";
 import { createSupabaseServiceClient } from "@/lib/supabase";
 import type { LeadStatus } from "@/lib/leads";
@@ -19,6 +20,8 @@ function apiError(error: unknown, status = 500) {
 }
 
 export async function GET(req: NextRequest) {
+  const guard = await requireUser();
+  if (guard) return guard;
   try {
     const supabase = createSupabaseServiceClient();
     const url = req.nextUrl;
@@ -46,6 +49,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: Request) {
+  const guard = await requireUser();
+  if (guard) return guard;
   try {
     const input = (await req.json()) as Record<string, unknown>;
     const supabase = createSupabaseServiceClient();

@@ -40,6 +40,7 @@ const ADMIN_API_PATTERNS = [
 // Rotas cujo acesso (incluindo GET) exige autenticação, não só mutações.
 const FULLY_GATED_API_PREFIXES = [
   "/api/studies",
+  "/api/leads", // leitura expõe dados pessoais; /request-contact segue público via isPublicApi
   "/api/upload-pdf",
   "/api/extract-from-pdf",
   "/api/finance",

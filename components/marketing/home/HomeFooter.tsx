@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CookiePrefsButton } from "@/components/ConsentManager";
 
 export function HomeFooter() {
   const ano = new Date().getFullYear();
@@ -20,6 +21,9 @@ export function HomeFooter() {
             </li>
             <li>
               <Link href="/privacidade#lgpd">LGPD</Link>
+            </li>
+            <li>
+              <CookiePrefsButton className="lp2-footer__cookies" />
             </li>
             <li>
               <a href="#contato">Contato</a>

@@ -876,7 +876,7 @@
 }
 .lp2-footer__nav { margin-top: 48px; }
 .lp2-footer__nav ul { display: flex; flex-wrap: wrap; gap: 8px 28px; }
-.lp2-footer__nav a {
+.lp2-footer__nav a, .lp2-footer__cookies {
   display: inline-block;
   padding: 6px 0;
   font-weight: 500;
@@ -885,7 +885,8 @@
   text-decoration-color: var(--line);
   text-underline-offset: 5px;
 }
-.lp2-footer__nav a:hover { text-decoration-color: currentColor; }
+.lp2-footer__nav a:hover, .lp2-footer__cookies:hover { text-decoration-color: currentColor; }
+.lp2-footer__cookies { background: none; border: 0; font: inherit; cursor: pointer; }
 .lp2-footer__copy {
   margin-top: 40px;
   padding-top: 24px;

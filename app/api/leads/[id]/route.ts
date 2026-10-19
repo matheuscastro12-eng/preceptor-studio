@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/apiAuth";
 import { NextResponse } from "next/server";
 import { createSupabaseServiceClient } from "@/lib/supabase";
 import { defaultRevenueCategoryId } from "@/lib/finance";
@@ -64,6 +65,8 @@ function apiError(error: unknown, status = 500) {
 }
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
+  const guard = await requireUser();
+  if (guard) return guard;
   try {
     const supabase = createSupabaseServiceClient();
     const { data, error } = await supabase
@@ -79,6 +82,8 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
 }
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+  const guard = await requireUser();
+  if (guard) return guard;
   try {
     const input = (await req.json()) as Record<string, unknown>;
     const update: Record<string, unknown> = {};
@@ -130,6 +135,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 }
 
 export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+  const guard = await requireUser();
+  if (guard) return guard;
   try {
     const supabase = createSupabaseServiceClient();
     const { error } = await supabase.from("leads").delete().eq("id", params.id);

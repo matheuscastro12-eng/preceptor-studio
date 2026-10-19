@@ -1,4 +1,3 @@
-// PENDENTE (copy v3, pendência 18): a correção do /api/leads aberto (GET e POST sem login) e do banner de cookies (Pixel e GA4 carregam sem consentimento) seguem pendentes. Este formulário só usa /api/public/automation-lead e não muda a lógica de segurança de nenhuma rota.
 "use client";
 
 import { useEffect, useRef, useState } from "react";
