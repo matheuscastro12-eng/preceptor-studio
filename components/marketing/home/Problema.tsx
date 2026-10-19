@@ -1,4 +1,5 @@
 import { Marca } from "./Marca";
+import { ProblemaVisual } from "./ProblemaVisual";
 
 const DORES = [
   {
@@ -28,6 +29,8 @@ export function Problema() {
             Sua equipe passa o dia copiando de <Marca>uma tela para outra</Marca>.
           </h2>
         </header>
+
+        <ProblemaVisual />
 
         <div className="lp2-problema__grid">
           <div className="lp2-problema__texto lp2-prose" data-rv style={{ "--rv-d": "120ms" } as React.CSSProperties}>

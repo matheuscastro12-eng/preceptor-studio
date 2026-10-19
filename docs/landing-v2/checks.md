@@ -21,3 +21,15 @@ Revisão de 19/10/2026 (sessão de retomada). Screenshots ficam com o Matheus.
 | 15 | `npx tsc --noEmit` | ok | exit 0, sem saída |
 | 16 | `npm run build` | ok | exit 0; `/` estático, 5.13 kB, First Load JS 101 kB |
 | 17 | Commit local na `lp-v2-do-zero`, sem push, master intacta | ok | um commit com `page.tsx`, `components/marketing/home/`, `docs/landing-v2/` |
+
+## Incremento 2: visuais (19/10/2026)
+| # | Requisito | Status | Evidência |
+|---|---|---|---|
+| 18 | Mockups animados por vertical, dados fictícios, sem marca real | ok | `MockLogistica/Financeiro/Clinica.tsx`, selo DEMONSTRAÇÃO, chat em navy/teal sem logo nem verde do WhatsApp, conversa só administrativa |
+| 19 | Diagrama do método sem ícones | ok, 4 passos (copy) em vez de 3 (pedido) | `Metodo.tsx`, `visuais-metodo.css`; texto dos passos literal |
+| 20 | Número grande animado na prova, sem número novo | ok | `Exemplos.tsx` + `ProvaGrade.tsx`; só "Cerca de 99%"; 13% segue comentado |
+| 21 | Antes/depois no Problema | ok | `ProblemaVisual.tsx`; texto e dores intactos |
+| 22 | Só cores do repo | ok | nenhum hex novo nos arquivos novos; rgba só de navy e branco |
+| 23 | Reduced motion e aria-hidden | ok no código | base = estado final; todos os visuais `aria-hidden` |
+| 24 | Texto: sem travessão, sem números antigos, sem "não é X, é Y" | ok | grep vazio (o "38%" achado é porcentagem de keyframe) |
+| 25 | lint, tsc, build | ok | sem avisos; exit 0; exit 0 (`/` 4.87 kB, 101 kB) |

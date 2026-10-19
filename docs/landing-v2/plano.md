@@ -71,3 +71,15 @@ Marcador `[A CONFIRMAR]` ou `[PLACEHOLDER]` inline = fora da página, em coment�
 - Rodapé: https://www.footer.design tags "Typographic", "Minimal".
 - Microinterações: fade com leve subida ("Wabi Fade Reveal"), destaque de borda por pseudo-elemento com opacity (60fps.design).
 - Não abriram: land-book.com (403); cta.gallery só lista nomes. Medidas de grid não vieram (WebFetch lê texto, não imagem).
+
+## Incremento 2 (19/10/2026): home mais visual
+Pedido do Matheus: trocar texto por visual onde der, mantendo a copy v3 literal no texto que fica. Tudo CSS/SVG, cores do repo, sem foto, sem pessoa, sem tela ou logo real, sem nome de cliente, dados fictícios.
+
+| Seção | Visual | Arquivo | Animação | Reduced motion |
+|---|---|---|---|---|
+| Problema | painel antes/depois: "antes" = janelas soltas e cópia manual de célula em célula, mensagens empilhando; "depois" = documento passa pela conferência e para numa aprovação | `ProblemaVisual.tsx`, `visuais-problema.css` | loop CSS 8 a 10 s, só transform/opacity | estado final parado |
+| Método | os 4 passos da copy viram diagrama: nós e conectores (horizontal no desktop, vertical no celular), faixa "piloto" sobre os passos 2 a 4, mini desenho abstrato por passo (linha embolada, linha reta, linha com portões de aprovação, duas barras comparadas). Sem ícones | `Metodo.tsx`, `visuais-metodo.css` | conector desenha com scaleX/scaleY ao entrar | tudo desenhado |
+| Exemplos | 99% vira número de exibição + grade 10×10 que preenche 99 células | `Exemplos.tsx`, `ProvaGrade.tsx`, `visuais-prova.css` | count-up existente + células com stagger | 99 cheias, número final |
+| Verticais | mockup animado em cada cartão: romaneio alimenta CT-e e equipe aprova (logística); extrato concilia linha a linha com título (financeiro); conversa da recepção com resposta aprovada (clínicas) | `MockLogistica.tsx`, `MockFinanceiro.tsx`, `MockClinica.tsx`, `visuais-mockups.css` | loops CSS, pausados até o cartão entrar | último quadro parado |
+
+Regras: base CSS de todo elemento novo = estado final (keyframes animam só o "de"); `aria-hidden` em todo visual (o texto ao lado carrega o sentido); selo "DEMONSTRAÇÃO" nos mockups (nota de produção da copy, seção 5); conversa só administrativa, sem verde nem logo do WhatsApp; nenhum número de resultado novo. A copy tem 4 passos no Método; o pedido falava em 3: ficam os 4 da copy (pergunta aberta para o Matheus).

@@ -1,11 +1,16 @@
 import Link from "next/link";
+import type { ComponentType } from "react";
 import { Marca } from "./Marca";
+import { MockLogistica } from "./MockLogistica";
+import { MockFinanceiro } from "./MockFinanceiro";
+import { MockClinica } from "./MockClinica";
 
 type Vertical = {
   nome: string;
   titulo: string;
   texto: string;
   link?: { href: string; texto: string };
+  mock: ComponentType;
 };
 
 const VERTICAIS: Vertical[] = [
@@ -15,6 +20,7 @@ const VERTICAIS: Vertical[] = [
     texto:
       "Transportadoras, distribuidoras e operações com frota. O agente prepara CT-e e MDF-e, monta rotas e organiza ocorrências. Sua equipe aprova o que pede decisão.",
     link: { href: "/transporte", texto: "Ver como funciona em logística" },
+    mock: MockLogistica,
   },
   {
     nome: "Financeiro / back-office",
@@ -23,6 +29,7 @@ const VERTICAIS: Vertical[] = [
       "Contas a receber, contas a pagar e controles internos de qualquer setor. O agente cruza extrato e títulos, propõe cada baixa com a prova e mantém os painéis do dia em ordem. Quem confirma é o seu financeiro.",
     // PENDENTE copy v3 (pendência 20): rota da página de financeiro ainda não
     // existe; o link "Ver como funciona no financeiro" entra quando existir.
+    mock: MockFinanceiro,
   },
   {
     nome: "Clínicas",
@@ -30,6 +37,7 @@ const VERTICAIS: Vertical[] = [
     texto:
       "O agente atende no WhatsApp oficial da clínica, responde dúvidas administrativas e organiza as conversas por assunto. A recepção continua no controle e aprova as respostas. O agente fica longe de orientação de saúde.",
     link: { href: "/medicina", texto: "Ver como funciona em clínicas" },
+    mock: MockClinica,
   },
 ];
 
@@ -45,25 +53,29 @@ export function Verticais() {
         </header>
 
         <ul className="lp2-verticais__grid">
-          {VERTICAIS.map((v, i) => (
-            <li
-              key={v.nome}
-              className="lp2-verticais__cel"
-              data-rv
-              style={{ "--rv-d": `${i * 120}ms` } as React.CSSProperties}
-            >
-              <div className="lp2-vertical">
-              <p className="lp2-rotulo">{v.nome}</p>
-              <h3 className="lp2-vertical__titulo">{v.titulo}</h3>
-              <p className="lp2-vertical__texto">{v.texto}</p>
-              {v.link ? (
-                <Link href={v.link.href} className="lp2-textlink">
-                  {v.link.texto} <span aria-hidden="true">→</span>
-                </Link>
-              ) : null}
-              </div>
-            </li>
-          ))}
+          {VERTICAIS.map((v, i) => {
+            const Mock = v.mock;
+            return (
+              <li
+                key={v.nome}
+                className="lp2-verticais__cel"
+                data-rv
+                style={{ "--rv-d": `${i * 120}ms` } as React.CSSProperties}
+              >
+                <div className="lp2-vertical">
+                  <Mock />
+                  <p className="lp2-rotulo">{v.nome}</p>
+                  <h3 className="lp2-vertical__titulo">{v.titulo}</h3>
+                  <p className="lp2-vertical__texto">{v.texto}</p>
+                  {v.link ? (
+                    <Link href={v.link.href} className="lp2-textlink">
+                      {v.link.texto} <span aria-hidden="true">→</span>
+                    </Link>
+                  ) : null}
+                </div>
+              </li>
+            );
+          })}
         </ul>
 
         {/* Advocacia: só informativo, sem link, sem CTA, sem preço e sem caso

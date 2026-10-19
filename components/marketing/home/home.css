@@ -609,80 +609,6 @@
 }
 .lp2-dores__item p { margin-top: 8px; color: var(--ink-soft); }
 
-/* ─── Método ──────────────────────────────────────────────── */
-.lp2-metodo__grid {
-  display: grid;
-  gap: 56px;
-}
-@media (min-width: 1024px) {
-  .lp2-metodo__grid {
-    grid-template-columns: 5fr 7fr;
-    gap: 80px;
-    align-items: start;
-  }
-  .lp2-metodo__head {
-    position: sticky;
-    top: 120px;
-  }
-}
-
-.lp2-metodo__passos {
-  position: relative;
-  padding-left: 44px;
-}
-.lp2-metodo__trilho {
-  position: absolute;
-  left: 7px;
-  top: 10px;
-  bottom: 10px;
-  width: 2px;
-  background: var(--line);
-}
-.lp2-metodo__fill {
-  position: absolute;
-  inset: 0;
-  background: var(--teal);
-  transform-origin: top center;
-  transform: scaleY(1);
-}
-
-.lp2-passos { display: grid; gap: 56px; }
-@media (min-width: 1024px) {
-  .lp2-passos { gap: 88px; }
-}
-.lp2-passo { position: relative; }
-.lp2-passo::before {
-  content: "";
-  position: absolute;
-  left: -44px;
-  top: 14px;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 2px solid var(--ink-mute);
-  background: var(--bg-soft);
-  transition: background-color var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out);
-}
-.lp2-passo.is-active::before,
-.lp2-metodo__passos:not(.is-tracking) .lp2-passo::before {
-  border-color: var(--navy);
-  background: var(--teal);
-}
-.lp2-passo__num {
-  display: block;
-  font-family: var(--f-display);
-  font-size: clamp(3rem, 6vw, 4.5rem);
-  font-weight: 600;
-  letter-spacing: -0.04em;
-  line-height: 1;
-  color: var(--navy);
-  transition: opacity var(--dur-slow) var(--ease-out);
-}
-.lp2-metodo__passos.is-tracking .lp2-passo:not(.is-active) .lp2-passo__num { opacity: 0.25; }
-.lp2-passo__body { margin-top: 16px; max-width: 54ch; }
-.lp2-passo__quando { margin-top: 6px; }
-.lp2-passo__body p:last-child { margin-top: 12px; color: var(--ink-soft); }
-
 /* ─── Serviços ────────────────────────────────────────────── */
 .lp2-indice { margin-top: 56px; border-top: 1px solid var(--line); }
 @media (min-width: 1024px) {
@@ -1113,7 +1039,5 @@
   .lp2 .lp2-scene__tick { opacity: 1; transform: none; }
   .lp2 .lp2-scene__stamp { opacity: 1; transform: rotate(-6deg); }
 
-  .lp2 .lp2-metodo__fill { transform: scaleY(1) !important; }
-  .lp2 .lp2-passo__num { opacity: 1 !important; }
   .lp2 .lp2-vertical:hover { transform: none; }
 }

@@ -1,5 +1,4 @@
 import { Marca } from "./Marca";
-import { MetodoProgress } from "./MetodoProgress";
 
 const PASSOS = [
   {
@@ -28,39 +27,121 @@ const PASSOS = [
   },
 ];
 
+/*
+ * Mini desenhos do diagrama. A mesma linha conta o processo: embolada no
+ * diagnóstico, reta e em trechos no redesenho, com portões de aprovação na IA
+ * aplicada e, na medição, duas barras (linha de base e depois), sem números.
+ */
+const SVG = {
+  viewBox: "0 0 160 56",
+  className: "lp2-mdiag__fig",
+  "aria-hidden": true,
+  focusable: false,
+} as const;
+
+function FigDiagnostico() {
+  return (
+    <svg {...SVG}>
+      <path
+        className="lp2-mdiag__traco lp2-mdiag__traco--draw"
+        pathLength={1}
+        d="M4 34 C 22 34, 30 10, 46 16 S 52 46, 38 40 S 50 8, 70 22 S 84 50, 98 34 S 86 10, 106 18 S 122 44, 132 30 S 146 28, 156 28"
+      />
+      <circle className="lp2-mdiag__alvo" cx="98" cy="34" r="8" />
+      <circle className="lp2-mdiag__ponto" cx="98" cy="34" r="3.5" />
+    </svg>
+  );
+}
+
+function FigRedesenho() {
+  const trechos = [4, 44, 84, 124];
+  return (
+    <svg {...SVG}>
+      {trechos.map((x, i) => (
+        <g key={x} className="lp2-mdiag__trecho" style={{ "--k": i } as React.CSSProperties}>
+          <line className="lp2-mdiag__traco" x1={x} y1="22" x2={x + 32} y2="22" />
+          <line className="lp2-mdiag__regra" x1={x} y1="34" x2={x + 24} y2="34" />
+          <line className="lp2-mdiag__regra" x1={x} y1="42" x2={x + 16} y2="42" />
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+function FigIa() {
+  const portoes = [48, 88, 128];
+  return (
+    <svg {...SVG}>
+      <line className="lp2-mdiag__traco" x1="4" y1="28" x2="156" y2="28" />
+      {portoes.map((x, i) => (
+        <g key={x} className="lp2-mdiag__portao" style={{ "--k": i } as React.CSSProperties}>
+          <rect className="lp2-mdiag__portao-luz" x={x - 4} y="19" width="8" height="18" />
+          <rect className="lp2-mdiag__portao-borda" x={x - 4} y="19" width="8" height="18" />
+        </g>
+      ))}
+      <circle className="lp2-mdiag__pulso" cx="156" cy="28" r="3.5" />
+    </svg>
+  );
+}
+
+function FigMedicao() {
+  return (
+    <svg {...SVG}>
+      <rect className="lp2-mdiag__barra lp2-mdiag__barra--base" x="4" y="14" width="148" height="10" />
+      <rect className="lp2-mdiag__barra lp2-mdiag__barra--depois" x="4" y="32" width="120" height="10" />
+      <line className="lp2-mdiag__ref" x1="152" y1="8" x2="152" y2="48" />
+    </svg>
+  );
+}
+
+const FIGURAS = [FigDiagnostico, FigRedesenho, FigIa, FigMedicao];
+
+/*
+ * Diagrama do método: o <ol> é o conteúdo (texto real); nós, conectores, faixa
+ * do piloto e desenhos são decoração aria-hidden. Quatro colunas com conector
+ * horizontal no desktop, pilha com conector vertical no celular. A faixa
+ * PILOTO cobre os passos 2 a 4: o diagnóstico vem antes do piloto.
+ */
 export function Metodo() {
   return (
-    <section id="metodo" className="lp2-section lp2-soft lp2-metodo">
-      <div className="lp2-container lp2-metodo__grid">
-        <header className="lp2-metodo__head" data-rv>
+    <section id="metodo" className="lp2-section lp2-soft lp2-mdiag">
+      <div className="lp2-container">
+        <header className="lp2-head" data-rv>
           <p className="lp2-rotulo">COMO FUNCIONA</p>
           <h2 className="lp2-h2">
             Primeiro o processo, <Marca>depois a IA</Marca>.
           </h2>
         </header>
 
-        <MetodoProgress>
-          <ol className="lp2-passos">
-            {PASSOS.map((p, i) => (
+        <ol className="lp2-mdiag__lista">
+          {PASSOS.map((p, i) => {
+            const Fig = FIGURAS[i];
+            return (
               <li
                 key={p.nome}
-                className="lp2-passo"
-                data-step
-                data-rv
-                style={{ "--rv-d": `${i * 80}ms` } as React.CSSProperties}
+                className={`lp2-mdiag__passo lp2-mdiag__passo--${i + 1}`}
+                data-rv="bg"
+                style={{ "--i": i } as React.CSSProperties}
               >
-                <span className="lp2-passo__num" aria-hidden="true">
+                {i === 1 && (
+                  <span className="lp2-mdiag__piloto" aria-hidden="true">
+                    <span className="lp2-mdiag__piloto-linha" />
+                    <span className="lp2-mdiag__piloto-txt">PILOTO</span>
+                  </span>
+                )}
+                <span className="lp2-mdiag__no" aria-hidden="true">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <div className="lp2-passo__body">
+                <div className="lp2-mdiag__corpo">
+                  <Fig />
                   <h3 className="lp2-h3">{p.nome}</h3>
-                  <p className="lp2-rotulo lp2-passo__quando">{p.quando}</p>
-                  <p>{p.texto}</p>
+                  <p className="lp2-rotulo lp2-mdiag__quando">{p.quando}</p>
+                  <p className="lp2-mdiag__texto">{p.texto}</p>
                 </div>
               </li>
-            ))}
-          </ol>
-        </MetodoProgress>
+            );
+          })}
+        </ol>
       </div>
     </section>
   );

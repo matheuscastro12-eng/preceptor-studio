@@ -1,5 +1,6 @@
 import { CountUp } from "./CountUp";
 import { Marca } from "./Marca";
+import { ProvaGrade } from "./ProvaGrade";
 
 export function Exemplos() {
   return (
@@ -19,11 +20,14 @@ export function Exemplos() {
         </header>
 
         <ul className="lp2-casos">
-          <li className="lp2-caso" data-rv style={{ "--rv-d": "0ms" } as React.CSSProperties}>
+          <li className="lp2-caso lp2-prova" data-rv style={{ "--rv-d": "0ms" } as React.CSSProperties}>
             <p className="lp2-rotulo lp2-caso__frente">FINANCEIRO</p>
-            <p className="lp2-caso__destaque lp2-caso__destaque--num">
-              Cerca de <CountUp to={99} />%
+            <p className="lp2-caso__destaque lp2-caso__destaque--num lp2-prova__num">
+              <span className="lp2-prova__pre">Cerca de </span>
+              <CountUp to={99} />
+              <span className="lp2-prova__pct">%</span>
             </p>
+            <ProvaGrade />
             <p className="lp2-caso__texto">dos recebimentos conciliados no período medido.</p>
             <p className="lp2-caso__nota">
               Um cliente de logística. O agente cruza extrato e títulos, e o financeiro confirma as

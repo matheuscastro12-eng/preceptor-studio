@@ -1,0 +1,385 @@
+/* Visuais do Problema (antes/depois) e da prova dos Exemplos (grade 10×10).
+   Escopo .lp2, só tokens da home. Estado base = estado final; os keyframes
+   animam só o "de" e só transform/opacity. Loops pausados até entrar. */
+
+/* ─── Antes/depois ────────────────────────────────────────── */
+.lp2-antes-depois {
+  display: grid;
+  gap: 28px;
+  margin-top: 48px;
+}
+@media (min-width: 1024px) {
+  .lp2-antes-depois {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-top: 72px;
+  }
+}
+.lp2-antes-depois__painel { min-width: 0; }
+.lp2-antes-depois__rotulo { margin-bottom: 12px; }
+.lp2-antes-depois__palco {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--bg-soft);
+  overflow: hidden;
+}
+.lp2-antes-depois__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Antes: janelas soltas (SVG, unidades do viewBox 400×300). */
+.lp2-ad-janela { fill: var(--bg); stroke: var(--line); stroke-width: 1; }
+.lp2-ad-linha { stroke: var(--line); stroke-width: 1; }
+.lp2-ad-titulo { fill: var(--ink-mute); opacity: 0.55; }
+.lp2-ad-cel { fill: none; stroke: var(--line); stroke-width: 1; }
+.lp2-ad-valor { fill: var(--ink-mute); opacity: 0.4; }
+.lp2-ad-label { fill: var(--ink-mute); opacity: 0.5; }
+.lp2-ad-campo { fill: var(--bg-soft); stroke: var(--line); stroke-width: 1; }
+.lp2-ad-erro { fill: none; stroke: var(--erro); stroke-width: 1.5; }
+.lp2-ad-msg { fill: var(--bg-soft); stroke: var(--line); stroke-width: 1; }
+.lp2-ad-ponto { fill: var(--navy); }
+.lp2-ad-copia { fill: var(--navy); opacity: 0.8; }
+
+.lp2-ad-ponto,
+.lp2-ad-msg,
+.lp2-ad-copia {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Loop de 9s. Cópias: aparecem na célula, esperam, atravessam devagar até o
+   campo (a 4 a 24%, b 34 a 54%, c 64 a 84%), tudo some de 90 a 96%. */
+@keyframes lp2-ad-copia-a {
+  0% { opacity: 0; transform: translate(-231px, -12px); }
+  4%, 8% { opacity: 0.8; transform: translate(-231px, -12px); }
+  24%, 90% { opacity: 0.8; transform: translate(0, 0); }
+  96%, 100% { opacity: 0; transform: translate(0, 0); }
+}
+@keyframes lp2-ad-copia-b {
+  0%, 30% { opacity: 0; transform: translate(-231px, -27px); }
+  34%, 38% { opacity: 0.8; transform: translate(-231px, -27px); }
+  54%, 90% { opacity: 0.8; transform: translate(0, 0); }
+  96%, 100% { opacity: 0; transform: translate(0, 0); }
+}
+@keyframes lp2-ad-copia-c {
+  0%, 60% { opacity: 0; transform: translate(-231px, -42px); }
+  64%, 68% { opacity: 0.8; transform: translate(-231px, -42px); }
+  84%, 90% { opacity: 0.8; transform: translate(0, 0); }
+  96%, 100% { opacity: 0; transform: translate(0, 0); }
+}
+/* Mensagens empilham uma a uma; o ponto pulsa a cada chegada. */
+@keyframes lp2-ad-msg-a {
+  0%, 14% { opacity: 0; transform: translateY(6px); }
+  18%, 90% { opacity: 1; transform: translateY(0); }
+  96%, 100% { opacity: 0; transform: translateY(0); }
+}
+@keyframes lp2-ad-msg-b {
+  0%, 44% { opacity: 0; transform: translateY(6px); }
+  48%, 90% { opacity: 1; transform: translateY(0); }
+  96%, 100% { opacity: 0; transform: translateY(0); }
+}
+@keyframes lp2-ad-msg-c {
+  0%, 74% { opacity: 0; transform: translateY(6px); }
+  78%, 90% { opacity: 1; transform: translateY(0); }
+  96%, 100% { opacity: 0; transform: translateY(0); }
+}
+@keyframes lp2-ad-ponto {
+  0%, 15%, 21%, 45%, 51%, 75%, 81%, 100% { transform: scale(1); }
+  18%, 48%, 78% { transform: scale(1.6); }
+}
+/* A célula que não bate acende depois da segunda cópia. */
+@keyframes lp2-ad-erro {
+  0%, 52% { opacity: 0.15; }
+  56%, 90% { opacity: 1; }
+  96%, 100% { opacity: 0.15; }
+}
+.lp2-ad-copia--a { animation: lp2-ad-copia-a 9s ease-in-out infinite; }
+.lp2-ad-copia--b { animation: lp2-ad-copia-b 9s ease-in-out infinite; }
+.lp2-ad-copia--c { animation: lp2-ad-copia-c 9s ease-in-out infinite; }
+.lp2-ad-msg--a { animation: lp2-ad-msg-a 9s var(--ease-out) infinite; }
+.lp2-ad-msg--b { animation: lp2-ad-msg-b 9s var(--ease-out) infinite; }
+.lp2-ad-msg--c { animation: lp2-ad-msg-c 9s var(--ease-out) infinite; }
+.lp2-ad-ponto { animation: lp2-ad-ponto 9s var(--ease-out) infinite; }
+.lp2-ad-erro { animation: lp2-ad-erro 9s var(--ease-out) infinite; }
+
+/* Depois: documento, faixa de conferência, uma aprovação. */
+.lp2-antes-depois__fluxo { position: absolute; inset: 0; }
+.lp2-antes-depois__doc {
+  position: absolute;
+  left: 6%;
+  top: 10%;
+  width: 26%;
+  height: 62%;
+  padding: 7% 4%;
+  display: flex;
+  flex-direction: column;
+  gap: 9%;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  box-shadow: 0 14px 30px -22px rgba(0, 3, 61, 0.35);
+}
+.lp2-antes-depois__bar {
+  display: block;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--line);
+}
+.lp2-antes-depois__bar--titulo { width: 70%; height: 8px; background: var(--navy); opacity: 0.85; }
+.lp2-antes-depois__bar--w60 { width: 60%; }
+.lp2-antes-depois__bar--w75 { width: 75%; }
+.lp2-antes-depois__bar--w90 { width: 90%; }
+
+.lp2-antes-depois__con {
+  position: absolute;
+  display: block;
+  background: rgba(0, 3, 61, 0.3);
+}
+.lp2-antes-depois__con--h {
+  left: 32%;
+  top: 41%;
+  width: 8%;
+  height: 1px;
+  transform-origin: left center;
+}
+.lp2-antes-depois__con--v {
+  left: 77%;
+  top: 72%;
+  width: 1px;
+  height: 6%;
+  transform-origin: center top;
+}
+
+.lp2-antes-depois__faixa {
+  position: absolute;
+  left: 40%;
+  top: 10%;
+  width: 54%;
+  height: 62%;
+  padding: 0 6%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  background: var(--teal-tint);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+.lp2-antes-depois__linha {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.lp2-antes-depois__linha .lp2-antes-depois__bar { flex: 1; background: rgba(0, 3, 61, 0.14); }
+.lp2-antes-depois__visto {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background: var(--teal);
+  color: var(--navy);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+}
+
+.lp2-antes-depois__acao {
+  position: absolute;
+  left: 60%;
+  top: 78%;
+  width: 34%;
+  height: 13%;
+}
+.lp2-antes-depois__botao {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--navy);
+  border-radius: var(--r-sm);
+  background: var(--bg);
+  color: var(--navy);
+  font-family: var(--f-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.lp2-antes-depois__botao--ok {
+  background: var(--navy);
+  color: var(--bg);
+}
+.lp2-antes-depois__ok { color: var(--teal); font-weight: 700; }
+
+/* Loop de 9s: doc entra (0 a 8%), conector (10 a 16%), vistos (20 a 44%),
+   conector (50 a 56%), botão pressionado e aprovado (62 a 70%), sai (90 a 96%). */
+@keyframes lp2-ad-fluxo {
+  0% { opacity: 0; }
+  4%, 90% { opacity: 1; }
+  96%, 100% { opacity: 0; }
+}
+@keyframes lp2-ad-doc {
+  0% { opacity: 0; transform: translateX(-14px); }
+  8%, 100% { opacity: 1; transform: translateX(0); }
+}
+@keyframes lp2-ad-con-h {
+  0%, 10% { transform: scaleX(0); }
+  16%, 100% { transform: scaleX(1); }
+}
+@keyframes lp2-ad-con-v {
+  0%, 50% { transform: scaleY(0); }
+  56%, 100% { transform: scaleY(1); }
+}
+@keyframes lp2-ad-visto-a {
+  0%, 20% { opacity: 0; transform: scale(0.4); }
+  24%, 100% { opacity: 1; transform: scale(1); }
+}
+@keyframes lp2-ad-visto-b {
+  0%, 28% { opacity: 0; transform: scale(0.4); }
+  32%, 100% { opacity: 1; transform: scale(1); }
+}
+@keyframes lp2-ad-visto-c {
+  0%, 36% { opacity: 0; transform: scale(0.4); }
+  40%, 100% { opacity: 1; transform: scale(1); }
+}
+@keyframes lp2-ad-visto-d {
+  0%, 44% { opacity: 0; transform: scale(0.4); }
+  48%, 100% { opacity: 1; transform: scale(1); }
+}
+@keyframes lp2-ad-aperta {
+  0%, 62% { transform: scale(1); }
+  66% { transform: scale(0.94); }
+  70%, 100% { transform: scale(1); }
+}
+@keyframes lp2-ad-aprovado {
+  0%, 66% { opacity: 0; }
+  70%, 100% { opacity: 1; }
+}
+.lp2-antes-depois__fluxo { animation: lp2-ad-fluxo 9s var(--ease-out) infinite; }
+.lp2-antes-depois__doc { animation: lp2-ad-doc 9s var(--ease-out) infinite; }
+.lp2-antes-depois__con--h { animation: lp2-ad-con-h 9s var(--ease-out) infinite; }
+.lp2-antes-depois__con--v { animation: lp2-ad-con-v 9s var(--ease-out) infinite; }
+.lp2-antes-depois__linha--a .lp2-antes-depois__visto { animation: lp2-ad-visto-a 9s var(--ease-out) infinite; }
+.lp2-antes-depois__linha--b .lp2-antes-depois__visto { animation: lp2-ad-visto-b 9s var(--ease-out) infinite; }
+.lp2-antes-depois__linha--c .lp2-antes-depois__visto { animation: lp2-ad-visto-c 9s var(--ease-out) infinite; }
+.lp2-antes-depois__linha--d .lp2-antes-depois__visto { animation: lp2-ad-visto-d 9s var(--ease-out) infinite; }
+.lp2-antes-depois__acao { animation: lp2-ad-aperta 9s var(--ease-out) infinite; }
+.lp2-antes-depois__botao--ok { animation: lp2-ad-aprovado 9s var(--ease-out) infinite; }
+
+/* Loops parados até o bloco entrar na tela. */
+.lp2.js-ready [data-rv]:not(.is-in) .lp2-antes-depois *,
+.lp2.js-ready .lp2-antes-depois[data-rv]:not(.is-in) * {
+  animation-play-state: paused;
+}
+
+/* ─── Prova (Exemplos) ────────────────────────────────────── */
+/* Sobrescreve .lp2-casos (home.css, 3 colunas em 1024): 2 colunas a partir de 720,
+   o cartão da prova na largura toda. */
+@media (min-width: 720px) {
+  .lp2 .lp2-casos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lp2 .lp2-casos .lp2-prova { grid-column: 1 / -1; }
+}
+
+.lp2 .lp2-prova__num { line-height: 0.9; }
+.lp2-prova__pre {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 1.375rem;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: var(--teal-soft);
+}
+.lp2 .lp2-prova .lp2-countup {
+  display: inline-block;
+  font-size: clamp(5rem, 12vw, 9rem);
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  /* Largura de dois dígitos desde o 0, para o "%" não pular na contagem. */
+  min-width: 2ch;
+  text-align: right;
+}
+.lp2-prova__pct { margin-left: 0.06em; }
+
+.lp2-prova__grade {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 4px;
+  width: min(100%, 240px);
+  aspect-ratio: 1;
+  margin-top: 28px;
+}
+.lp2-prova__cel {
+  display: block;
+  border-radius: 2px;
+  background: var(--teal);
+}
+.lp2-prova__cel--vazia {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+}
+
+/* Cartão da prova: número e textos à esquerda, grade à direita. */
+@media (min-width: 720px) {
+  .lp2 .lp2-caso.lp2-prova {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "frente grade"
+      "num grade"
+      "texto grade"
+      "nota grade";
+    grid-template-rows: auto auto auto 1fr;
+    column-gap: 48px;
+    padding: 36px;
+  }
+  .lp2-prova .lp2-caso__frente { grid-area: frente; }
+  .lp2-prova .lp2-prova__num { grid-area: num; }
+  .lp2-prova .lp2-caso__texto { grid-area: texto; }
+  .lp2 .lp2-prova .lp2-caso__nota { grid-area: nota; margin-top: 0; align-self: end; }
+  .lp2-prova .lp2-prova__grade {
+    grid-area: grade;
+    align-self: center;
+    width: clamp(220px, 28vw, 300px);
+    margin-top: 0;
+  }
+}
+@media (min-width: 1024px) {
+  .lp2 .lp2-caso.lp2-prova { column-gap: 80px; padding: 44px; }
+}
+
+/* Células enchem em sequência, no ritmo do CountUp (atraso em --d). */
+.lp2.js-ready .lp2-prova[data-rv]:not(.is-in) .lp2-prova__cel:not(.lp2-prova__cel--vazia) {
+  opacity: 0;
+  transform: scale(0.4);
+}
+.lp2.js-ready .lp2-prova[data-rv].is-in .lp2-prova__cel {
+  transition:
+    opacity 240ms var(--ease-out) var(--d, 0ms),
+    transform 240ms var(--ease-out) var(--d, 0ms);
+}
+
+/* ─── Reduced motion: estado final parado ─────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .lp2 .lp2-antes-depois *,
+  .lp2 .lp2-prova__cel {
+    animation: none !important;
+    transition: none !important;
+  }
+  .lp2 .lp2-ad-copia { opacity: 0.8 !important; transform: none !important; }
+  .lp2 .lp2-ad-msg,
+  .lp2 .lp2-ad-erro,
+  .lp2 .lp2-antes-depois__fluxo,
+  .lp2 .lp2-antes-depois__doc,
+  .lp2 .lp2-antes-depois__visto,
+  .lp2 .lp2-antes-depois__botao--ok,
+  .lp2 .lp2-prova__cel { opacity: 1 !important; transform: none !important; }
+  .lp2 .lp2-ad-ponto,
+  .lp2 .lp2-antes-depois__con,
+  .lp2 .lp2-antes-depois__acao { transform: none !important; }
+}
