@@ -412,35 +412,11 @@
 
 .lp2-hero .lp2-lead { margin-top: 28px; }
 
-.lp2-frentes {
-  margin-top: 72px;
-  border-top: 1px solid var(--line);
-  display: grid;
-}
-.lp2-frentes__item {
-  font-family: var(--f-mono);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  line-height: 1.6;
-  color: var(--ink);
-  padding: 18px 0;
-  border-bottom: 1px solid var(--line);
-}
+.lp2-hero .lp2-hero__frentes { margin-top: 72px; }
 @media (min-width: 1024px) {
-  .lp2-frentes {
-    grid-template-columns: repeat(3, 1fr);
-    margin-top: 96px;
-    border-bottom: 1px solid var(--line);
-  }
-  .lp2-frentes__item {
-    border-bottom: 0;
-    padding: 20px 24px;
-  }
-  .lp2-frentes__item:first-child { padding-left: 0; }
-  .lp2-frentes__item + .lp2-frentes__item { border-left: 1px solid var(--line); }
+  .lp2-hero .lp2-hero__frentes { margin-top: 96px; }
 }
+.lp2-vertical .lp2-hero__frente { margin-top: 20px; }
 
 /* Entrada do hero (no load, independe de JS) */
 @keyframes lp2-rise {
@@ -580,17 +556,15 @@
 .lp2-scene__stamp { animation: lp2-stamp 9s var(--ease-out) infinite; }
 
 /* ─── Problema ────────────────────────────────────────────── */
-.lp2-problema__grid {
-  display: grid;
-  gap: 56px;
-  margin-top: 48px;
-}
+.lp2-dores--linhas { margin-top: 48px; }
 @media (min-width: 1024px) {
-  .lp2-problema__grid {
-    grid-template-columns: 5fr 7fr;
-    gap: 80px;
-    margin-top: 72px;
+  .lp2-dores--linhas {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    margin-top: 64px;
   }
+  .lp2-dores--linhas .lp2-dores__item { grid-template-columns: 40px 1fr; }
 }
 .lp2-dores { border-top: 1px solid var(--line); }
 .lp2-dores__item {
@@ -607,32 +581,8 @@
   color: var(--ink-soft);
   padding-top: 6px;
 }
-.lp2-dores__item p { margin-top: 8px; color: var(--ink-soft); }
-
-/* ─── Serviços ────────────────────────────────────────────── */
-.lp2-indice { margin-top: 56px; border-top: 1px solid var(--line); }
-@media (min-width: 1024px) {
-  .lp2-indice { margin-top: 80px; }
-}
-.lp2-indice__grupo {
-  display: grid;
-  gap: 20px;
-  padding: 32px 0;
-  border-bottom: 1px solid var(--line);
-}
-@media (min-width: 1024px) {
-  .lp2-indice__grupo {
-    grid-template-columns: 4fr 8fr;
-    gap: 48px;
-    padding: 44px 0;
-  }
-}
-.lp2-indice__titulo { padding-top: 4px; }
-.lp2-indice__itens { display: grid; gap: 28px; }
-@media (min-width: 720px) {
-  .lp2-indice__itens { grid-template-columns: 1fr 1fr; gap: 40px; }
-}
-.lp2-indice__item p { margin-top: 8px; color: var(--ink-soft); }
+.lp2-dores__item p { color: var(--ink-soft); }
+.lp2-dores__titulo { font-weight: 600; color: var(--ink); }
 
 /* ─── Exemplos ────────────────────────────────────────────── */
 .lp2-exemplos.lp2-navy { background: transparent; }
@@ -695,7 +645,6 @@
   font-style: italic;
   color: var(--teal-soft);
 }
-.lp2-exemplos__rodape { margin-top: 40px; }
 
 /* ─── Verticais ───────────────────────────────────────────── */
 .lp2-verticais__grid {
@@ -729,72 +678,6 @@
 }
 .lp2-vertical__texto { margin-top: 14px; color: var(--ink-soft); }
 .lp2-vertical .lp2-textlink { margin-top: auto; padding-top: 24px; }
-
-.lp2-advocacia {
-  display: grid;
-  gap: 12px;
-  margin-top: 56px;
-  padding-top: 32px;
-  border-top: 1px solid var(--line);
-}
-@media (min-width: 1024px) {
-  .lp2-advocacia { grid-template-columns: 4fr 8fr; gap: 48px; }
-}
-.lp2-advocacia p:not(.lp2-rotulo) { margin-top: 8px; color: var(--ink-soft); max-width: 68ch; }
-
-/* ─── Piloto ──────────────────────────────────────────────── */
-.lp2-regua {
-  position: relative;
-  display: grid;
-  gap: 36px;
-  margin-top: 56px;
-  padding-left: 28px;
-  border-left: 2px solid var(--line);
-}
-.lp2-regua__marco { position: relative; }
-.lp2-regua__marco p { margin-top: 8px; color: var(--ink-soft); }
-.lp2-regua__ponto {
-  position: absolute;
-  left: -36px;
-  top: 6px;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 2px solid var(--navy);
-  background: var(--teal);
-}
-@media (min-width: 720px) {
-  .lp2-regua {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 32px;
-    padding-left: 0;
-    padding-top: 32px;
-    border-left: 0;
-    border-top: 2px solid var(--line);
-  }
-  .lp2-regua__ponto { left: 0; top: -40px; }
-}
-@media (min-width: 1024px) {
-  .lp2-regua { margin-top: 80px; gap: 48px; }
-}
-
-.lp2-piloto__listas {
-  display: grid;
-  gap: 40px;
-  margin-top: 64px;
-}
-@media (min-width: 1024px) {
-  .lp2-piloto__listas { grid-template-columns: repeat(3, 1fr); gap: 48px; margin-top: 88px; }
-}
-.lp2-piloto__lista-titulo { margin-bottom: 12px; }
-.lp2-lista li {
-  padding: 14px 0;
-  border-top: 1px solid var(--line);
-  color: var(--ink-soft);
-}
-.lp2-lista li:last-child { border-bottom: 1px solid var(--line); }
-.lp2-lista strong { color: var(--navy); font-weight: 600; }
-.lp2-piloto__cta { margin-top: 64px; }
 
 /* ─── FAQ ─────────────────────────────────────────────────── */
 .lp2-faq__grid { display: grid; gap: 24px; }
@@ -957,7 +840,6 @@
 }
 .lp2-btn:hover { opacity: 0.92; }
 .lp2-btn:disabled { opacity: 0.7; cursor: progress; }
-.lp2-form__micro { font-size: 0.875rem; color: var(--ink-soft); margin-top: -8px; }
 /* Região viva fica sempre na árvore (display:none impede o anúncio); vazia,
    só desconta o gap do flex. */
 .lp2-form__status:empty { margin-top: -20px; }
@@ -992,7 +874,6 @@
   color: var(--navy);
   max-width: 18ch;
 }
-.lp2-footer__texto { margin-top: 24px; color: var(--ink-soft); max-width: 64ch; }
 .lp2-footer__nav { margin-top: 48px; }
 .lp2-footer__nav ul { display: flex; flex-wrap: wrap; gap: 8px 28px; }
 .lp2-footer__nav a {

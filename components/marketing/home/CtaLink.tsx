@@ -13,7 +13,6 @@ export function CtaLink({ onNavy = false }: { onNavy?: boolean }) {
   );
 }
 
-export const CTA_MICROCOPY =
-  "30 minutos, sem compromisso de piloto. Você sai com o passo a passo de hoje e onde o tempo se perde.";
+export const CTA_MICROCOPY = "30 minutos, sem compromisso de piloto.";
 
 export { CTA_TEXTO };

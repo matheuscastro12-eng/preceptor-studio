@@ -10,11 +10,6 @@ export function HomeFooter() {
           <img src="/brand/logo-horizontal.png" alt="PRECEPTOR!" width={480} height={120} />
         </Link>
         <p className="lp2-footer__assinatura">Primeiro o processo, depois a IA.</p>
-        <p className="lp2-footer__texto">
-          Funciona no ERP, na planilha ou no WhatsApp que você já usa, e no TMS, no caso da logística.
-          Integração por API quando existe; quando não, pela tela ou pelo e-mail. Dados pessoais
-          tratados conforme a LGPD.
-        </p>
         <nav aria-label="Rodapé" className="lp2-footer__nav">
           <ul>
             <li>

@@ -5,10 +5,7 @@ import { HomeNav } from "@/components/marketing/home/HomeNav";
 import { Hero } from "@/components/marketing/home/Hero";
 import { Problema } from "@/components/marketing/home/Problema";
 import { Metodo } from "@/components/marketing/home/Metodo";
-import { Servicos } from "@/components/marketing/home/Servicos";
 import { Exemplos } from "@/components/marketing/home/Exemplos";
-import { Verticais } from "@/components/marketing/home/Verticais";
-import { Piloto } from "@/components/marketing/home/Piloto";
 import { Faq } from "@/components/marketing/home/Faq";
 import { Contato } from "@/components/marketing/home/Contato";
 import { HomeFooter } from "@/components/marketing/home/HomeFooter";
@@ -93,10 +90,7 @@ export default function MarketingHome() {
         <Hero />
         <Problema />
         <Metodo />
-        <Servicos />
         <Exemplos />
-        <Verticais />
-        <Piloto />
         <Faq />
         <Contato />
       </main>

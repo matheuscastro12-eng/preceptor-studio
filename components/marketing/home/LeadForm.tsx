@@ -13,35 +13,24 @@ const SEGMENTOS = [
   { value: "outro", label: "Outro" },
 ];
 
-const PROCESSOS = [
-  "Digitação de documentos",
-  "Conciliação e financeiro",
-  "Atendimento no WhatsApp",
-  "Emissão de CT-e e MDF-e",
-  "Retomada de contatos",
-  "Rotas e ocorrências de entrega",
-  "Outro",
-];
-
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const MSG = {
   nome: "Escreva seu nome.",
   email: "Confira o e-mail.",
   telefone: "Confira o número com DDD.",
-  empresa: "Escreva o nome da empresa.",
   segmento: "Selecione o segmento.",
   consent: "Para enviar, marque a autorização.",
   sucesso: "Recebido. A gente vai falar com você para marcar o diagnóstico de 30 min.",
 };
 
-type Campo = "nome" | "email" | "telefone" | "empresa" | "segmento" | "consent";
-const ORDEM: Campo[] = ["nome", "email", "telefone", "empresa", "segmento", "consent"];
+// Campos mínimos (corte v4): Empresa e "O que mais toma tempo hoje?" saíram.
+type Campo = "nome" | "email" | "telefone" | "segmento" | "consent";
+const ORDEM: Campo[] = ["nome", "email", "telefone", "segmento", "consent"];
 const IDS: Record<Campo, string> = {
   nome: "lf-nome",
   email: "lf-email",
   telefone: "lf-whatsapp",
-  empresa: "lf-empresa",
   segmento: "lf-segmento",
   consent: "lf-consent",
 };
@@ -52,9 +41,7 @@ export function LeadForm() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
-  const [empresa, setEmpresa] = useState("");
   const [segmento, setSegmento] = useState("");
-  const [processo, setProcesso] = useState("");
   const [consent, setConsent] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<Campo, string>>>({});
   const [status, setStatus] = useState<Status>("idle");
@@ -112,7 +99,6 @@ export function LeadForm() {
     if (!EMAIL_RE.test(email.trim())) e.email = MSG.email;
     const digitos = telefone.replace(/\D/g, "");
     if (digitos.length < 10 || digitos.length > 13) e.telefone = MSG.telefone;
-    if (!empresa.trim()) e.empresa = MSG.empresa;
     if (!segmento) e.segmento = MSG.segmento;
     if (!consent) e.consent = MSG.consent;
     return e;
@@ -136,8 +122,7 @@ export function LeadForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contact: { nome, email, telefone, empresa },
-          mensagem: processo,
+          contact: { nome, email, telefone },
           category: segmento,
           consent: true,
           attribution: getAttribution(),
@@ -220,56 +205,23 @@ export function LeadForm() {
         </div>
       </div>
 
-      <div className="lp2-form__row">
-        <div className="lp2-field">
-          <label htmlFor={IDS.empresa}>Empresa</label>
-          <input
-            id={IDS.empresa}
-            name="empresa"
-            value={empresa}
-            onChange={(e) => setEmpresa(e.target.value)}
-            placeholder="Nome da empresa"
-            autoComplete="organization"
-            required
-            {...erroProps("empresa")}
-          />
-          <Erro c="empresa" />
-        </div>
-        <div className="lp2-field">
-          <label htmlFor={IDS.segmento}>Segmento</label>
-          <select
-            id={IDS.segmento}
-            name="segmento"
-            value={segmento}
-            onChange={(e) => setSegmento(e.target.value)}
-            required
-            {...erroProps("segmento")}
-          >
-            {SEGMENTOS.map((s) => (
-              <option key={s.value} value={s.value}>
-                {s.label}
-              </option>
-            ))}
-          </select>
-          <Erro c="segmento" />
-        </div>
-      </div>
-
       <div className="lp2-field">
-        <label htmlFor="lf-processo">O que mais toma tempo hoje?</label>
+        <label htmlFor={IDS.segmento}>Segmento</label>
         <select
-          id="lf-processo"
-          name="processo"
-          value={processo}
-          onChange={(e) => setProcesso(e.target.value)}
+          id={IDS.segmento}
+          name="segmento"
+          value={segmento}
+          onChange={(e) => setSegmento(e.target.value)}
+          required
+          {...erroProps("segmento")}
         >
-          <option value="">Selecione</option>
-          {PROCESSOS.map((p) => (
-            <option key={p} value={p}>
-              {p}
+          {SEGMENTOS.map((s) => (
+            <option key={s.value} value={s.value}>
+              {s.label}
             </option>
           ))}
         </select>
+        <Erro c="segmento" />
       </div>
 
       <div className="lp2-field lp2-field--check">
@@ -307,10 +259,8 @@ export function LeadForm() {
         {sending ? "Enviando..." : CTA_TEXTO}
       </button>
 
-      <p className="lp2-form__micro">
-        30 minutos, sem compromisso de piloto. A resposta vem para marcar a conversa.
-      </p>
-      {/* PENDENTE copy v3 (pendência 4): prazo "em até 1 dia útil" só entra se confirmado. */}
+      {/* Corte v4: microcopy abaixo do botão saiu (repetia a do hero).
+          PENDENTE copy v3 (pendência 4): prazo "em até 1 dia útil" só entra se confirmado. */}
 
       <div role="status" aria-live="polite" className="lp2-form__status">
         {status === "success" ? <p className="lp2-form__ok">{MSG.sucesso}</p> : null}

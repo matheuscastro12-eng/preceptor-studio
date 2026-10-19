@@ -40,9 +40,28 @@ Pedido do Matheus: trocar texto por visual onde der, copy v3 literal no texto qu
 - [ ] Screenshots finais 1440/390 e reduced motion com o Matheus (workers tiraram prints de conferência em 360/1280/1440 no dev server da 3210: sem rolagem lateral, reduced motion mostra o estado final).
 
 ### Decisões e atenção
-- Pedido falava em "3 passos"; a copy v3 tem 4. Ficaram os 4 (pergunta para o Matheus).
+- Pedido falava em "3 passos"; a copy v3 tem 4. Ficaram os 4 (pergunta para o Matheus). **Resolvido no Incremento 3: 3 passos, decisão do Matheus.**
 - Strings novas de interface, todas dentro de visuais `aria-hidden`: ANTES, DEPOIS, PILOTO, Aprovar, Aprovado, DEMONSTRAÇÃO e dados fictícios dos mockups (NF 4821, 12 vol., 380 kg, valores R$ fictícios, "Vocês atendem sábado?", "Sim, das 8h às 12h. Quer agendar um horário?", "Aguardando aprovação", "Aprovado pela recepção", "prova.pdf").
 - Horário "8h às 12h" é fictício; trocar se puder ser lido como horário real de algum cliente.
 - Mockups em 8/7 (1/1 abaixo de 480 px) para caber o extrato em 360 px.
 - Desenho do passo 4: barra "depois" ficou só um pouco menor que a linha de base (120 de 148), para ler como comparação e não como resultado prometido.
 - 100 spans da grade adicionam cerca de 3 KB de HTML.
+
+## Incremento 3 (19/10/2026): corte de texto
+Pedido do Matheus: home com 5 a 6 seções e menos de ~600 palavras visíveis, mantendo todos os visuais novos. Só cortar e condensar a v3. Copy final em `/workspace/marketing/copy-site/copy-site-v4-enxuta.md`, com a contagem por seção.
+- [x] Hero: sem o rótulo de topo, subtítulo de 1 frase e microcopy curta. Os 3 mockups saíram de Verticais e viraram cartões no hero, com os rótulos de frente da v3, `data-rv` nos `<li>` (sem isso o loop não toca) e os links de logística e clínicas. A HeroScene ficou.
+- [x] Problema: antes/depois + 3 linhas (título da dor + cena da v3), `.lp2-dores--linhas` com 3 colunas em 1024.
+- [x] Método: 3 passos (Diagnóstico, IA aplicada, Medição), uma linha cada. `FigRedesenho` e o CSS dele saíram; grade com 3 colunas e faixa PILOTO sobre os passos 2 e 3. "Piloto de 2 a 4 semanas" fica no `quando` do passo 2 porque a faixa é `aria-hidden`.
+- [x] Prova: um cartão (99% + grade + uma linha), com as ressalvas da v3.
+- [x] FAQ: 3 perguntas (Serve?, Trocar sistema?, E se a IA errar?).
+- [x] Formulário: nome, e-mail, WhatsApp, segmento, consentimento LGPD (texto da v3) e aviso de dados de saúde. Saíram Empresa, "O que mais toma tempo hoje?" e a microcopy abaixo do botão. Mesmo endpoint; `/api/leads` intocado.
+- [x] Removidos `Servicos.tsx`, `Verticais.tsx` e `Piloto.tsx`, mais o CSS sem uso (`.lp2-frentes`, `.lp2-indice*`, `.lp2-advocacia`, `.lp2-regua*`, `.lp2-piloto*`, `.lp2-lista`, `.lp2-exemplos__rodape`, `.lp2-footer__texto`, `.lp2-form__micro`). `.lp2-vertical*` e `.lp2-verticais__*` ficam porque os cartões do hero usam.
+- [x] Nav: Como funciona · Exemplo · FAQ. Rodapé sem o parágrafo de integração.
+- [x] Contagem na 3210 (curl, sem script/style/tags, tokens com letra ou número): 1781 → **558** no total e 1671 → **450** só no texto de leitura (sem `aria-hidden`/`hidden`).
+- [x] Varredura: sem travessão e sem números antigos. O único "não é" é a pergunta do FAQ da v3 ("não é de logística nem de clínica"), sem contraste.
+- [x] Lint sem avisos, tsc exit 0. Build não rodado (dev server da 3210 usa `.next`).
+- [ ] Screenshots 1440/390 com o Matheus. Olhar o comprimento do hero no celular: texto, HeroScene e 3 mockups antes do Problema.
+
+### Atenção
+- CRM: leads da home chegam com `company` nulo e `mensagem`/`notes` vazios (Empresa e processo saíram). `category` segue preenchido pelo Segmento, então `computeScoreFields` e o resumo continuam recebendo o setor.
+- Duas sessões (09 e 8c) rodaram este corte em paralelo no mesmo working tree. Combinaram por mensagem: a 09 parou e a 8c fez o commit. Hero, CtaLink, Problema e o bloco Problema do `home.css` são da 09; o resto é da 8c.

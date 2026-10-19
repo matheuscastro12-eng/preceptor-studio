@@ -6,8 +6,7 @@ import { CTA_TEXTO } from "./CtaLink";
 
 const ANCORAS = [
   { href: "#metodo", label: "Como funciona" },
-  { href: "#servicos", label: "Serviços" },
-  { href: "#exemplos", label: "Exemplos" },
+  { href: "#exemplos", label: "Exemplo" },
   { href: "#faq", label: "FAQ" },
 ];
 

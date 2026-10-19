@@ -1,7 +1,7 @@
 /* Método como diagrama (incremento 2). Escopado em .lp2, prefixo lp2-mdiag.
    Celular: passos empilhados, nó à esquerda e conector vertical.
-   Desktop (>=1024): quatro colunas, conector horizontal entre os nós e a
-   faixa PILOTO sobre os passos 2 a 4.
+   Desktop (>=1024): três colunas, conector horizontal entre os nós e a
+   faixa PILOTO sobre os passos 2 e 3.
    O estilo base de tudo é o estado final desenhado; os estados iniciais só
    existem sob .lp2.js-ready [data-rv]:not(.is-in) ou dentro de keyframes. */
 
@@ -123,20 +123,12 @@
 .lp2-mdiag__ponto,
 .lp2-mdiag__alvo { transform-box: fill-box; transform-origin: center; }
 
-/* 2. Redesenho: trechos retos com as regras escritas embaixo. */
-.lp2-mdiag__regra {
-  stroke: var(--ink-mute);
-  stroke-width: 1.5;
-  stroke-linecap: round;
-}
-.lp2-mdiag__trecho { transform-box: fill-box; transform-origin: left center; }
-
-/* 3. IA aplicada: portões de aprovação acesos e o pulso no fim da linha. */
+/* 2. IA aplicada: portões de aprovação acesos e o pulso no fim da linha. */
 .lp2-mdiag__portao-borda { fill: none; stroke: var(--navy); stroke-width: 1.5; }
 .lp2-mdiag__portao-luz { fill: var(--teal); }
 .lp2-mdiag__pulso { fill: var(--navy); }
 
-/* 4. Medição: linha de base (contorno) e depois (cheia), sem números. */
+/* 3. Medição: linha de base (contorno) e depois (cheia), sem números. */
 .lp2-mdiag__barra { transform-box: fill-box; transform-origin: left center; }
 .lp2-mdiag__barra--base { fill: none; stroke: var(--navy); stroke-width: 1.5; }
 .lp2-mdiag__barra--depois { fill: var(--teal); }
@@ -146,13 +138,13 @@
   stroke-dasharray: 3 3;
 }
 
-/* ─── Desktop: quatro colunas ────────────────────────────── */
+/* ─── Desktop: três colunas ─────────────────────────────── */
 @media (min-width: 1024px) {
   .lp2-mdiag {
     --mdiag-g: 40px;
   }
   .lp2-mdiag__lista {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--mdiag-g);
     margin-top: 80px;
     padding-top: 52px; /* espaço da faixa PILOTO */
@@ -173,12 +165,12 @@
     transform-origin: left center;
   }
 
-  /* Chave sobre as colunas 2 a 4. */
+  /* Chave sobre as colunas 2 e 3. */
   .lp2-mdiag__piloto {
     left: 0;
     right: auto;
     top: -52px;
-    width: calc(300% + 2 * var(--mdiag-g));
+    width: calc(200% + var(--mdiag-g));
     height: 22px;
     display: block;
   }
@@ -237,7 +229,7 @@
   transition: opacity var(--dur-slow) var(--ease-out) calc(var(--d) + 450ms);
 }
 
-/* Desenhos animam uma vez ao entrar (o passo 3 repete, discreto). */
+/* Desenhos animam uma vez ao entrar (o passo 2 repete, discreto). */
 .lp2.js-ready .lp2-mdiag__passo.is-in .lp2-mdiag__traco--draw {
   animation: lp2-mdiag-draw 1400ms var(--ease-out) calc(var(--d) + 250ms) both;
 }
@@ -246,9 +238,6 @@
 }
 .lp2.js-ready .lp2-mdiag__passo.is-in .lp2-mdiag__alvo {
   animation: lp2-mdiag-alvo 900ms var(--ease-out) calc(var(--d) + 1450ms) both;
-}
-.lp2.js-ready .lp2-mdiag__passo.is-in .lp2-mdiag__trecho {
-  animation: lp2-mdiag-trecho 500ms var(--ease-out) calc(var(--d) + 300ms + var(--k) * 140ms) both;
 }
 .lp2.js-ready .lp2-mdiag__passo.is-in .lp2-mdiag__pulso {
   animation: lp2-mdiag-pulso 6s linear calc(var(--d) + 400ms) infinite both;
@@ -277,9 +266,6 @@
 }
 @keyframes lp2-mdiag-alvo {
   from { opacity: 0; transform: scale(2); }
-}
-@keyframes lp2-mdiag-trecho {
-  from { opacity: 0; transform: scaleX(0); }
 }
 @keyframes lp2-mdiag-barra {
   from { transform: scaleX(0); }
@@ -315,7 +301,6 @@
   .lp2 .lp2-mdiag__piloto-txt,
   .lp2 .lp2-mdiag__ponto,
   .lp2 .lp2-mdiag__alvo,
-  .lp2 .lp2-mdiag__trecho,
   .lp2 .lp2-mdiag__portao-luz,
   .lp2 .lp2-mdiag__pulso,
   .lp2 .lp2-mdiag__barra {
