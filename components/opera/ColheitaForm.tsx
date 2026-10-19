@@ -232,7 +232,7 @@ export default function ColheitaForm({ projeto }: { projeto: Pick<ProjetoOpera, 
           <section className="surface rounded-2xl p-6 space-y-6">
             <div>
               <h2 className="text-base font-extrabold text-navy mb-1">As respostas possíveis, nas palavras de quem decide</h2>
-              <p className="text-sm text-ink-soft">Cada lista precisa de pelo menos duas opções. São as palavras de vocês: se chamam de "segurar", a opção se chama "segurar". Se tiver um "depende", vira duas: depende do quê.</p>
+              <p className="text-sm text-ink-soft">Cada lista precisa de pelo menos duas opções. São as palavras de vocês: se chamam de &quot;segurar&quot;, a opção se chama &quot;segurar&quot;. Se tiver um &quot;depende&quot;, vira duas: depende do quê.</p>
             </div>
             {LISTAS_DE_RESPOSTAS.map((l) => (
               <div key={l.id}>

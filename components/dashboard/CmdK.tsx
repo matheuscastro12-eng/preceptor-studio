@@ -262,7 +262,7 @@ export function CmdK() {
           )}
           {!loading && query.trim() && flat.length === 0 && (
             <div style={{ padding: 16, fontSize: 13, color: "var(--ink-mute)" }}>
-              Nenhum resultado para "{query}".
+              Nenhum resultado para &quot;{query}&quot;.
             </div>
           )}
           {!loading && !query.trim() && (

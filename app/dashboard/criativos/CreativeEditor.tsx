@@ -490,7 +490,7 @@ export function CreativeEditor() {
               <button onClick={delSlide} disabled={slides.length === 1} style={{ ...miniBtn, color: slides.length === 1 ? C.inkMute : "#b91c1c" }}>Excluir</button>
             </div>
           </div>
-          <p style={{ fontSize: 11, color: C.inkMute, marginTop: 10 }}>Carrossel: adicione slides e use "Baixar todos" para exportar a sequência. Cada PNG sai em 1080px, pronto pro Instagram.</p>
+          <p style={{ fontSize: 11, color: C.inkMute, marginTop: 10 }}>Carrossel: adicione slides e use &quot;Baixar todos&quot; para exportar a sequência. Cada PNG sai em 1080px, pronto pro Instagram.</p>
         </div>
       </div>
 
