@@ -1,5 +1,6 @@
 import { CountUp } from "./CountUp";
 import { ProvaGrade } from "./ProvaGrade";
+import { Icone3D } from "./Icone3D";
 
 /*
  * Prova: um caso só, o de 99% (copy v3, seção 5, cartão 1). As ressalvas da
@@ -9,7 +10,7 @@ import { ProvaGrade } from "./ProvaGrade";
  */
 export function Exemplos() {
   return (
-    <section id="exemplos" className="lp2-section lp2-navy lp2-exemplos" data-rv="bg">
+    <section id="exemplos" className="lp2-section lp2-navy lp2-exemplos lp4-exemplos" data-rv="bg">
       <div className="lp2-container">
         <h2 className="lp2-rotulo" data-rv>
           EXEMPLO · CASO ANÔNIMO · NÚMERO ARREDONDADO
@@ -17,6 +18,9 @@ export function Exemplos() {
 
         <div className="lp2-casos">
           <div className="lp2-caso lp2-prova" data-rv>
+            <Icone3D nome="check" tamanho={96} className="lp4-prova__ic lp4-prova__ic--a" />
+            <Icone3D nome="grafico" tamanho={84} className="lp4-prova__ic lp4-prova__ic--b" />
+            <p className="lp4-nota lp4-prova__nota">caso real, nome guardado</p>
             <p className="lp2-rotulo lp2-caso__frente">FINANCEIRO · UM CLIENTE DE LOGÍSTICA</p>
             <p className="lp2-caso__destaque lp2-caso__destaque--num lp2-prova__num">
               <span className="lp2-prova__pre">Cerca de </span>

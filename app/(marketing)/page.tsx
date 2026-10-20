@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { mao } from "@/components/marketing/home/fonte-mao";
 import { RevealObserver } from "@/components/marketing/home/RevealObserver";
 import { HomeNav } from "@/components/marketing/home/HomeNav";
 import { Hero } from "@/components/marketing/home/Hero";
@@ -79,7 +80,7 @@ const ORG_JSONLD = {
 
 export default function MarketingHome() {
   return (
-    <div className="lp2">
+    <div className={`lp2 ${mao.variable}`}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_JSONLD) }}

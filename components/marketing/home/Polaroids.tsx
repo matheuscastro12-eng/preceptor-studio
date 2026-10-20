@@ -1,8 +1,4 @@
 import Image from "next/image";
-import { Caveat } from "next/font/google";
-
-/* Legenda manuscrita das polaroids. */
-const mao = Caveat({ subsets: ["latin"], weight: ["500", "600"], display: "swap" });
 
 /*
  * Polaroids presas com tachinha em volta da cena do hero: cada uma é uma
@@ -20,7 +16,7 @@ const FOTOS = [
 
 export function Polaroids() {
   return (
-    <div className={`lp4-fotos ${mao.className}`} aria-hidden="true">
+    <div className="lp4-fotos" aria-hidden="true">
       {FOTOS.map((f, i) => (
         <figure
           key={f.img}

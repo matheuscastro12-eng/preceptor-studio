@@ -1,4 +1,9 @@
 import { Marca } from "./Marca";
+import { CabecaSecao } from "./CabecaSecao";
+import { Icone3D } from "./Icone3D";
+
+const ICONES = ["lupa", "robo", "grafico"];
+const TONS = ["#E3F1FF", "#F1ECFF", "#E6F8E1"];
 
 const PASSOS = [
   {
@@ -82,12 +87,15 @@ export function Metodo() {
   return (
     <section id="metodo" className="lp2-section lp2-soft lp2-mdiag">
       <div className="lp2-container">
-        <header className="lp2-head" data-rv>
-          <p className="lp2-rotulo">COMO FUNCIONA</p>
-          <h2 className="lp2-h2">
-            Primeiro o processo, <Marca>depois a IA</Marca>.
-          </h2>
-        </header>
+        <CabecaSecao
+          selo="Como funciona"
+          titulo={
+            <>
+              Primeiro o processo, <Marca>depois a IA</Marca>.
+            </>
+          }
+          nota="três passos, sem trocar de sistema"
+        />
 
         <ol className="lp2-mdiag__lista">
           {PASSOS.map((p, i) => {
@@ -97,7 +105,7 @@ export function Metodo() {
                 key={p.nome}
                 className={`lp2-mdiag__passo lp2-mdiag__passo--${i + 1}`}
                 data-rv="bg"
-                style={{ "--i": i } as React.CSSProperties}
+                style={{ "--i": i, "--tom": TONS[i] } as React.CSSProperties}
               >
                 {i === 1 && (
                   <span className="lp2-mdiag__piloto" aria-hidden="true">
@@ -105,8 +113,9 @@ export function Metodo() {
                     <span className="lp2-mdiag__piloto-txt">PILOTO</span>
                   </span>
                 )}
-                <span className="lp2-mdiag__no" aria-hidden="true">
-                  {String(i + 1).padStart(2, "0")}
+                <span className="lp2-mdiag__no lp4-no" aria-hidden="true">
+                  <Icone3D nome={ICONES[i]} tamanho={44} />
+                  <b>{String(i + 1).padStart(2, "0")}</b>
                 </span>
                 <div className="lp2-mdiag__corpo">
                   <Fig />

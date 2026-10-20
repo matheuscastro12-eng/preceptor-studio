@@ -1,3 +1,5 @@
+import { CabecaSecao } from "./CabecaSecao";
+
 // Corte da v4: três perguntas da copy v3, respostas condensadas.
 const PERGUNTAS = [
   {
@@ -17,10 +19,8 @@ const PERGUNTAS = [
 export function Faq() {
   return (
     <section id="faq" className="lp2-section lp2-faq">
-      <div className="lp2-container lp2-faq__grid">
-        <h2 className="lp2-rotulo lp2-faq__rotulo" data-rv>
-          FAQ
-        </h2>
+      <div className="lp2-container lp4-faq">
+        <CabecaSecao selo="Perguntas frequentes" titulo="O que costumam perguntar." nota="e se ficar dúvida, é só chamar" />
         <div className="lp2-faq__lista" data-rv style={{ "--rv-d": "120ms" } as React.CSSProperties}>
           {PERGUNTAS.map((p) => (
             <details key={p.q} className="lp2-faq__item">

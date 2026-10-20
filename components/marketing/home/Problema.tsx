@@ -1,16 +1,24 @@
 import { Marca } from "./Marca";
+import { CabecaSecao } from "./CabecaSecao";
+import { Icone3D } from "./Icone3D";
 import { ProblemaVisual } from "./ProblemaVisual";
 
 const DORES = [
   {
+    icone: "documento",
+    tom: "#F1ECFF",
     titulo: "Documento digitado um por um.",
     texto: "A nota chega por e-mail e alguém digita o CT-e.",
   },
   {
+    icone: "lupa",
+    tom: "#E3F1FF",
     titulo: "Conferência na mão.",
     texto: "O extrato vai para a planilha e alguém confere linha por linha.",
   },
   {
+    icone: "mensagem",
+    tom: "#DFF7F7",
     titulo: "Mensagem que espera.",
     texto: "O WhatsApp da recepção lota antes das nove.",
   },
@@ -20,28 +28,29 @@ export function Problema() {
   return (
     <section id="problema" className="lp2-section lp2-problema">
       <div className="lp2-container">
-        <header className="lp2-head" data-rv>
-          <p className="lp2-rotulo">ONDE O DIA SOME</p>
-          <h2 className="lp2-h2">
-            Sua equipe passa o dia copiando de <Marca>uma tela para outra</Marca>.
-          </h2>
-        </header>
+        <CabecaSecao
+          selo="Onde o dia some"
+          titulo={
+            <>
+              Sua equipe passa o dia copiando de <Marca>uma tela para outra</Marca>.
+            </>
+          }
+          nota="soa familiar?"
+        />
 
         <ProblemaVisual />
 
-        <ol className="lp2-dores lp2-dores--linhas">
+        <ol className="lp4-cards">
           {DORES.map((d, i) => (
             <li
               key={d.titulo}
-              className="lp2-dores__item"
+              className="lp4-card"
               data-rv
-              style={{ "--rv-d": `${i * 120}ms` } as React.CSSProperties}
+              style={{ "--rv-d": `${i * 120}ms`, "--tom": d.tom } as React.CSSProperties}
             >
-              <span className="lp2-dores__num" aria-hidden="true">
-                {String(i + 1).padStart(2, "0")}
-              </span>
+              <Icone3D nome={d.icone} tamanho={72} className="lp4-card__ic" />
               <p>
-                <strong className="lp2-dores__titulo">{d.titulo}</strong> {d.texto}
+                <strong className="lp4-card__titulo">{d.titulo}</strong> {d.texto}
               </p>
             </li>
           ))}

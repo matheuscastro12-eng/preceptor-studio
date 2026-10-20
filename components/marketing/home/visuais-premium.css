@@ -434,3 +434,81 @@
   .lp4-foto { opacity: 1; animation: none; transform: rotate(var(--r)); }
   .lp4-rabisco__svg path { animation: none; stroke-dashoffset: 0; }
 }
+
+/* ═══ v4 na página toda: cabeças centralizadas, pastel, 3D, notas à mão ═══ */
+.lp4-foto figcaption, .lp4-nota { font-family: var(--f-mao), cursive; }
+.lp4-ic3d { display: block; height: auto; filter: drop-shadow(0 10px 14px rgba(0, 3, 61, 0.18)); }
+
+.lp4-cabeca { display: flex; flex-direction: column; align-items: center; text-align: center; margin: 0 auto 64px; max-width: 760px; }
+.lp4-selo { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px 6px 10px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1px var(--line), 0 4px 12px -6px rgba(0, 3, 61, 0.15); font-size: 13px; font-weight: 500; color: var(--navy); }
+.lp4-selo span { width: 8px; height: 8px; border-radius: 999px; background: var(--teal); box-shadow: 0 0 0 4px rgba(59, 202, 206, 0.2); }
+.lp4-cabeca__titulo { margin-left: auto; margin-right: auto; max-width: 22ch !important; text-wrap: balance; }
+.lp4-nota { margin-top: 14px; font-size: 26px; line-height: 1; color: var(--teal-ink); transform: rotate(-2deg); }
+.lp4-cabeca--claro .lp4-selo { background: rgba(255, 255, 255, 0.08); color: #fff; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16); }
+.lp4-cabeca--claro .lp4-nota { color: var(--teal-soft); }
+
+/* Frentes sob o hero: moldura no tom de cada vertical + ícone 3D */
+.lp4-vert { position: relative; background: linear-gradient(180deg, var(--tom), #fff 70%) !important; box-shadow: inset 0 0 0 1px rgba(0, 3, 61, 0.06) !important; }
+.lp4-vert__ic { position: absolute; right: 18px; bottom: 18px; width: 64px !important; margin: 0 !important; transition: transform 600ms var(--spring); }
+.lp4-vert:hover .lp4-vert__ic { transform: rotate(-8deg) scale(1.1); }
+
+/* Dores: cards pastel com ícone */
+.lp2-dores, .lp2-dores--linhas { display: none; }
+.lp4-cards { list-style: none; margin: 48px 0 0; padding: 0; display: grid; gap: 16px; }
+@media (min-width: 880px) { .lp4-cards { grid-template-columns: repeat(3, 1fr); gap: 20px; } }
+.lp4-card { padding: 28px; border-radius: 24px; background: linear-gradient(170deg, var(--tom), #fff 80%); box-shadow: inset 0 0 0 1px rgba(0, 3, 61, 0.06); transition: transform 600ms var(--spring), box-shadow 600ms var(--spring); }
+.lp4-card:hover { transform: translateY(-6px); box-shadow: inset 0 0 0 1px rgba(0, 3, 61, 0.06), var(--sh-lift); }
+.lp4-card__ic { width: 72px; margin-bottom: 20px; transition: transform 600ms var(--spring); }
+.lp4-card:hover .lp4-card__ic { transform: rotate(-8deg) scale(1.08); }
+.lp4-card p { font-size: 16px; line-height: 1.6; color: var(--ink-soft); }
+.lp4-card__titulo { display: block; margin-bottom: 4px; font-family: var(--f-display); font-size: 20px; font-weight: 600; letter-spacing: -0.02em; color: var(--navy); }
+
+/* Método: nó vira ícone 3D com número; cada passo num card pastel */
+.lp2-mdiag { background: linear-gradient(180deg, #fff, var(--bg-soft)) !important; }
+.lp4-no { width: auto !important; height: auto !important; padding: 8px 14px 8px 8px; gap: 8px; grid-auto-flow: column; border: 0 !important; border-radius: 999px !important; background: #fff !important; box-shadow: inset 0 0 0 1px var(--line), var(--sh-soft); }
+.lp4-no .lp4-ic3d { width: 36px; filter: drop-shadow(0 4px 6px rgba(0, 3, 61, 0.15)); }
+.lp4-no b { font-family: var(--f-mono); font-size: 12px; font-weight: 500; color: var(--navy); }
+.lp2-mdiag__corpo { padding: 20px; border-radius: 24px; background: linear-gradient(170deg, var(--tom), #fff 75%); box-shadow: inset 0 0 0 1px rgba(0, 3, 61, 0.06); }
+
+/* Prova: seção clara, card saturado */
+.lp4-exemplos { background: #fff !important; color: var(--ink) !important; }
+.lp4-exemplos > .lp2-container > .lp2-rotulo { text-align: center; color: var(--ink-soft) !important; }
+.lp4-exemplos .lp2-prova {
+  position: relative;
+  overflow: visible;
+  color: #fff;
+  background: radial-gradient(ellipse 60% 80% at 85% 20%, rgba(59, 202, 206, 0.45), transparent 60%), linear-gradient(135deg, #0A1A8C 0%, #00033D 70%) !important;
+  box-shadow: 0 40px 80px -30px rgba(0, 3, 61, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+}
+.lp4-prova__ic { position: absolute; z-index: 2; pointer-events: none; }
+.lp4-prova__ic--a { top: -40px; right: 40px; width: 96px; transform: rotate(10deg); }
+.lp4-prova__ic--b { bottom: -34px; left: -24px; width: 84px; transform: rotate(-10deg); }
+.lp4-prova__nota { position: absolute; top: -44px; left: 32px; margin: 0; color: var(--teal-ink); font-size: 26px; }
+@media (max-width: 720px) { .lp4-prova__ic--b { display: none; } .lp4-prova__ic--a { width: 64px; top: -28px; right: 16px; } .lp4-prova__nota { font-size: 22px; top: -38px; left: 12px; } }
+
+/* FAQ: cards arredondados */
+.lp4-faq .lp2-faq__lista { max-width: 760px; margin: 0 auto; display: grid; gap: 12px; }
+.lp4-faq .lp2-faq__item { border: 0; border-radius: 20px; background: var(--bg-soft); box-shadow: inset 0 0 0 1px rgba(0, 3, 61, 0.05); padding: 0 24px; transition: background 400ms var(--spring); }
+.lp4-faq .lp2-faq__item[open] { background: #fff; box-shadow: inset 0 0 0 1px var(--line), var(--sh-soft); }
+.lp4-faq .lp2-faq__icone { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); flex-shrink: 0; }
+.lp4-faq .lp2-faq__a { padding-right: 0; }
+
+/* Contato: polaroid "30 min" */
+.lp2-contato { background: radial-gradient(ellipse 50% 60% at 15% 20%, rgba(59, 202, 206, 0.22), transparent 70%), radial-gradient(ellipse 40% 50% at 90% 90%, rgba(150, 120, 255, 0.2), transparent 70%), var(--navy) !important; }
+.lp4-foto--contato { position: relative; display: inline-block; width: 132px; margin-bottom: 28px; opacity: 1; animation: none; transform: rotate(var(--r)); }
+.lp4-foto--contato .lp4-foto__img img { width: 70%; height: auto; }
+.lp4-foto--contato figcaption { font-size: 22px; color: var(--navy); }
+.lp2-contato__card { border-radius: 28px !important; box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.5) !important; }
+
+/* Ajustes v4 */
+.lp4-vert__ic { top: -26px; right: 22px; bottom: auto !important; z-index: 2; }
+.lp2-mdiag__no.lp4-no { display: inline-flex !important; align-items: center; justify-self: start; width: max-content !important; }
+.lp2 .lp4-exemplos.lp2-exemplos { background: #fff !important; }
+.lp4-exemplos.lp2-exemplos::before { background: #fff; }
+.lp4-exemplos.lp2-exemplos::after { opacity: 0; }
+.lp4-faq .lp2-faq__lista { border-top: 0; }
+.lp2-btn { border-radius: 999px !important; min-height: 56px; padding: 14px 28px !important; box-shadow: 0 16px 32px -12px rgba(0, 3, 61, 0.45); transition: transform 300ms var(--spring), background 300ms var(--spring) !important; }
+.lp2-btn:hover { background: #0a0f55; }
+.lp2-btn:active { transform: scale(0.98); }
+.lp4-vert__ic { position: static !important; width: 52px !important; margin: 20px 20px 0 !important; }
+.lp4-vert__ic + .lp2-rotulo { margin-top: 8px !important; }

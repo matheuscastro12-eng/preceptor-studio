@@ -6,8 +6,11 @@ import { MockLogistica } from "./MockLogistica";
 import { MockFinanceiro } from "./MockFinanceiro";
 import { MockClinica } from "./MockClinica";
 import { Polaroids } from "./Polaroids";
+import { Icone3D } from "./Icone3D";
 
 type Frente = {
+  icone: string;
+  tom: string;
   frente: string;
   exemplo: string;
   mock: ComponentType;
@@ -16,18 +19,24 @@ type Frente = {
 
 const FRENTES: Frente[] = [
   {
+    icone: "caminhao",
+    tom: "#E3F1FF",
     frente: "LOGÍSTICA",
     exemplo: "CT-e pronto para conferir",
     mock: MockLogistica,
     link: { href: "/transporte", texto: "Ver como funciona em logística" },
   },
   {
+    icone: "dinheiro",
+    tom: "#FFF4D6",
     frente: "FINANCEIRO / BACK-OFFICE",
     exemplo: "Extrato conciliado com prova",
     // PENDENTE copy v3 (pendência 20): link do financeiro entra quando a rota existir.
     mock: MockFinanceiro,
   },
   {
+    icone: "estetoscopio",
+    tom: "#FFE9EC",
     frente: "CLÍNICAS",
     exemplo: "WhatsApp da recepção em dia",
     mock: MockClinica,
@@ -91,10 +100,11 @@ export function Hero() {
                 key={f.frente}
                 className="lp2-verticais__cel"
                 data-rv
-                style={{ "--rv-d": `${i * 120}ms` } as React.CSSProperties}
+                style={{ "--rv-d": `${i * 120}ms`, "--tom": f.tom } as React.CSSProperties}
               >
-                <div className="lp2-vertical">
+                <div className="lp2-vertical lp4-vert">
                   <Mock />
+                  <Icone3D nome={f.icone} tamanho={64} className="lp4-vert__ic" />
                   <p className="lp2-rotulo lp2-hero__frente">
                     {f.frente} · {f.exemplo}
                   </p>
