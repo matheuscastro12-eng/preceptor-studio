@@ -2,6 +2,7 @@ import Link from "next/link";
 import { AppPreview } from "./AppPreview";
 import { Glifo } from "./Glifo";
 import { HeroIcone } from "./HeroIcone";
+import { MarcaFundo } from "./MarcaFundo";
 import { CountUp } from "./CountUp";
 import { CTA_MICROCOPY, CTA_TEXTO } from "./CtaLink";
 import { LeadForm } from "./LeadForm";
@@ -73,6 +74,7 @@ export function MbHome() {
     <main id="conteudo">
       {/* Hero */}
       <section className="mb-hero">
+        <MarcaFundo />
         <div className="mb-wrap">
           <h1 className="mb-h1">
             <span className="mb-linha" style={{ animationDelay: "400ms" }}>
