@@ -133,7 +133,7 @@ export function DiagnosticApp({ calcomUrl }: { calcomUrl?: string | null } = {})
           contact,
           consent,
           category: category || null,
-          meta: { event_id: eventId, fbp, fbc, event_source_url: eventSourceUrl },
+          meta: { event_id: eventId, fbp, fbc, event_source_url: eventSourceUrl, ads_consent: lerConsentimento() },
           attribution: getAttribution(),
         }),
       });
@@ -225,4 +225,13 @@ export function DiagnosticApp({ calcomUrl }: { calcomUrl?: string | null } = {})
       )}
     </div>
   );
+}
+
+/* Escolha do banner de cookies (ConsentManager); sem "granted", o servidor não manda o evento à Meta. */
+function lerConsentimento(): boolean {
+  try {
+    return window.localStorage.getItem("preceptor_consent") === "granted";
+  } catch {
+    return false;
+  }
 }

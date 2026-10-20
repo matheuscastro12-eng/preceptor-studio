@@ -102,13 +102,13 @@ export function MbNav() {
           <img src="/brand/logo-horizontal.png" alt="PRECEPTOR!" width={480} height={120} />
         </Link>
         <nav className="mb-nav__links" aria-label="Seções da página">
-          <a href="#como">Como funciona</a>
-          <a href="#exemplo">Exemplo</a>
-          <a href="#faq">FAQ</a>
+          <Link href="/#como">Como funciona</Link>
+          <Link href="/#exemplo">Exemplo</Link>
+          <Link href="/#faq">FAQ</Link>
         </nav>
         <div className="mb-nav__acoes">
           <Link href="/opera" className="mb-nav__entrar">Entrar</Link>
-          <a href="#contato" className="mb-pilula mb-pilula--navy mb-pilula--p">Falar com a gente</a>
+          <Link href="/#contato" className="mb-pilula mb-pilula--navy mb-pilula--p">Falar com a gente</Link>
         </div>
       </div>
     </header>

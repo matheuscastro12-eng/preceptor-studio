@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Nav } from "@/components/marketing/Nav";
-import { Footer } from "@/components/marketing/Footer";
+import { LegalShell } from "@/components/marketing/home/LegalShell";
 
 const SITE_URL = "https://preceptorstudio.com";
 const STUDIO_EMAIL = "thiago@ospreceptores.com";
-const LAST_UPDATED = "02 de junho de 2026";
+const LAST_UPDATED = "20 de outubro de 2026";
 
 export const metadata: Metadata = {
   title: "Política de Privacidade",
@@ -30,8 +29,7 @@ const linkStyle: React.CSSProperties = {
 
 export default function PrivacidadePage() {
   return (
-    <div className="site marketing-shell">
-      <Nav />
+    <LegalShell>
 
       <section className="section" id="main" style={{ paddingBottom: 24 }}>
         <div className="container" style={{ maxWidth: 820 }}>
@@ -89,8 +87,13 @@ export default function PrivacidadePage() {
                   negócio e as respostas do questionário estratégico.
                 </>,
                 <>
+                  <strong>Dados do formulário de contato:</strong> nome, e-mail de
+                  trabalho, WhatsApp e segmento da empresa, quando você pede a
+                  conversa de diagnóstico.
+                </>,
+                <>
                   <strong>Dados de contato:</strong> quando você nos escreve por
-                  e-mail ou pede para falar com um especialista.
+                  e-mail ou WhatsApp.
                 </>,
                 <>
                   <strong>Dados técnicos:</strong> endereço IP e identificação do
@@ -109,7 +112,9 @@ export default function PrivacidadePage() {
             <List
               items={[
                 "Gerar e enviar o seu diagnóstico e o score estratégico.",
+                "Responder o seu contato e agendar a conversa de diagnóstico.",
                 "Permitir que um especialista do estúdio entre em contato, quando fizer sentido.",
+                "Medir visitas e o resultado de anúncios, só se você aceitar os cookies (seção 5).",
                 "Operar, proteger e melhorar o site e o serviço.",
                 "Cumprir obrigações legais e regulatórias.",
               ]}
@@ -142,6 +147,14 @@ export default function PrivacidadePage() {
                 <>
                   <strong>Envio de e-mails:</strong> Resend.
                 </>,
+                <>
+                  <strong>Medição de visitas:</strong> Google (Google Analytics),
+                  só com o seu consentimento.
+                </>,
+                <>
+                  <strong>Medição de anúncios:</strong> Meta (Pixel e Conversions
+                  API), só com o seu consentimento.
+                </>,
               ]}
             />
             <P>
@@ -151,11 +164,23 @@ export default function PrivacidadePage() {
             </P>
           </Block>
 
-          <Block title="5. Cookies e armazenamento local">
+          <Block title="5. Cookies e armazenamento local" id="cookies">
             <P>
-              Usamos armazenamento estritamente necessário para o funcionamento do
-              site e podemos medir, de forma agregada e anônima, a performance de
-              chamadas para ação. Não usamos cookies de publicidade de terceiros.
+              <strong>Necessários:</strong> guardamos no seu navegador apenas a sua
+              escolha sobre cookies, para não perguntar de novo a cada visita.
+            </P>
+            <P>
+              <strong>Análise e anúncios (opcionais):</strong> o Google Analytics e o
+              Pixel da Meta só são carregados depois que você clica em
+              &ldquo;Aceitar cookies&rdquo;. Se você aceitou e envia o diagnóstico,
+              também avisamos a Meta pelo servidor (Conversions API), com e-mail e
+              telefone embaralhados por hash, para medir o anúncio. Se você recusar,
+              nada disso é carregado nem enviado.
+            </P>
+            <P>
+              A base legal é o seu consentimento (art. 7º, I). Você pode mudar a
+              escolha quando quiser pelo link &ldquo;Cookies&rdquo; no rodapé do
+              site.
             </P>
           </Block>
 
@@ -168,7 +193,7 @@ export default function PrivacidadePage() {
             </P>
           </Block>
 
-          <Block title="7. Os seus direitos" id="lgpd">
+          <Block title="7. Os seus direitos (LGPD)" id="lgpd">
             <P>A LGPD (art. 18) garante a você, titular dos dados, o direito de:</P>
             <List
               items={[
@@ -185,7 +210,8 @@ export default function PrivacidadePage() {
               <a href={`mailto:${STUDIO_EMAIL}`} style={linkStyle}>
                 {STUDIO_EMAIL}
               </a>
-              . Respondemos no menor prazo possível.
+              . Respondemos no menor prazo possível. Você também pode reclamar
+              à Autoridade Nacional de Proteção de Dados (ANPD).
             </P>
           </Block>
 
@@ -222,8 +248,7 @@ export default function PrivacidadePage() {
         </div>
       </section>
 
-      <Footer />
-    </div>
+    </LegalShell>
   );
 }
 

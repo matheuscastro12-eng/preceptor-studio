@@ -45,6 +45,7 @@ interface SubmitPayload {
     fbp?: string;
     fbc?: string;
     event_source_url?: string;
+    ads_consent?: boolean;
   };
   attribution?: {
     utm_source?: string;
@@ -242,7 +243,8 @@ export async function POST(req: NextRequest) {
 
   // ─── Meta CAPI: evento Lead server-side (best-effort, deduplicado) ─────
   // Mesmo event_id do browser (payload.meta) para o Meta nao contar 2x.
-  try {
+  // So dispara se a pessoa aceitou os cookies de anuncio no banner (LGPD).
+  if (payload.meta?.ads_consent === true) try {
     await sendMetaLeadEvent({
       email,
       phone,

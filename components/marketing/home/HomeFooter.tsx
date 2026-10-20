@@ -10,7 +10,11 @@ export function HomeFooter() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/brand/logo-horizontal.png" alt="PRECEPTOR!" width={480} height={120} />
         </Link>
-        <p className="lp2-footer__assinatura">Primeiro o processo, depois a IA.</p>
+        <p className="lp2-footer__assinatura">
+          A tecnologia é o caminho.
+          <br />
+          O destino são as <span className="mb-ponto">pessoas.</span>
+        </p>
         <nav aria-label="Rodapé" className="lp2-footer__nav">
           <ul>
             <li>
@@ -26,11 +30,7 @@ export function HomeFooter() {
               <CookiePrefsButton className="lp2-footer__cookies" />
             </li>
             <li>
-              <a href="#contato">Contato</a>
-            </li>
-            <li>
-              {/* copy v3, pendência 22: "Entrar no OPERA" sai do menu e fica no rodapé. */}
-              <Link href="/opera">Entrar no OPERA</Link>
+              <Link href="/#contato">Contato</Link>
             </li>
           </ul>
         </nav>

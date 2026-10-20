@@ -406,3 +406,7 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
     .mb-marca--contato { animation: mb-rol-p linear both !important; animation-timeline: view() !important; }
   }
 }
+
+/* Páginas legais e rodapé */
+.mb-legal { padding-top: 24px; }
+.lp2 .lp2-footer__assinatura { max-width: none; }

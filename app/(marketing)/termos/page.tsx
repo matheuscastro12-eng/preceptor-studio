@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Nav } from "@/components/marketing/Nav";
-import { Footer } from "@/components/marketing/Footer";
+import { LegalShell } from "@/components/marketing/home/LegalShell";
 
 const SITE_URL = "https://preceptorstudio.com";
 const STUDIO_EMAIL = "thiago@ospreceptores.com";
-const LAST_UPDATED = "02 de junho de 2026";
+const LAST_UPDATED = "20 de outubro de 2026";
 
 export const metadata: Metadata = {
   title: "Termos de Uso",
@@ -30,8 +29,7 @@ const linkStyle: React.CSSProperties = {
 
 export default function TermosPage() {
   return (
-    <div className="site marketing-shell">
-      <Nav />
+    <LegalShell>
 
       <section className="section" id="main" style={{ paddingBottom: 24 }}>
         <div className="container" style={{ maxWidth: 820 }}>
@@ -76,6 +74,15 @@ export default function TermosPage() {
               respostas. O serviço é fornecido como uma ferramenta de orientação
               inicial, não como consultoria formal, auditoria, parecer jurídico,
               contábil ou financeiro.
+            </P>
+            <P>
+              A conversa de diagnóstico de 30 minutos não gera compromisso. Pilotos e
+              a operação de agentes de IA, quando contratados, seguem contrato
+              próprio, que prevalece sobre estes Termos.
+            </P>
+            <P>
+              As telas de produto mostradas no site são demonstrações, com dados de
+              exemplo.
             </P>
           </Block>
 
@@ -155,8 +162,7 @@ export default function TermosPage() {
         </div>
       </section>
 
-      <Footer />
-    </div>
+    </LegalShell>
   );
 }
 
