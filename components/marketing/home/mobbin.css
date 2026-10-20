@@ -569,3 +569,4 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
 .mb-cena--conf b { background: var(--mb-teal); color: #fff; }
 .mb-cena--chat .in { background: #F0F2F5; }
 .mb-cena--chat .out { color: var(--mb-navy) !important; }
+@media (min-width: 900px) { .mb-telas .mb-tela--meia { grid-column: span 3; } }
