@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ComponentType } from "react";
 import { CtaLink, CTA_MICROCOPY } from "./CtaLink";
 import { AppPreview } from "./AppPreview";
+import { Operacao3D } from "./Operacao3D";
 import { MockLogistica } from "./MockLogistica";
 import { MockFinanceiro } from "./MockFinanceiro";
 import { MockClinica } from "./MockClinica";
@@ -46,22 +47,33 @@ export function Hero() {
   return (
     <section id="topo" className="lp2-section lp2-hero lp2-grain">
       <div className="lp2-container">
-        <div className="sb-hero">
-          <h1 className="lp2-h1 sb-hero__titulo">
-            O documento chega. A conferência fica pronta. <em>Sua equipe só aprova.</em>
-          </h1>
-          <div className="sb-hero__lado lp2-hero__in" style={{ "--in-d": "200ms" } as React.CSSProperties}>
-            <p className="lp2-lead sb-hero__lead">
+        <div className="o3-hero">
+          <div className="o3-hero__texto">
+            <h1 className="lp2-h1 o3-hero__titulo">
+              O documento chega. A conferência fica pronta. <em>Sua equipe só aprova.</em>
+            </h1>
+            <p className="lp2-lead o3-hero__lead lp2-hero__in" style={{ "--in-d": "150ms" } as React.CSSProperties}>
               Primeiro a gente desenha o processo com quem faz o trabalho, depois põe um agente de IA
               na parte repetitiva: documentos, conferências e mensagens.
             </p>
-            <div className="sb-hero__ctas">
+            <div className="sb-hero__ctas lp2-hero__in" style={{ "--in-d": "250ms" } as React.CSSProperties}>
               <CtaLink />
               <a href="#metodo" className="sb-btn-sec">Como funciona</a>
             </div>
             <p className="lp2-micro">{CTA_MICROCOPY}</p>
           </div>
+          <div className="o3-hero__obj lp2-hero__in" style={{ "--in-d": "200ms" } as React.CSSProperties}>
+            <Operacao3D />
+          </div>
         </div>
+
+        <ul className="o3-setores" aria-label="Setores atendidos">
+          <li>Logística</li>
+          <li>Financeiro</li>
+          <li>Clínicas</li>
+          <li>Agro</li>
+          <li>Back-office</li>
+        </ul>
 
         <div className="sb-palco lp2-hero__in" style={{ "--in-d": "350ms" } as React.CSSProperties}>
           <AppPreview />
