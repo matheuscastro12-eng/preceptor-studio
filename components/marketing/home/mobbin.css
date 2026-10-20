@@ -449,3 +449,20 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
 @media (max-width: 899px) { .mb-seg__seta { rotate: 90deg; } }
 @media (max-width: 720px) { .mb-seg__painel { padding: 22px 16px; border-radius: 24px; } }
 @media (prefers-reduced-motion: reduce) { .mb-seg__painel, .mb-seg__sistemas li, .mb-seg__col li { animation: none; } }
+
+/* ===== Esteira de sistemas ===== */
+.mb-esteira { margin: 0 0 72px; text-align: center; }
+.mb-esteira__rot { margin: 0 0 18px; font-size: 13px; color: #8A8FA0; }
+.mb-esteira__trilho { display: flex; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
+.mb-esteira ul { display: flex; flex-shrink: 0; gap: 12px; margin: 0; padding: 0 6px; list-style: none; animation: mb-esteira 40s linear infinite; }
+.mb-esteira li { flex-shrink: 0; padding: 10px 18px; border-radius: 999px; background: var(--mb-cinza); font-family: var(--f-display); font-size: 17px; font-weight: 600; letter-spacing: -0.02em; color: var(--mb-tinta); }
+.mb-esteira li:nth-child(3n + 1) { background: var(--mb-navy); color: #fff; }
+.mb-esteira li:nth-child(4n + 2) { background: rgba(59, 202, 206, 0.16); color: var(--mb-teal-ink); }
+.mb-esteira__trilho:hover ul { animation-play-state: paused; }
+@keyframes mb-esteira { to { translate: -100% 0; } }
+@media (prefers-reduced-motion: reduce) { .mb-esteira ul { animation: none; } .mb-esteira__trilho { flex-wrap: wrap; justify-content: center; } }
+
+/* ===== Dois casos ===== */
+.mb-casos { display: grid; gap: 64px; }
+@media (min-width: 900px) { .mb-casos { grid-template-columns: 1fr 1fr; gap: 48px; } .mb-casos .mb-medida__num { font-size: clamp(5rem, 9vw, 8rem); } }
+.mb-medida__barra--dias i { width: 100%; background: repeating-linear-gradient(90deg, var(--mb-teal) 0 calc(100% / 15 - 3px), transparent calc(100% / 15 - 3px) calc(100% / 15)); }

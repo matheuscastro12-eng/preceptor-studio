@@ -32,6 +32,8 @@ const PASSOS = [
   { n: "03", titulo: "Medição", quando: "Última semana do piloto", texto: "Você recebe a comparação com a linha de base e decide se o agente segue rodando.", icone: "grafico", tom: "#EEF0FF" },
 ];
 
+const SISTEMAS = ["SSW", "Brudam", "Bsoft", "MaisFrete", "SEFAZ", "Enoki", "Safra Cloud", "Safragold", "iClinic", "WhatsApp Business", "SharePoint", "Atua", "OFX bancário", "Excel", "E-mail"];
+
 const FATOS = [
   { quando: "Dia 1", valor: "30 min", rot: "de diagnóstico" },
   { quando: "Semanas 1 a 4", valor: "Piloto", rot: "junto com a equipe" },
@@ -172,6 +174,18 @@ export function MbHome() {
 
       {/* Segmentos: falar como em reunião de vendas */}
       <section id="segmentos" className="mb-sec mb-sec--colado">
+        <div className="mb-esteira" aria-label="Sistemas em que já trabalhamos">
+          <p className="mb-esteira__rot">Sistemas em que os nossos agentes já trabalham</p>
+          <div className="mb-esteira__trilho">
+            {[0, 1].map((k) => (
+              <ul key={k} aria-hidden={k === 1 ? true : undefined}>
+                {SISTEMAS.map((n) => (
+                  <li key={n}>{n}</li>
+                ))}
+              </ul>
+            ))}
+          </div>
+        </div>
         <div className="mb-wrap">
           <div className="mb-seg__cab" data-rv>
             <h2 className="mb-h2">
@@ -300,17 +314,31 @@ export function MbHome() {
       {/* Prova */}
       <section id="exemplo" className="mb-sec">
         <div className="mb-wrap">
-          <div className="mb-medida" data-rv>
-            <p className="mb-medida__rot">Financeiro · um cliente de logística · caso anônimo</p>
-            <p className="mb-medida__num">
-              <span className="mb-medida__pre">cerca de</span>
-              <CountUp to={99} />
-              <span className="mb-ponto">%</span>
-            </p>
-            <div className="mb-medida__barra" aria-hidden="true"><i /></div>
-            <p className="mb-medida__txt">
-              dos recebimentos conciliados no período medido. O financeiro confirma as baixas.
-            </p>
+          <div className="mb-casos">
+            <div className="mb-medida" data-rv>
+              <p className="mb-medida__rot">Financeiro · cliente de logística · caso anônimo</p>
+              <p className="mb-medida__num">
+                <span className="mb-medida__pre">cerca de</span>
+                <CountUp to={99} />
+                <span className="mb-ponto">%</span>
+              </p>
+              <div className="mb-medida__barra" aria-hidden="true"><i /></div>
+              <p className="mb-medida__txt">
+                dos recebimentos conciliados no período medido. O financeiro confirma as baixas.
+              </p>
+            </div>
+            <div className="mb-medida" data-rv>
+              <p className="mb-medida__rot">Roteirização · transportadora · caso anônimo</p>
+              <p className="mb-medida__num">
+                <CountUp to={13} />
+                <span className="mb-ponto">%</span>
+              </p>
+              <div className="mb-medida__barra mb-medida__barra--dias" aria-hidden="true"><i /></div>
+              <p className="mb-medida__txt">
+                mais barato em 15 de 15 dias, nas mesmas notas e com 26 veículos a menos. Medido em sombra, com o plano
+                comparado ao que foi feito de verdade.
+              </p>
+            </div>
           </div>
         </div>
       </section>
