@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ComponentType } from "react";
 import { CtaLink, CTA_MICROCOPY } from "./CtaLink";
-import { CadernoFluxo } from "./CadernoFluxo";
+import { GrafoAgente } from "./GrafoAgente";
 import { MockLogistica } from "./MockLogistica";
 import { MockFinanceiro } from "./MockFinanceiro";
 import { MockClinica } from "./MockClinica";
@@ -84,12 +84,12 @@ export function Hero() {
         </div>
 
         <div className="cd-hero__folha lp2-hero__in" style={{ "--in-d": "300ms" } as React.CSSProperties}>
-          <CadernoFluxo />
+          <GrafoAgente />
         </div>
         </div>
 
         <p className="lp4-nota lp4-frentes__nota" data-rv>
-          onde já dá pra começar ↓
+          // onde já dá pra começar
         </p>
         <ul className="lp2-verticais__grid lp2-hero__frentes">
           {FRENTES.map((f, i) => {

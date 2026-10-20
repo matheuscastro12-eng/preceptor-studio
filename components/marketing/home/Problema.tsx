@@ -34,7 +34,7 @@ export function Problema() {
               Sua equipe passa o dia copiando de <Marca>uma tela para outra</Marca>.
             </>
           }
-          nota="soa familiar?"
+          nota="// soa familiar?"
         />
 
         <ProblemaVisual />
@@ -47,7 +47,7 @@ export function Problema() {
               data-rv
               style={{ "--rv-d": `${i * 120}ms`, "--tom": d.tom } as React.CSSProperties}
             >
-              <span className="cd-ficha__num" aria-hidden="true">{i + 1}.</span>
+              <span className="cd-ficha__num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
               <p>
                 <strong className="lp4-card__titulo">{d.titulo}</strong> {d.texto}
               </p>

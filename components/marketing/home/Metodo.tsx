@@ -92,7 +92,7 @@ export function Metodo() {
               Primeiro o processo, <Marca>depois a IA</Marca>.
             </>
           }
-          nota="três passos, sem trocar de sistema"
+          nota="// três passos, sem trocar de sistema"
         />
 
         <ol className="lp2-mdiag__lista">

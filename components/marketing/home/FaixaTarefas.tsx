@@ -30,7 +30,7 @@ function Lista({ oculta = false }: { oculta?: boolean }) {
 export function FaixaTarefas() {
   return (
     <section className="lp4-faixa" aria-label="Tarefas que o agente assume">
-      <p className="lp4-nota lp4-faixa__nota">o que o agente tira da mesa</p>
+      <p className="lp4-nota lp4-faixa__nota">// o que o agente tira da mesa</p>
       <div className="lp4-faixa__trilho">
         <Lista />
         <Lista oculta />

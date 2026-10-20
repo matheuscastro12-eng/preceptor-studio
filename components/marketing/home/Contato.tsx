@@ -6,7 +6,7 @@ export function Contato() {
     <section id="contato" className="lp2-section lp2-navy lp2-grain lp2-contato">
       <div className="lp2-container lp2-contato__grid">
         <header className="lp2-contato__head" data-rv>
-          <span className="cf-carimbo cd-contato__carimbo" aria-hidden="true">30 min</span>
+          <p className="tc-tag" aria-hidden="true">● diagnóstico · 30 min</p>
           <h2 className="lp2-h2">
             Qual processo <Marca>come o dia</Marca> da sua equipe?
           </h2>
