@@ -112,7 +112,6 @@ export function MbNav() {
           <Link href="/#faq">FAQ</Link>
         </nav>
         <div className="mb-nav__acoes">
-          <Link href="/opera" className="mb-nav__entrar">Entrar</Link>
           <Link href="/#contato" className="mb-pilula mb-pilula--navy mb-pilula--p">Falar com a gente</Link>
         </div>
       </div>
