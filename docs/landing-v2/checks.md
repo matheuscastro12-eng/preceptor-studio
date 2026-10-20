@@ -33,3 +33,16 @@ Revisão de 19/10/2026 (sessão de retomada). Screenshots ficam com o Matheus.
 | 23 | Reduced motion e aria-hidden | ok no código | base = estado final; todos os visuais `aria-hidden` |
 | 24 | Texto: sem travessão, sem números antigos, sem "não é X, é Y" | ok | grep vazio (o "38%" achado é porcentagem de keyframe) |
 | 25 | lint, tsc, build | ok | sem avisos; exit 0; exit 0 (`/` 4.87 kB, 101 kB) |
+
+## Incremento 4: "Agente em destaque" (19/10/2026)
+| # | Requisito | Status | Evidência |
+|---|---|---|---|
+| 26 | Hero com título curto, uma linha de apoio, CTA + "Ver como funciona" | ok | `Hero.tsx` |
+| 27 | Uma peça central com abas/auto-play nas 3 frentes e selo "Aprovado pela equipe" | ok | `HeroPalco.tsx`, `visuais-hero.css`; teste Playwright de troca, clique e setas |
+| 28 | Faixa de prova sem números | ok | `FaixaProva.tsx` |
+| 29 | Método como fluxo de nós com passo humano destacado | ok | `Metodo.tsx`, `visuais-metodo.css` |
+| 30 | Prova, FAQ (3) e formulário; `/api/leads` intocado | ok | `git diff --stat -- app/api` vazio |
+| 31 | Cores do repo, sem pílula, sem grid, sem ícone genérico | ok | só tokens do `.lp2`; botões `--r-sm` |
+| 32 | Só CSS/SVG + IntersectionObserver, reduced motion | ok | sem dependência nova; screenshot com `reduced_motion=reduce` |
+| 33 | Leitura ≤ 600 palavras | ok | 421 |
+| 34 | lint, tsc, build | ok | sem avisos; exit 0; exit 0 |

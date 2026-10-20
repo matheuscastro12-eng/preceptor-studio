@@ -65,3 +65,24 @@ Pedido do Matheus: home com 5 a 6 seções e menos de ~600 palavras visíveis, m
 ### Atenção
 - CRM: leads da home chegam com `company` nulo e `mensagem`/`notes` vazios (Empresa e processo saíram). `category` segue preenchido pelo Segmento, então `computeScoreFields` e o resumo continuam recebendo o setor.
 - Duas sessões (09 e 8c) rodaram este corte em paralelo no mesmo working tree. Combinaram por mensagem: a 09 parou e a 8c fez o commit. Hero, CtaLink, Problema e o bloco Problema do `home.css` são da 09; o resto é da 8c.
+
+## Incremento 4 (19/10/2026): redesenho "Agente em destaque"
+Pedido do Matheus: o visual anterior não agradou. Direção Linear + Attio, com toques de n8n e Sierra. Plano em `plano.md` (Incremento 4). Texto da v4 enxuta, só cortado.
+- [x] Hero: título da v4 em 3 linhas, uma linha de apoio (subtítulo da v4 cortado em "parte repetitiva"), botão primário navy (retângulo, sem pílula) + "Ver como funciona" (fantasma, leva a `#metodo`), microcopy da v4.
+- [x] Palco do agente (`HeroPalco.tsx`, `visuais-hero.css`): uma janela grande em perspectiva leve (desktop), base sumindo no fundo; abas Logística / Financeiro / Clínicas (tablist com setas, Home/End). Em cada aba: entrada chega, o agente preenche os campos, conferência ganha os vistos, "Aguardando a equipe" e o selo teal "Aprovado pela equipe". Auto-play pela barra de progresso da aba (9 s), só com o palco na tela e sem o mouse em cima; o primeiro clique ou tecla desliga. Reduced motion: sem barra, sem troca, estado final. Painéis inativos com `hidden`. Selo DEMONSTRAÇÃO e dados fictícios dos mockups antigos.
+- [x] Faixa de prova (`FaixaProva.tsx`): frentes (rótulos do Segmento + financeiro) e caso anônimo com link para `#exemplos`. Sem números e sem logos.
+- [x] Método como fluxo de nós (`Metodo.tsx`, `visuais-metodo.css` reescrito): 3 nós com portas, arestas tracejadas que se desenham na entrada e pacote teal andando em loop de 6 s; dentro do passo 2, mini fluxo "Agente prepara → Equipe aprova" com o nó humano em teal (o único) e anel que pulsa quando o pacote chega. Faixa PILOTO sobre 2 e 3. Texto dos passos igual à v4.
+- [x] Prova, FAQ e formulário iguais. `/api/leads` e o payload do formulário intocados.
+- [x] Saíram: Problema (`Problema.tsx`, `ProblemaVisual.tsx`), `HeroScene.tsx`, os 3 mockups e `visuais-mockups.css`, `visuais-problema-prova.css` (a parte da prova virou `visuais-prova.css`), o componente `CtaLink` (o arquivo guarda só as constantes), o grão do fundo e o CSS de cena/verticais/dores/CTA de texto.
+- [x] Contagem (curl na home, sem script/style/tags, tokens com letra ou número; inclui o `<title>`): **602** no HTML todo, **421** só texto de leitura (sem `aria-hidden` e `hidden`).
+- [x] Varredura: sem travessão, sem 1.400/38%/7 de cada 10. "não é" só na pergunta do FAQ.
+- [x] Lint sem avisos, tsc exit 0, build exit 0 (`/` estático, 6.26 kB, First Load 102 kB).
+- [x] Screenshots (Playwright, `next start`/`next dev` na 3311): 1440 e 390, com e sem reduced motion. Sem rolagem lateral em 390. Auto-play troca de aba em ~9 s, clique para a troca, setas mudam a aba e o foco; com reduced motion fica na 1ª aba com o selo visível.
+
+### Decisões e atenção
+- Problema saiu: não estava na lista de seções do pedido, e o palco já mostra o trabalho manual sendo feito.
+- "Da marca só o logo P!": ficou o `logo-horizontal.png` (P! + PRECEPTOR!); saíram o grão e a cena abstrata. A marca de caneta ficou no título do hero, do Método e do formulário.
+- Strings novas, todas `aria-hidden` dentro dos visuais: etapas do agente (Entrada, Preenchimento, Conferência, Aprovação), títulos das colunas, rótulos de campo, os 3 vistos de conferência por frente, "CT-e pronto", "Baixa proposta", "Resposta enviada", "Aguardando a equipe", "Aprovado pela equipe", "Agente prepara", "Equipe aprova", "Passo humano".
+- Strings novas de leitura: "Ver como funciona", "Frentes", "Caso anônimo", "Conciliação de recebimentos em um cliente de logística.", "Ver o caso". Nenhuma promessa nova.
+- Pausa do auto-play só com mouse (`pointerType`): no toque não há "leave", e a troca pararia de vez. Sombra da janela com folga dentro da máscara (sem corte reto no desktop).
+- Não testado: Safari/iOS real (máscara e `perspective`), leitor de tela real.

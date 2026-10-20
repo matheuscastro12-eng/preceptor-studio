@@ -1,314 +1,296 @@
-/* Método como diagrama (incremento 2). Escopado em .lp2, prefixo lp2-mdiag.
-   Celular: passos empilhados, nó à esquerda e conector vertical.
-   Desktop (>=1024): três colunas, conector horizontal entre os nós e a
-   faixa PILOTO sobre os passos 2 e 3.
-   O estilo base de tudo é o estado final desenhado; os estados iniciais só
-   existem sob .lp2.js-ready [data-rv]:not(.is-in) ou dentro de keyframes. */
+/* Método como fluxo de nós (n8n). Escopo .lp2, prefixo lp2-fluxo.
+   Celular: nós empilhados, arestas verticais à esquerda.
+   Desktop (>=1024): três nós em linha, arestas horizontais, faixa PILOTO
+   sobre os passos 2 e 3. Base = estado final; o "de" só existe sob
+   .js-ready ... :not(.is-in) ou em keyframes. Pacotes ficam invisíveis
+   fora da animação (com reduced motion não aparecem). */
 
-.lp2-mdiag {
-  --mdiag-no: 44px;
-  --mdiag-col: 20px;   /* espaço entre nó e texto no celular */
-  --mdiag-gap: 56px;   /* espaço entre passos no celular */
-  --mdiag-traco: rgba(0, 3, 61, 0.28);
+.lp2-fluxo {
+  --fx-gap: 48px;
+  --fx-porta-y: 34px;
+  --fx-traco: rgba(0, 3, 61, 0.22);
 }
 
-.lp2-mdiag__lista {
-  display: grid;
-  gap: var(--mdiag-gap);
-  margin-top: 56px;
-}
-
-.lp2-mdiag__passo {
-  --d: 0ms;
+.lp2-fluxo__canvas {
   position: relative;
+  margin-top: 56px;
+  padding-top: 40px;
+}
+@media (min-width: 1024px) {
+  .lp2-fluxo { --fx-gap: 72px; }
+  .lp2-fluxo__canvas { margin-top: 72px; padding-top: 48px; }
+}
+
+.lp2-fluxo__nos {
   display: grid;
-  grid-template-columns: var(--mdiag-no) minmax(0, 1fr);
-  column-gap: var(--mdiag-col);
-  align-items: start;
+  gap: var(--fx-gap);
+}
+@media (min-width: 1024px) {
+  .lp2-fluxo__nos {
+    grid-template-columns: 1fr 1.25fr 1fr;
+    align-items: start;
+  }
 }
 
 /* ─── Nó ─────────────────────────────────────────────────── */
-.lp2-mdiag__no {
+.lp2-fluxo__no {
   position: relative;
-  z-index: 1;
-  display: grid;
+  padding: 22px 22px 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-xl);
+  background: var(--bg);
+  box-shadow: 0 1px 2px rgba(0, 3, 61, 0.04), 0 16px 40px -28px rgba(0, 3, 61, 0.35);
+}
+@media (min-width: 1024px) {
+  .lp2-fluxo__no { padding: 26px 26px 28px; }
+}
+.lp2-fluxo__no--2 { border-color: rgba(0, 3, 61, 0.28); }
+
+.lp2-fluxo__num {
+  display: inline-grid;
   place-items: center;
-  width: var(--mdiag-no);
-  height: var(--mdiag-no);
-  border: 1px solid var(--navy);
+  width: 32px;
+  height: 32px;
   border-radius: var(--r-sm);
-  background: var(--bg-soft);
-  font-family: var(--f-mono);
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  color: var(--navy);
-}
-
-/* ─── Conector: liga cada nó ao seguinte ─────────────────── */
-.lp2-mdiag__passo:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  left: calc(var(--mdiag-no) / 2);
-  top: calc(var(--mdiag-no) + 8px);
-  bottom: calc(-1 * var(--mdiag-gap) + 8px);
-  width: 1px;
-  background: var(--mdiag-traco);
-  transform-origin: top center;
-  transform: scale(1);
-}
-
-/* ─── Corpo ──────────────────────────────────────────────── */
-.lp2-mdiag__corpo { min-width: 0; }
-
-.lp2-mdiag__fig {
-  display: block;
-  width: 100%;
-  max-width: 220px;
-  height: auto;
-  margin-bottom: 16px;
-  overflow: visible;
-}
-
-.lp2-mdiag__quando { margin-top: 6px; }
-.lp2-mdiag__texto {
-  margin-top: 12px;
-  color: var(--ink-soft);
-  max-width: 54ch;
-}
-
-/* ─── Faixa PILOTO (celular: rótulo com linha antes do passo 2) ── */
-.lp2-mdiag__piloto {
-  position: absolute;
-  left: calc(var(--mdiag-no) + var(--mdiag-col));
-  right: 0;
-  top: calc(-1 * var(--mdiag-gap) / 2 - 9px);
-  display: flex;
-  flex-direction: row-reverse;
-  align-items: center;
-  gap: 12px;
-  height: 18px;
-}
-.lp2-mdiag__piloto-txt {
+  background: var(--navy);
+  color: #fff;
   font-family: var(--f-mono);
   font-size: 12px;
   font-weight: 500;
-  line-height: 1.5;
-  letter-spacing: 0.14em;
+}
+.lp2-fluxo__no .lp2-h3 { margin-top: 18px; }
+.lp2-fluxo__quando { margin-top: 6px; }
+.lp2-fluxo__texto { margin-top: 12px; color: var(--ink-soft); }
+
+/* Portas (bolinhas nas bordas), como no editor de fluxo. */
+.lp2-fluxo__porta {
+  position: absolute;
+  z-index: 2;
+  width: 11px;
+  height: 11px;
+  border: 2px solid var(--navy);
+  border-radius: 50%;
+  background: var(--bg);
+}
+/* Celular: entrada em cima, saída embaixo, alinhadas à esquerda. */
+.lp2-fluxo__porta--in { top: -6px; left: 33px; }
+.lp2-fluxo__porta--out { bottom: -6px; left: 33px; }
+.lp2-fluxo__no--1 .lp2-fluxo__porta--in,
+.lp2-fluxo__no--3 .lp2-fluxo__porta--out { display: none; }
+@media (min-width: 1024px) {
+  .lp2-fluxo__porta--in { top: var(--fx-porta-y); left: -6px; bottom: auto; }
+  .lp2-fluxo__porta--out { top: var(--fx-porta-y); right: -6px; left: auto; bottom: auto; }
+}
+
+/* ─── Arestas e pacotes ───────────────────────────────────── */
+.lp2-fluxo__aresta {
+  position: absolute;
+  overflow: hidden;
+}
+.lp2-fluxo__aresta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat-x;
+  background-image: linear-gradient(90deg, var(--fx-traco) 50%, transparent 50%);
+  background-size: 8px 2px;
+  background-position: left center;
+}
+.lp2-fluxo__trilho { position: absolute; inset: 0; }
+.lp2-fluxo__pacote {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--teal);
+  box-shadow: 0 0 0 3px rgba(59, 202, 206, 0.25);
+}
+
+/* Aresta entre nós. Celular: vertical, da porta de saída até a próxima entrada. */
+.lp2-fluxo__aresta--entre {
+  top: 100%;
+  left: 37px;
+  width: 2px;
+  height: var(--fx-gap);
+}
+.lp2-fluxo__aresta--entre::before {
+  background-image: linear-gradient(180deg, var(--fx-traco) 50%, transparent 50%);
+  background-repeat: repeat-y;
+  background-size: 2px 8px;
+}
+.lp2-fluxo__aresta--entre .lp2-fluxo__pacote { bottom: 0; left: -4px; }
+@media (min-width: 1024px) {
+  .lp2-fluxo__aresta--entre {
+    top: calc(var(--fx-porta-y) + 4px);
+    left: 100%;
+    width: var(--fx-gap);
+    height: 2px;
+  }
+  .lp2-fluxo__aresta--entre::before {
+    background-image: linear-gradient(90deg, var(--fx-traco) 50%, transparent 50%);
+    background-repeat: repeat-x;
+    background-size: 8px 2px;
+  }
+  .lp2-fluxo__aresta--entre .lp2-fluxo__pacote { bottom: auto; top: -4px; left: auto; right: 0; }
+}
+
+/* ─── Mini fluxo do passo 2: agente → equipe aprova ───────── */
+.lp2-fluxo__interno {
+  display: flex;
+  align-items: center;
+  margin-top: 34px;
+  font-size: 13px;
+  line-height: 1.2;
+}
+.lp2-fluxo__chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--bg-soft);
+  font-weight: 600;
+  color: var(--navy);
+}
+.lp2-fluxo__aresta--interna {
+  position: relative;
+  flex: 1;
+  min-width: 20px;
+  height: 2px;
+}
+.lp2-fluxo__aresta--interna .lp2-fluxo__pacote { top: -4px; right: 0; }
+
+/* O passo humano: o único nó em teal. Teal cheio com texto navy (AA). */
+.lp2-fluxo__chip--humano {
+  border-color: var(--teal-ink);
+  background: var(--teal);
+  color: var(--navy);
+}
+.lp2-fluxo__chip--humano::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border: 2px solid var(--teal);
+  border-radius: calc(var(--r-sm) + 4px);
+  opacity: 0;
+}
+.lp2-fluxo__chip-rot {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  font-family: var(--f-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
   color: var(--ink-soft);
 }
-.lp2-mdiag__piloto-linha {
-  flex: 1;
-  height: 1px;
-  background: var(--mdiag-traco);
-  transform-origin: left center;
+.lp2-fluxo__chip-visto {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: var(--teal);
+  font-size: 10px;
 }
 
-/* ─── Desenhos ───────────────────────────────────────────── */
-/* Sem non-scaling-stroke no traço desenhado: o tracejado usa pathLength. */
-.lp2-mdiag__fig *:not(.lp2-mdiag__traco--draw) { vector-effect: non-scaling-stroke; }
-
-.lp2-mdiag__traco {
-  fill: none;
-  stroke: var(--navy);
-  stroke-width: 1.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.lp2-mdiag__traco--draw { stroke-dasharray: 1; stroke-dashoffset: 0; }
-
-/* 1. Diagnóstico: ponto onde o tempo se perde. */
-.lp2-mdiag__ponto { fill: var(--teal); }
-.lp2-mdiag__alvo { fill: none; stroke: var(--teal); stroke-width: 1.5; }
-.lp2-mdiag__ponto,
-.lp2-mdiag__alvo { transform-box: fill-box; transform-origin: center; }
-
-/* 2. IA aplicada: portões de aprovação acesos e o pulso no fim da linha. */
-.lp2-mdiag__portao-borda { fill: none; stroke: var(--navy); stroke-width: 1.5; }
-.lp2-mdiag__portao-luz { fill: var(--teal); }
-.lp2-mdiag__pulso { fill: var(--navy); }
-
-/* 3. Medição: linha de base (contorno) e depois (cheia), sem números. */
-.lp2-mdiag__barra { transform-box: fill-box; transform-origin: left center; }
-.lp2-mdiag__barra--base { fill: none; stroke: var(--navy); stroke-width: 1.5; }
-.lp2-mdiag__barra--depois { fill: var(--teal); }
-.lp2-mdiag__ref {
-  stroke: var(--ink-mute);
-  stroke-width: 1;
-  stroke-dasharray: 3 3;
-}
-
-/* ─── Desktop: três colunas ─────────────────────────────── */
+/* ─── Faixa PILOTO sobre os passos 2 e 3 ──────────────────── */
+.lp2-fluxo__piloto { display: none; }
 @media (min-width: 1024px) {
-  .lp2-mdiag {
-    --mdiag-g: 40px;
+  .lp2-fluxo__piloto {
+    position: absolute;
+    top: 0;
+    /* Começa no passo 2: colunas 1fr 1.25fr 1fr com dois vãos de --fx-gap. */
+    left: calc((100% - 2 * var(--fx-gap)) / 3.25 + var(--fx-gap));
+    right: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
-  .lp2-mdiag__lista {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--mdiag-g);
-    margin-top: 80px;
-    padding-top: 52px; /* espaço da faixa PILOTO */
-  }
-  .lp2-mdiag__passo {
-    --d: calc(var(--i, 0) * 220ms);
-    display: block;
-  }
-  .lp2-mdiag__corpo { margin-top: 28px; }
-  .lp2-mdiag__texto { font-size: 0.95rem; line-height: 1.6; }
-
-  .lp2-mdiag__passo:not(:last-child)::after {
-    left: calc(var(--mdiag-no) + 10px);
-    top: calc(var(--mdiag-no) / 2);
-    bottom: auto;
-    width: calc(100% + var(--mdiag-g) - var(--mdiag-no) - 20px);
-    height: 1px;
+  .lp2-fluxo__piloto-linha {
+    flex: 1;
+    height: 10px;
+    border: 1px solid var(--fx-traco);
+    border-bottom: 0;
+    border-radius: 4px 4px 0 0;
     transform-origin: left center;
   }
-
-  /* Chave sobre as colunas 2 e 3. */
-  .lp2-mdiag__piloto {
-    left: 0;
-    right: auto;
-    top: -52px;
-    width: calc(200% + var(--mdiag-g));
-    height: 22px;
-    display: block;
-  }
-  .lp2-mdiag__piloto-linha {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 9px;
-    height: 12px;
-    background: none;
-    border: 1px solid var(--mdiag-traco);
-    border-bottom: 0;
-  }
-  .lp2-mdiag__piloto-txt {
-    position: absolute;
-    left: 16px;
-    top: 0;
-    padding: 0 10px;
-    background: var(--bg-soft);
+  .lp2-fluxo__piloto-txt {
+    order: -1;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    color: var(--ink-soft);
   }
 }
 
-/* ─── Entrada (só com JS e só antes de .is-in) ───────────── */
-.lp2.js-ready .lp2-mdiag__passo:not(.is-in) .lp2-mdiag__no {
+/* ─── Entrada no scroll ───────────────────────────────────── */
+.lp2.js-ready .lp2-fluxo__canvas:not(.is-in) .lp2-fluxo__no {
   opacity: 0;
-  transform: scale(0.7);
+  transform: translateY(20px);
 }
-.lp2.js-ready .lp2-mdiag__passo:not(.is-in)::after { transform: scaleY(0); }
-.lp2.js-ready .lp2-mdiag__passo:not(.is-in) .lp2-mdiag__corpo {
-  opacity: 0;
-  transform: translateY(16px);
+.lp2.js-ready .lp2-fluxo__canvas.is-in .lp2-fluxo__no {
+  transition:
+    opacity var(--dur-slow) var(--ease-out) calc(var(--i) * 220ms),
+    transform var(--dur-slow) var(--ease-out) calc(var(--i) * 220ms);
 }
-.lp2.js-ready .lp2-mdiag__passo:not(.is-in) .lp2-mdiag__piloto-linha { transform: scaleX(0); }
-.lp2.js-ready .lp2-mdiag__passo:not(.is-in) .lp2-mdiag__piloto-txt { opacity: 0; }
+.lp2.js-ready .lp2-fluxo__canvas:not(.is-in) .lp2-fluxo__aresta--entre::before { transform: scaleY(0); }
 @media (min-width: 1024px) {
-  .lp2.js-ready .lp2-mdiag__passo:not(.is-in)::after { transform: scaleX(0); }
+  .lp2.js-ready .lp2-fluxo__canvas:not(.is-in) .lp2-fluxo__aresta--entre::before { transform: scaleX(0); }
+}
+.lp2-fluxo__aresta--entre::before { transform-origin: left top; }
+.lp2.js-ready .lp2-fluxo__canvas.is-in .lp2-fluxo__aresta--entre::before {
+  transition: transform 600ms var(--ease-out) calc(var(--i) * 220ms + 400ms);
+}
+.lp2.js-ready .lp2-fluxo__canvas:not(.is-in) .lp2-fluxo__piloto-linha { transform: scaleX(0); }
+.lp2.js-ready .lp2-fluxo__canvas.is-in .lp2-fluxo__piloto-linha {
+  transition: transform 900ms var(--ease-out) 700ms;
 }
 
-.lp2.js-ready .lp2-mdiag__passo.is-in .lp2-mdiag__no {
-  transition:
-    opacity var(--dur-base) var(--ease-out) var(--d),
-    transform var(--dur-base) var(--ease-out) var(--d);
+/* ─── Loop de 6 s: pacote anda 1→2, agente→equipe, 2→3 ────── */
+@keyframes lp2-fx-x {
+  0% { opacity: 0; transform: translateX(-100%); }
+  3% { opacity: 1; }
+  20% { opacity: 1; transform: translateX(0); }
+  24%, 100% { opacity: 0; transform: translateX(0); }
 }
-.lp2.js-ready .lp2-mdiag__passo.is-in::after {
-  transition: transform 600ms var(--ease-out) calc(var(--d) + 200ms);
+@keyframes lp2-fx-y {
+  0% { opacity: 0; transform: translateY(-100%); }
+  3% { opacity: 1; }
+  20% { opacity: 1; transform: translateY(0); }
+  24%, 100% { opacity: 0; transform: translateY(0); }
 }
-.lp2.js-ready .lp2-mdiag__passo.is-in .lp2-mdiag__corpo {
-  transition:
-    opacity var(--dur-slow) var(--ease-out) calc(var(--d) + 120ms),
-    transform var(--dur-slow) var(--ease-out) calc(var(--d) + 120ms);
-}
-.lp2.js-ready .lp2-mdiag__passo.is-in .lp2-mdiag__piloto-linha {
-  transition: transform 900ms var(--ease-out) calc(var(--d) + 150ms);
-}
-.lp2.js-ready .lp2-mdiag__passo.is-in .lp2-mdiag__piloto-txt {
-  transition: opacity var(--dur-slow) var(--ease-out) calc(var(--d) + 450ms);
-}
-
-/* Desenhos animam uma vez ao entrar (o passo 2 repete, discreto). */
-.lp2.js-ready .lp2-mdiag__passo.is-in .lp2-mdiag__traco--draw {
-  animation: lp2-mdiag-draw 1400ms var(--ease-out) calc(var(--d) + 250ms) both;
-}
-.lp2.js-ready .lp2-mdiag__passo.is-in .lp2-mdiag__ponto {
-  animation: lp2-mdiag-pop 500ms var(--ease-out) calc(var(--d) + 1300ms) both;
-}
-.lp2.js-ready .lp2-mdiag__passo.is-in .lp2-mdiag__alvo {
-  animation: lp2-mdiag-alvo 900ms var(--ease-out) calc(var(--d) + 1450ms) both;
-}
-.lp2.js-ready .lp2-mdiag__passo.is-in .lp2-mdiag__pulso {
-  animation: lp2-mdiag-pulso 6s linear calc(var(--d) + 400ms) infinite both;
-}
-.lp2.js-ready .lp2-mdiag__passo.is-in .lp2-mdiag__portao:nth-of-type(1) .lp2-mdiag__portao-luz {
-  animation: lp2-mdiag-luz-1 6s linear calc(var(--d) + 400ms) infinite both;
-}
-.lp2.js-ready .lp2-mdiag__passo.is-in .lp2-mdiag__portao:nth-of-type(2) .lp2-mdiag__portao-luz {
-  animation: lp2-mdiag-luz-2 6s linear calc(var(--d) + 400ms) infinite both;
-}
-.lp2.js-ready .lp2-mdiag__passo.is-in .lp2-mdiag__portao:nth-of-type(3) .lp2-mdiag__portao-luz {
-  animation: lp2-mdiag-luz-3 6s linear calc(var(--d) + 400ms) infinite both;
-}
-.lp2.js-ready .lp2-mdiag__passo.is-in .lp2-mdiag__barra--base {
-  animation: lp2-mdiag-barra 800ms var(--ease-out) calc(var(--d) + 300ms) both;
-}
-.lp2.js-ready .lp2-mdiag__passo.is-in .lp2-mdiag__barra--depois {
-  animation: lp2-mdiag-barra 800ms var(--ease-out) calc(var(--d) + 700ms) both;
+@keyframes lp2-fx-humano {
+  0% { opacity: 0; transform: scale(0.92); }
+  6% { opacity: 0.9; transform: scale(1); }
+  22%, 100% { opacity: 0; transform: scale(1.18); }
 }
 
-@keyframes lp2-mdiag-draw {
-  from { stroke-dashoffset: 1; }
+/* O trilho anda e leva o pacote preso na ponta; fora da viagem fica invisível. */
+.lp2-fluxo__trilho {
+  opacity: 0;
+  animation: lp2-fx-y 6s var(--ease-out) var(--fx-d, 1.4s) infinite;
 }
-@keyframes lp2-mdiag-pop {
-  from { opacity: 0; transform: scale(0); }
+.lp2-fluxo__aresta--interna .lp2-fluxo__trilho { animation-name: lp2-fx-x; --fx-d: 3s; }
+.lp2-fluxo__no--2 .lp2-fluxo__aresta--entre .lp2-fluxo__trilho { --fx-d: 4.6s; }
+@media (min-width: 1024px) {
+  .lp2-fluxo__aresta--entre .lp2-fluxo__trilho { animation-name: lp2-fx-x; }
 }
-@keyframes lp2-mdiag-alvo {
-  from { opacity: 0; transform: scale(2); }
-}
-@keyframes lp2-mdiag-barra {
-  from { transform: scaleX(0); }
-}
-/* Pulso percorre a linha (x 4 a 156) em 60% do ciclo; cada portão acende
-   quando o pulso passa (x 48, 88 e 128) e todos apagam juntos no fim. */
-@keyframes lp2-mdiag-pulso {
-  0% { opacity: 0; transform: translateX(-152px); }
-  4% { opacity: 1; }
-  60% { opacity: 1; transform: translateX(0); }
-  68%, 100% { opacity: 0; transform: translateX(0); }
-}
-@keyframes lp2-mdiag-luz-1 {
-  0%, 17% { opacity: 0; }
-  20%, 86% { opacity: 1; }
-  94%, 100% { opacity: 0; }
-}
-@keyframes lp2-mdiag-luz-2 {
-  0%, 33% { opacity: 0; }
-  36%, 86% { opacity: 1; }
-  94%, 100% { opacity: 0; }
-}
-@keyframes lp2-mdiag-luz-3 {
-  0%, 49% { opacity: 0; }
-  52%, 86% { opacity: 1; }
-  94%, 100% { opacity: 0; }
-}
+.lp2-fluxo__chip--humano::after { animation: lp2-fx-humano 6s var(--ease-out) 4.1s infinite; }
 
-/* ─── Reduced motion: diagrama inteiro desenhado e parado ── */
+.lp2.js-ready .lp2-fluxo__canvas:not(.is-in) *,
+.lp2.js-ready .lp2-fluxo__canvas:not(.is-in) *::after { animation-play-state: paused; }
+
+/* ─── Reduced motion: tudo parado e visível, sem pacotes ──── */
 @media (prefers-reduced-motion: reduce) {
-  .lp2 .lp2-mdiag__no,
-  .lp2 .lp2-mdiag__corpo,
-  .lp2 .lp2-mdiag__piloto-txt,
-  .lp2 .lp2-mdiag__ponto,
-  .lp2 .lp2-mdiag__alvo,
-  .lp2 .lp2-mdiag__portao-luz,
-  .lp2 .lp2-mdiag__pulso,
-  .lp2 .lp2-mdiag__barra {
-    opacity: 1 !important;
-    transform: none !important;
-    animation: none !important;
-  }
-  .lp2 .lp2-mdiag__passo::after,
-  .lp2 .lp2-mdiag__piloto-linha { transform: none !important; }
-  .lp2 .lp2-mdiag__traco--draw { stroke-dashoffset: 0 !important; }
+  .lp2 .lp2-fluxo__no,
+  .lp2 .lp2-fluxo__aresta--entre::before,
+  .lp2 .lp2-fluxo__piloto-linha { opacity: 1 !important; transform: none !important; }
 }

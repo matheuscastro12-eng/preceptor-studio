@@ -83,3 +83,28 @@ Pedido do Matheus: trocar texto por visual onde der, mantendo a copy v3 literal 
 | Verticais | mockup animado em cada cartão: romaneio alimenta CT-e e equipe aprova (logística); extrato concilia linha a linha com título (financeiro); conversa da recepção com resposta aprovada (clínicas) | `MockLogistica.tsx`, `MockFinanceiro.tsx`, `MockClinica.tsx`, `visuais-mockups.css` | loops CSS, pausados até o cartão entrar | último quadro parado |
 
 Regras: base CSS de todo elemento novo = estado final (keyframes animam só o "de"); `aria-hidden` em todo visual (o texto ao lado carrega o sentido); selo "DEMONSTRAÇÃO" nos mockups (nota de produção da copy, seção 5); conversa só administrativa, sem verde nem logo do WhatsApp; nenhum número de resultado novo. A copy tem 4 passos no Método; o pedido falava em 3: ficam os 4 da copy (pergunta aberta para o Matheus).
+
+## Incremento 4 (19/10/2026): direção "Agente em destaque"
+Pedido do Matheus: o visual anterior não agradou. Refazer a home no estilo Linear + Attio, com toques de n8n e Sierra. Texto da v4 enxuta, só cortando.
+
+### Direção
+1. **Propósito:** o visitante entende em 5 segundos que um agente prepara o trabalho e a equipe aprova, e pede o diagnóstico.
+2. **Público:** dono ou gestor de operação com regra (logística, financeiro, clínica), muito no celular.
+3. **Tom:** produto calmo, claro, muito respiro; o agente é o protagonista, o texto é curto.
+4. **Detalhe memorável:** o selo "Aprovado pela equipe" em teal que fecha cada demonstração, e o nó humano destacado no fluxo do método.
+5. **Restrições:** tokens do `.lp2` (sem hex novo), Bricolage + Instrument Sans + JetBrains Mono, CSS/SVG + IntersectionObserver, sem lib nova, reduced motion, contraste AA (teal nunca como texto no claro), `/api/leads` intocado.
+
+### Seções e referência
+| Seção | Referência | Padrão roubado |
+|---|---|---|
+| Hero | Linear (01), Attio (05) | título grande à esquerda, uma linha de apoio, CTA sólido + fantasma; abaixo, uma janela de produto grande em perspectiva que some no fundo |
+| Palco do agente | Attio (05), Sierra (08), Tractian | abas de frente com barra de progresso (auto-play), entrada → campos → conferência → selo; balão do agente provando o trabalho |
+| Faixa de prova | Vercel (02), Fractional | linha fina logo abaixo do hero: frentes e caso anônimo, sem logos e sem números |
+| Método | n8n (09) | nós com portas, arestas com pulso andando, passo humano em teal |
+| Prova | Stripe (03) | número grande da marca (99% com ressalvas da v4), mantido |
+| FAQ + formulário | Ramp (04) | 3 perguntas, formulário igual |
+
+### Decisões
+- **Problema sai.** Não está na lista do Matheus e o palco já mostra o trabalho manual sendo feito pelo agente (−56 palavras).
+- "Da marca só o logo P!": o `logo-horizontal.png` (P! + PRECEPTOR!) fica; saem os outros recursos de marca da v2 no hero (grão, cena abstrata). A marca de caneta fica só no "só aprova." do título.
+- Botões: retângulo `--r-sm` (sem pílula); primário navy, secundário com fio.

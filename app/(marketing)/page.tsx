@@ -3,16 +3,16 @@ import { mono } from "@/components/marketing/home/fonts";
 import { RevealObserver } from "@/components/marketing/home/RevealObserver";
 import { HomeNav } from "@/components/marketing/home/HomeNav";
 import { Hero } from "@/components/marketing/home/Hero";
-import { Problema } from "@/components/marketing/home/Problema";
+import { FaixaProva } from "@/components/marketing/home/FaixaProva";
 import { Metodo } from "@/components/marketing/home/Metodo";
 import { Exemplos } from "@/components/marketing/home/Exemplos";
 import { Faq } from "@/components/marketing/home/Faq";
 import { Contato } from "@/components/marketing/home/Contato";
 import { HomeFooter } from "@/components/marketing/home/HomeFooter";
 import "../../components/marketing/home/home.css";
-import "../../components/marketing/home/visuais-problema-prova.css";
-import "../../components/marketing/home/visuais-mockups.css";
+import "../../components/marketing/home/visuais-hero.css";
 import "../../components/marketing/home/visuais-metodo.css";
+import "../../components/marketing/home/visuais-prova.css";
 
 const SITE_URL = "https://preceptorstudio.com";
 const TITLE = "PRECEPTOR! Studio | Agentes de IA que sua equipe aprova";
@@ -88,7 +88,7 @@ export default function MarketingHome() {
       <HomeNav />
       <main id="conteudo">
         <Hero />
-        <Problema />
+        <FaixaProva />
         <Metodo />
         <Exemplos />
         <Faq />

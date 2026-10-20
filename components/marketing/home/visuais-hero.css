@@ -1,0 +1,451 @@
+/* Hero "Agente em destaque": botões, palco com abas e a janela do agente.
+   Escopo .lp2, só tokens da home. Estado base = estado final; keyframes
+   animam só o "de" (transform/opacity) e rodam uma vez por aba. */
+
+/* ─── Hero ────────────────────────────────────────────────── */
+.lp2-hero { padding-top: 48px; padding-bottom: 0; }
+@media (min-width: 1024px) {
+  .lp2-hero { padding-top: 96px; }
+}
+.lp2-hero .lp2-h1 {
+  margin-top: 0;
+  font-size: clamp(2.375rem, 5.4vw, 4.75rem);
+}
+.lp2-hero .lp2-lead { margin-top: 28px; max-width: 46ch; }
+
+.lp2-hero__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 36px;
+}
+.lp2-hero__acoes .lp2-micro { flex-basis: 100%; margin-top: 4px; }
+
+/* ─── Botões (retângulo, sem pílula) ──────────────────────── */
+.lp2-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  min-height: 48px;
+  padding: 0 20px;
+  border: 1px solid var(--navy);
+  border-radius: var(--r-sm);
+  font-family: var(--f-body);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+.lp2-btn--primario { background: var(--navy); color: #fff; }
+.lp2-btn--primario:hover { background: var(--navy-deep); }
+.lp2-btn--fantasma { background: transparent; color: var(--navy); border-color: var(--line); }
+.lp2-btn--fantasma:hover { border-color: var(--navy); }
+.lp2-btn:active { transform: translateY(1px); }
+.lp2-btn__seta { display: inline-block; transition: transform var(--dur-base) var(--ease-out); }
+.lp2-btn:hover .lp2-btn__seta { transform: translateX(3px); }
+
+/* ─── Palco ───────────────────────────────────────────────── */
+.lp2-palco { margin-top: 64px; }
+@media (min-width: 1024px) {
+  .lp2-palco { margin-top: 96px; }
+}
+
+.lp2-palco__abas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+}
+.lp2-palco__aba {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 4px 16px 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.lp2-palco__aba + .lp2-palco__aba { padding-left: 12px; }
+@media (min-width: 720px) {
+  .lp2-palco__aba + .lp2-palco__aba { padding-left: 20px; }
+}
+/* Fio de cima da aba: cinza; a ativa ganha navy e a barra de progresso. */
+.lp2-palco__aba::before,
+.lp2-palco__prog {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+}
+.lp2-palco__aba[aria-selected="true"]::before { background: var(--navy); opacity: 0.18; }
+.lp2-palco__aba[aria-selected="true"] { color: var(--navy); }
+.lp2-palco__aba-nome {
+  font-family: var(--f-display);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.lp2-palco__aba-ex { font-size: 0.875rem; line-height: 1.35; }
+@media (max-width: 719px) {
+  .lp2-palco__aba-ex { display: none; }
+}
+@media (min-width: 1024px) {
+  .lp2-palco__aba-nome { font-size: 1.125rem; }
+  .lp2-palco__aba-ex { font-size: 0.9375rem; }
+}
+.lp2-palco__aba:hover { color: var(--navy); }
+
+.lp2-palco__prog {
+  background: var(--navy);
+  transform-origin: left center;
+  animation: lp2-pl-prog 9s linear both;
+}
+@keyframes lp2-pl-prog {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.lp2-palco:not(.is-vis) .lp2-palco__prog,
+.lp2-palco.is-pausa .lp2-palco__prog { animation-play-state: paused; }
+
+/* Cena: a janela entra inclinada e assenta numa perspectiva leve (uma vez). */
+.lp2-palco__cena { position: relative; margin-top: 20px; }
+@media (min-width: 1024px) {
+  .lp2-palco { perspective: 2400px; }
+  .lp2-palco__cena {
+    margin-top: 32px;
+    transform: rotateX(5deg);
+    transform-origin: 50% 0;
+    animation: lp2-pl-cena 1100ms var(--ease-out) 500ms both;
+  }
+  /* A base da janela some no fundo, como no Linear. */
+  .lp2-palco__cena {
+    /* Folga para a sombra da janela ficar dentro da caixa da máscara. */
+    margin-left: -40px;
+    margin-right: -40px;
+    padding: 0 40px 40px;
+    -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent 98%);
+    mask-image: linear-gradient(to bottom, #000 62%, transparent 98%);
+  }
+}
+@keyframes lp2-pl-cena {
+  from { opacity: 0; transform: rotateX(22deg) translateY(48px); }
+  to { opacity: 1; transform: rotateX(5deg); }
+}
+
+.lp2-palco__link {
+  min-height: 1.6em;
+  margin-top: 16px;
+  font-size: 0.9375rem;
+}
+@media (min-width: 1024px) {
+  .lp2-palco__link { margin-top: 8px; text-align: center; }
+}
+
+/* ─── Janela do agente ────────────────────────────────────── */
+.lp2-janela {
+  border: 1px solid var(--line);
+  border-radius: var(--r-xl);
+  background: var(--bg);
+  box-shadow:
+    0 1px 2px rgba(0, 3, 61, 0.04),
+    0 24px 64px -24px rgba(0, 3, 61, 0.22);
+  overflow: hidden;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ink);
+}
+.lp2-janela__barra {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-soft);
+}
+.lp2-janela__pontos { display: flex; gap: 6px; }
+.lp2-janela__pontos span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--line);
+}
+.lp2-janela__nome { font-weight: 600; color: var(--navy); }
+.lp2-janela__demo {
+  margin-left: auto;
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.lp2-janela__corpo {
+  display: grid;
+  gap: 18px;
+  padding: 18px;
+}
+@media (min-width: 720px) {
+  .lp2-janela__corpo {
+    grid-template-columns: 1fr 1.3fr;
+    gap: 22px;
+    padding: 24px;
+  }
+  .lp2-janela__col--conf { grid-column: 1 / -1; }
+}
+@media (min-width: 1024px) {
+  .lp2-janela { font-size: 14px; }
+  .lp2-janela__corpo {
+    grid-template-columns: 168px 1fr 1.25fr 1.15fr;
+    gap: 0;
+    padding: 0;
+    min-height: 360px;
+  }
+  .lp2-janela__col--conf { grid-column: auto; }
+  .lp2-janela__lateral,
+  .lp2-janela__col { padding: 24px 22px 56px; }
+  .lp2-janela__col + .lp2-janela__col,
+  .lp2-janela__lateral + .lp2-janela__col { border-left: 1px solid var(--line); }
+}
+
+.lp2-janela__lateral { display: none; background: var(--bg-soft); }
+@media (min-width: 1024px) {
+  .lp2-janela__lateral { display: block; }
+}
+.lp2-janela__agente {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--navy);
+}
+.lp2-janela__pulso {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--teal-ink);
+}
+.lp2-janela__pulso::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid var(--teal);
+  opacity: 0;
+  animation: lp2-pl-pulso 1.8s var(--ease-out) infinite;
+}
+@keyframes lp2-pl-pulso {
+  from { opacity: 0.9; transform: scale(0.6); }
+  to { opacity: 0; transform: scale(1.6); }
+}
+.lp2-janela__etapas {
+  display: grid;
+  gap: 12px;
+  margin-top: 22px;
+  color: var(--ink-soft);
+}
+.lp2-janela__etapas li { display: flex; align-items: center; gap: 10px; }
+.lp2-janela__etapa-ponto {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--teal);
+  box-shadow: 0 0 0 1px var(--teal-ink);
+}
+
+.lp2-janela__coltit {
+  margin-bottom: 12px;
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* Entrada: o documento que chega. */
+.lp2-janela__doc {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--bg);
+  box-shadow: 0 8px 20px -14px rgba(0, 3, 61, 0.3);
+}
+.lp2-janela__doc-tipo {
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.lp2-janela__doc-tit { margin-top: 4px; font-weight: 600; color: var(--navy); }
+.lp2-janela__doc ul {
+  display: grid;
+  gap: 6px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line);
+  color: var(--ink-soft);
+  white-space: pre;
+}
+
+/* Campos que o agente preenche. */
+.lp2-janela__campos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.lp2-janela__campo {
+  display: grid;
+  gap: 2px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--bg-soft);
+}
+.lp2-janela__campo--largo { grid-column: 1 / -1; }
+.lp2-janela__campo-rot { font-size: 11px; color: var(--ink-soft); }
+.lp2-janela__campo-valor { font-weight: 600; color: var(--navy); overflow-wrap: anywhere; }
+
+/* Conferência e aprovação. */
+.lp2-janela__checks { display: grid; gap: 10px; }
+.lp2-janela__checks li { display: flex; align-items: center; gap: 10px; color: var(--ink); }
+.lp2-janela__visto {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--teal-tint);
+  color: var(--teal-ink);
+  font-size: 11px;
+  font-weight: 700;
+}
+.lp2-janela__aprova {
+  position: relative;
+  display: grid;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.lp2-janela__resultado { font-weight: 600; color: var(--navy); }
+/* "Aguardando" e o selo ocupam o mesmo lugar; o selo fica no fim. */
+.lp2-janela__espera,
+.lp2-janela__selo { grid-area: 2 / 1; justify-self: start; }
+.lp2-janela__espera {
+  padding: 6px 10px;
+  border: 1px dashed var(--ink-mute);
+  border-radius: var(--r-sm);
+  color: var(--ink-soft);
+  opacity: 0;
+}
+/* Selo da marca: teal cheio, texto navy (teal como texto no claro não passa AA). */
+.lp2-janela__selo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px 8px 10px;
+  border-radius: var(--r-sm);
+  background: var(--teal);
+  color: var(--navy);
+  font-weight: 700;
+  box-shadow: 0 10px 24px -10px rgba(18, 136, 142, 0.6);
+}
+.lp2-janela__selo-visto {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: var(--teal);
+  font-size: 11px;
+}
+
+/* ─── Linha do tempo de cada aba (uma vez, ao abrir) ──────── */
+@keyframes lp2-pl-doc {
+  from { opacity: 0; transform: translateX(-24px) rotate(-2deg); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes lp2-pl-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes lp2-pl-ponto {
+  from { opacity: 0.25; transform: scale(0.6); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes lp2-pl-espera {
+  0% { opacity: 0; }
+  15%, 80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes lp2-pl-selo {
+  0% { opacity: 0; transform: scale(1.35); }
+  60% { opacity: 1; transform: scale(0.96); }
+  100% { opacity: 1; transform: none; }
+}
+
+.lp2-janela__doc { animation: lp2-pl-doc 700ms var(--ease-out) 200ms both; }
+.lp2-janela__campo-valor,
+.lp2-janela__checks li,
+.lp2-janela__resultado { animation: lp2-pl-in 450ms var(--ease-out) var(--t, 0ms) both; }
+.lp2-janela__etapa-ponto { animation: lp2-pl-ponto 400ms var(--ease-out) var(--t, 0ms) both; }
+.lp2-janela__resultado { --t: 5200ms; }
+.lp2-janela__espera { animation: lp2-pl-espera 1300ms linear 5300ms both; }
+.lp2-janela__selo { animation: lp2-pl-selo 520ms var(--ease-out) 6500ms both; }
+
+/* Linha do tempo parada até o palco entrar na tela (só com JS). */
+.lp2.js-ready .lp2-palco:not(.is-vis) .lp2-janela *,
+.lp2.js-ready .lp2-palco:not(.is-vis) .lp2-janela *::after { animation-play-state: paused; }
+
+/* ─── Reduced motion: estado final parado ─────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .lp2 .lp2-palco__prog { display: none; }
+  .lp2 .lp2-janela__pulso::after { opacity: 0; }
+  .lp2 .lp2-btn:hover .lp2-btn__seta { transform: none; }
+}
+
+/* ─── Faixa de prova ──────────────────────────────────────── */
+.lp2-faixa { padding: 8px 0 72px; }
+@media (min-width: 1024px) {
+  .lp2-faixa { padding: 0 0 112px; }
+}
+.lp2-faixa__grid {
+  display: grid;
+  gap: 24px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+@media (min-width: 720px) {
+  .lp2-faixa__grid { grid-template-columns: 1.4fr 1fr; gap: 48px; }
+}
+.lp2-faixa__frentes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 0;
+  margin-top: 10px;
+  font-family: var(--f-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--navy);
+}
+.lp2-faixa__frentes li + li::before {
+  content: "·";
+  margin: 0 12px;
+  color: var(--ink-mute);
+}
+.lp2-faixa__caso { margin-top: 10px; color: var(--ink-soft); }
+.lp2-faixa__caso .lp2-textlink { margin-left: 4px; }

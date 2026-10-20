@@ -1,0 +1,97 @@
+/* Prova dos Exemplos (99% e grade 10x10). Escopo .lp2, só tokens da home.
+   Estado base = estado final; só transform/opacity animam. */
+
+/* ─── Prova (Exemplos) ────────────────────────────────────── */
+/* Sobrescreve .lp2-casos (home.css, 3 colunas em 1024): 2 colunas a partir de 720,
+   o cartão da prova na largura toda. */
+@media (min-width: 720px) {
+  .lp2 .lp2-casos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lp2 .lp2-casos .lp2-prova { grid-column: 1 / -1; }
+}
+
+.lp2 .lp2-prova__num { line-height: 0.9; }
+.lp2-prova__pre {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 1.375rem;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: var(--teal-soft);
+}
+.lp2 .lp2-prova .lp2-countup {
+  display: inline-block;
+  font-size: clamp(5rem, 12vw, 9rem);
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  /* Largura de dois dígitos desde o 0, para o "%" não pular na contagem. */
+  min-width: 2ch;
+  text-align: right;
+}
+.lp2-prova__pct { margin-left: 0.06em; }
+
+.lp2-prova__grade {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 4px;
+  width: min(100%, 240px);
+  aspect-ratio: 1;
+  margin-top: 28px;
+}
+.lp2-prova__cel {
+  display: block;
+  border-radius: 2px;
+  background: var(--teal);
+}
+.lp2-prova__cel--vazia {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+}
+
+/* Cartão da prova: número e textos à esquerda, grade à direita. */
+@media (min-width: 720px) {
+  .lp2 .lp2-caso.lp2-prova {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "frente grade"
+      "num grade"
+      "texto grade"
+      "nota grade";
+    grid-template-rows: auto auto auto 1fr;
+    column-gap: 48px;
+    padding: 36px;
+  }
+  .lp2-prova .lp2-caso__frente { grid-area: frente; }
+  .lp2-prova .lp2-prova__num { grid-area: num; }
+  .lp2-prova .lp2-caso__texto { grid-area: texto; }
+  .lp2 .lp2-prova .lp2-caso__nota { grid-area: nota; margin-top: 0; align-self: end; }
+  .lp2-prova .lp2-prova__grade {
+    grid-area: grade;
+    align-self: center;
+    width: clamp(220px, 28vw, 300px);
+    margin-top: 0;
+  }
+}
+@media (min-width: 1024px) {
+  .lp2 .lp2-caso.lp2-prova { column-gap: 80px; padding: 44px; }
+}
+
+/* Células enchem em sequência, no ritmo do CountUp (atraso em --d). */
+.lp2.js-ready .lp2-prova[data-rv]:not(.is-in) .lp2-prova__cel:not(.lp2-prova__cel--vazia) {
+  opacity: 0;
+  transform: scale(0.4);
+}
+.lp2.js-ready .lp2-prova[data-rv].is-in .lp2-prova__cel {
+  transition:
+    opacity 240ms var(--ease-out) var(--d, 0ms),
+    transform 240ms var(--ease-out) var(--d, 0ms);
+}
+
+/* ─── Reduced motion: estado final parado ─────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .lp2 .lp2-prova__cel {
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

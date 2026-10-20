@@ -3,7 +3,7 @@ import { Marca } from "./Marca";
 
 export function Contato() {
   return (
-    <section id="contato" className="lp2-section lp2-navy lp2-grain lp2-contato">
+    <section id="contato" className="lp2-section lp2-navy lp2-contato">
       <div className="lp2-container lp2-contato__grid">
         <header className="lp2-contato__head" data-rv>
           <h2 className="lp2-h2">
