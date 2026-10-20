@@ -314,7 +314,7 @@ export function MbHome() {
       {/* Prova */}
       <section id="exemplo" className="mb-sec">
         <div className="mb-wrap">
-          <div className="mb-casos">
+          <div className="mb-casos mb-casos--um">
             <div className="mb-medida" data-rv>
               <p className="mb-medida__rot">Financeiro · cliente de logística · caso anônimo</p>
               <p className="mb-medida__num">
@@ -325,18 +325,6 @@ export function MbHome() {
               <div className="mb-medida__barra" aria-hidden="true"><i /></div>
               <p className="mb-medida__txt">
                 dos recebimentos conciliados no período medido. O financeiro confirma as baixas.
-              </p>
-            </div>
-            <div className="mb-medida" data-rv>
-              <p className="mb-medida__rot">Roteirização · transportadora · caso anônimo</p>
-              <p className="mb-medida__num">
-                <CountUp to={13} />
-                <span className="mb-ponto">%</span>
-              </p>
-              <div className="mb-medida__barra mb-medida__barra--dias" aria-hidden="true"><i /></div>
-              <p className="mb-medida__txt">
-                mais barato em 15 de 15 dias, nas mesmas notas e com 26 veículos a menos. Medido em sombra, com o plano
-                comparado ao que foi feito de verdade.
               </p>
             </div>
           </div>
