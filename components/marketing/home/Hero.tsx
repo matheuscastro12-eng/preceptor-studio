@@ -89,7 +89,7 @@ export function Hero() {
         </div>
 
         <p className="lp4-nota lp4-frentes__nota" data-rv>
-          // onde já dá pra começar
+          {"// onde já dá pra começar"}
         </p>
         <ul className="lp2-verticais__grid lp2-hero__frentes">
           {FRENTES.map((f, i) => {
