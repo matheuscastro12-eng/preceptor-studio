@@ -32,9 +32,9 @@ const PASSOS = [
 ];
 
 const FATOS = [
-  { valor: "30 min", rot: "de diagnóstico", icone: "lupa" },
-  { valor: "2 a 4 sem.", rot: "de piloto", icone: "ampulheta" },
-  { valor: "1 pessoa", rot: "aprova cada saída", icone: "check" },
+  { quando: "Dia 1", valor: "30 min", rot: "de diagnóstico" },
+  { quando: "Semanas 1 a 4", valor: "Piloto", rot: "junto com a equipe" },
+  { quando: "Toda saída", valor: "1 pessoa", rot: "aprova antes de valer" },
 ];
 
 const MOTIVOS = [
@@ -63,6 +63,35 @@ const PERGUNTAS = [
     a: "Ela só segue sozinha onde a regra é fechada e você autorizou. O resto passa por uma pessoa da sua equipe antes de virar documento, baixa ou resposta.",
   },
 ];
+
+/* Mini cenas em loop dentro dos cartões de tarefa (dados de exemplo). */
+function Cena({ tipo }: { tipo: number }) {
+  if (tipo === 0)
+    return (
+      <div className="mb-cena mb-cena--doc" aria-hidden="true">
+        <i className="mb-cena__scan" />
+        <p><span>Emitente</span><b>Transportes Sul</b></p>
+        <p><span>Valor</span><b>R$ 4.380,00</b></p>
+        <p><span>Vencimento</span><b>28/10</b></p>
+        <p className="mb-cena__ok">→ lançado no ERP</p>
+      </div>
+    );
+  if (tipo === 1)
+    return (
+      <div className="mb-cena mb-cena--conf" aria-hidden="true">
+        <p><span>2.350,00</span><span>2.350,00</span><b>✓</b></p>
+        <p><span>1.180,00</span><span>1.180,00</span><b>✓</b></p>
+        <p className="is-exc"><span>780,00</span><span>870,00</span><b>!</b></p>
+      </div>
+    );
+  return (
+    <div className="mb-cena mb-cena--chat" aria-hidden="true">
+      <p className="in">Tem horário no sábado?</p>
+      <p className="out">Tem sim: 9h ou 10h30. Qual prefere?</p>
+      <p className="in">9h</p>
+    </div>
+  );
+}
 
 export function MbNav() {
   return (
@@ -151,15 +180,15 @@ export function MbHome() {
               Nota digitada à mão, extrato conferido linha por linha, a mesma pergunta no WhatsApp o dia todo. O agente
               assume essa parte e entrega pronto para alguém aprovar.
             </p>
-            <ul className="mb-fatos">
+            <ol className="mb-trilha">
               {FATOS.map((f) => (
                 <li key={f.rot}>
-                  <span className="mb-fatos__ic"><Glifo nome={f.icone} /></span>
+                  <span className="mb-trilha__quando">{f.quando}</span>
                   <b>{f.valor}</b>
-                  <span>{f.rot}</span>
+                  <span className="mb-trilha__rot">{f.rot}</span>
                 </li>
               ))}
-            </ul>
+            </ol>
           </div>
           <ul className="mb-motivos" data-rv>
             {MOTIVOS.map((m) => (
@@ -220,6 +249,7 @@ export function MbHome() {
             <article key={t.titulo} className={`mb-tarefa mb-tarefa--${i + 1}`} data-rv>
               <span className="mb-tarefa__ic"><Glifo nome={t.icone} /></span>
               <p className="mb-tarefa__antes">{t.antes}</p>
+              <Cena tipo={i} />
               <div>
                 <h3>{t.titulo}</h3>
                 <p>{t.texto}</p>

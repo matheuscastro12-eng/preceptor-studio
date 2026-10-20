@@ -323,3 +323,86 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
 .mb-medida.is-in .mb-medida__barra i, .lp2:not(.js-ready) .mb-medida__barra i { transform: scaleX(1); }
 .mb-medida__txt { max-width: 40ch; margin: 18px auto 0; font-size: 17px; line-height: 1.55; color: var(--mb-texto); }
 @media (prefers-reduced-motion: reduce) { .mb-medida__barra i { transform: none; transition: none; } }
+
+/* ===== Trilha (substitui os ícones redondos) ===== */
+.mb-trilha { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 40px 0 0; padding: 22px 0 0; list-style: none; }
+.mb-trilha::before { content: ""; position: absolute; top: 5px; left: 5px; right: 0; height: 2px; background: linear-gradient(90deg, var(--mb-navy), var(--mb-teal)); transform-origin: left; transform: scaleX(0); transition: transform 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.2s; }
+.mb-trilha li { position: relative; display: grid; gap: 2px; }
+.mb-trilha li::before { content: ""; position: absolute; top: -22px; left: 0; width: 12px; height: 12px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 3px var(--mb-teal); transform: scale(0); transition: transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+.mb-trilha li:nth-child(1)::before { transition-delay: 0.3s; } .mb-trilha li:nth-child(2)::before { transition-delay: 0.8s; } .mb-trilha li:nth-child(3)::before { transition-delay: 1.3s; }
+.is-in .mb-trilha::before, .lp2:not(.js-ready) .mb-trilha::before { transform: scaleX(1); }
+.is-in .mb-trilha li::before, .lp2:not(.js-ready) .mb-trilha li::before { transform: scale(1); }
+.mb-trilha__quando { font-family: var(--f-mono, ui-monospace, monospace); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--mb-teal-ink); }
+.mb-trilha b { font-family: var(--f-display); font-size: 22px; font-weight: 600; letter-spacing: -0.03em; color: var(--mb-tinta); }
+.mb-trilha__rot { font-size: 13px; color: var(--mb-texto); }
+@media (max-width: 520px) { .mb-trilha b { font-size: 18px; } }
+
+/* ===== Mini cenas nos cartões de tarefa ===== */
+.mb-tarefa { min-height: 440px; }
+.mb-cena { position: relative; overflow: hidden; display: grid; gap: 6px; padding: 12px; border-radius: 16px; background: rgba(255, 255, 255, 0.1); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14); font-size: 12px; }
+.mb-cena p { margin: 0 !important; color: #fff !important; font-size: 12px !important; line-height: 1.3 !important; }
+.mb-cena--doc p { display: flex; justify-content: space-between; gap: 8px; padding: 5px 8px; border-radius: 8px; animation: mb-cena-linha 4s ease-in-out infinite; }
+.mb-cena--doc p span { opacity: 0.6; }
+.mb-cena--doc p:nth-of-type(2) { animation-delay: 0.5s; } .mb-cena--doc p:nth-of-type(3) { animation-delay: 1s; }
+.mb-cena--doc .mb-cena__ok { justify-content: flex-start; color: var(--mb-teal) !important; font-weight: 600; opacity: 0; animation: mb-cena-surge 4s ease infinite 1.5s; }
+.mb-cena__scan { position: absolute; left: 0; right: 0; top: 0; height: 30px; background: linear-gradient(transparent, rgba(59, 202, 206, 0.35), transparent); animation: mb-cena-scan 4s ease-in-out infinite; }
+@keyframes mb-cena-scan { 0% { translate: 0 -30px; } 45% { translate: 0 110px; } 100% { translate: 0 110px; opacity: 0; } }
+@keyframes mb-cena-linha { 0%, 8% { background: transparent; } 15%, 80% { background: rgba(59, 202, 206, 0.18); } 95%, 100% { background: transparent; } }
+@keyframes mb-cena-surge { 0%, 10% { opacity: 0; translate: 0 6px; } 20%, 80% { opacity: 1; translate: 0 0; } 95%, 100% { opacity: 0; } }
+.mb-cena--conf p { display: grid; grid-template-columns: 1fr 1fr 22px; align-items: center; gap: 6px; padding: 6px 8px; border-radius: 8px; background: rgba(255, 255, 255, 0.08); font-family: var(--f-mono, ui-monospace, monospace); }
+.mb-cena--conf b { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 999px; background: #fff; color: var(--mb-teal-ink); font-size: 11px; opacity: 0; scale: 0.4; animation: mb-cena-tick 4.5s cubic-bezier(0.34, 1.56, 0.64, 1) infinite; }
+.mb-cena--conf p:nth-child(2) b { animation-delay: 0.6s; } .mb-cena--conf p:nth-child(3) b { animation-delay: 1.2s; background: #FFD66B; color: #5A3B00; }
+.mb-cena--conf p.is-exc { animation: mb-cena-exc 4.5s ease infinite 1.2s; }
+@keyframes mb-cena-tick { 0%, 10% { opacity: 0; scale: 0.4; } 20%, 85% { opacity: 1; scale: 1; } 100% { opacity: 0; scale: 0.4; } }
+@keyframes mb-cena-exc { 0%, 15% { box-shadow: none; } 25%, 85% { box-shadow: inset 0 0 0 1.5px #FFD66B; } 100% { box-shadow: none; } }
+.mb-cena--chat p { max-width: 85%; padding: 7px 10px; border-radius: 12px; opacity: 0; animation: mb-cena-msg 6s ease infinite; }
+.mb-cena--chat .in { justify-self: start; background: rgba(255, 255, 255, 0.16); border-bottom-left-radius: 4px; }
+.mb-cena--chat .out { justify-self: end; background: var(--mb-teal); color: var(--mb-navy) !important; border-bottom-right-radius: 4px; animation-delay: 1.2s; }
+.mb-cena--chat p:nth-child(3) { animation-delay: 2.4s; }
+@keyframes mb-cena-msg { 0%, 4% { opacity: 0; translate: 0 8px; } 10%, 85% { opacity: 1; translate: 0 0; } 95%, 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .mb-cena *, .mb-cena p { animation: none !important; opacity: 1 !important; scale: 1 !important; }
+  .mb-cena__scan { display: none; }
+  .mb-trilha::before, .mb-trilha li::before { transform: none; transition: none; }
+}
+
+/* ===== Animações presas à rolagem ===== */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .mb-palco { perspective: 1400px; }
+    .mb-palco__tela { transform-origin: 50% 0; animation: mb-rol-tela linear both; animation-timeline: scroll(root); animation-range: 0px 520px; }
+    @keyframes mb-rol-tela { from { rotate: x 14deg; scale: 0.94; } to { rotate: x 0deg; scale: 1; } }
+    .mb-hero .mb-h1, .mb-hero .mb-palco__selo { animation-timeline: auto; }
+    .mb-hero::before { animation: mb-rol-brilho linear both; animation-timeline: scroll(root); animation-range: 0px 700px; }
+    @keyframes mb-rol-brilho { to { translate: -20% 30%; opacity: 0.4; } }
+
+    .mb-motivo { animation: mb-rol-dir linear both; animation-timeline: view(); }
+    .mb-motivo:nth-child(1) { animation-range: entry 0% entry 70%; }
+    .mb-motivo:nth-child(2) { animation-range: entry 15% entry 85%; }
+    .mb-motivo:nth-child(3) { animation-range: entry 30% entry 100%; }
+    @keyframes mb-rol-dir { from { translate: 120px 0; opacity: 0; } to { translate: 0 0; opacity: 1; } }
+
+    .mb-frentes .mb-card { animation: mb-rol-sobe linear both; animation-timeline: view(); }
+    .mb-frentes .mb-card:nth-child(1) { animation-range: entry 0% entry 70%; }
+    .mb-frentes .mb-card:nth-child(2) { animation-range: entry 10% entry 90%; }
+    .mb-frentes .mb-card:nth-child(3) { animation-range: entry 20% entry 100%; }
+    @keyframes mb-rol-sobe { from { translate: 0 90px; scale: 0.94; } to { translate: 0 0; scale: 1; } }
+
+    .mb-tarefa, .mb-bento__grande { animation: mb-rol-carta linear both; animation-timeline: view(); }
+    .mb-bento__grande { animation-range: entry 0% entry 60%; }
+    .mb-tarefa--1 { animation-range: entry 0% entry 75%; }
+    .mb-tarefa--2 { animation-range: entry 10% entry 90%; }
+    .mb-tarefa--3 { animation-range: entry 20% entry 100%; }
+    @keyframes mb-rol-carta { from { translate: 0 120px; rotate: 5deg; opacity: 0.2; } to { translate: 0 0; rotate: 0deg; opacity: 1; } }
+    .mb-bento__p { animation: mb-rol-p linear both; animation-timeline: view(); }
+    @keyframes mb-rol-p { from { translate: 0 60px; } to { translate: 0 -60px; } }
+
+    .mb-passos li { animation: mb-rol-esq linear both; animation-timeline: view(); animation-range: entry 0% entry 80%; }
+    @keyframes mb-rol-esq { from { translate: -60px 0; opacity: 0; } to { translate: 0 0; opacity: 1; } }
+
+    .mb-medida__num { animation: mb-rol-num linear both; animation-timeline: view(); animation-range: entry 0% cover 45%; }
+    @keyframes mb-rol-num { from { scale: 0.6; opacity: 0.1; } to { scale: 1; opacity: 1; } }
+
+    .mb-marca--contato { animation: mb-rol-p linear both !important; animation-timeline: view() !important; }
+  }
+}
