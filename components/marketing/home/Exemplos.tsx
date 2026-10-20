@@ -1,6 +1,5 @@
 import { CountUp } from "./CountUp";
 import { ProvaGrade } from "./ProvaGrade";
-import { Icone3D } from "./Icone3D";
 
 /*
  * Prova: um caso só, o de 99% (copy v3, seção 5, cartão 1). As ressalvas da
@@ -18,8 +17,7 @@ export function Exemplos() {
 
         <div className="lp2-casos">
           <div className="lp2-caso lp2-prova" data-rv>
-            <Icone3D nome="check" tamanho={96} className="lp4-prova__ic lp4-prova__ic--a" />
-            <Icone3D nome="grafico" tamanho={84} className="lp4-prova__ic lp4-prova__ic--b" />
+            <span className="cf-carimbo cd-prova__carimbo" aria-hidden="true">Medido</span>
             <p className="lp4-nota lp4-prova__nota">caso real, nome guardado</p>
             <p className="lp2-rotulo lp2-caso__frente">FINANCEIRO · UM CLIENTE DE LOGÍSTICA</p>
             <p className="lp2-caso__destaque lp2-caso__destaque--num lp2-prova__num">

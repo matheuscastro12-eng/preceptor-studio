@@ -1,4 +1,3 @@
-import { Icone3D } from "./Icone3D";
 
 /*
  * Faixa em movimento com tarefas que o agente assume. A lista aparece duas
@@ -20,7 +19,7 @@ function Lista({ oculta = false }: { oculta?: boolean }) {
     <ul className="lp4-faixa__lista" aria-hidden={oculta || undefined}>
       {TAREFAS.map((x) => (
         <li key={x.t} className="lp4-faixa__item">
-          <Icone3D nome={x.ic} tamanho={32} />
+          <span className="cd-check" aria-hidden="true" />
           {x.t}
         </li>
       ))}

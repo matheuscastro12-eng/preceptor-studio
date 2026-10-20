@@ -1,6 +1,5 @@
 import { Marca } from "./Marca";
 import { CabecaSecao } from "./CabecaSecao";
-import { Icone3D } from "./Icone3D";
 import { ProblemaVisual } from "./ProblemaVisual";
 
 const DORES = [
@@ -48,7 +47,7 @@ export function Problema() {
               data-rv
               style={{ "--rv-d": `${i * 120}ms`, "--tom": d.tom } as React.CSSProperties}
             >
-              <Icone3D nome={d.icone} tamanho={72} className="lp4-card__ic" />
+              <span className="cd-ficha__num" aria-hidden="true">{i + 1}.</span>
               <p>
                 <strong className="lp4-card__titulo">{d.titulo}</strong> {d.texto}
               </p>

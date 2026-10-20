@@ -1,0 +1,203 @@
+/* ═══ Conceito "Caderno de processo" ═══════════════════════════════════
+   Papel quadriculado, caneta azul e vermelha, marca-texto teal, fichas com
+   fita adesiva e carimbos. Carregado por último: sobrepõe as camadas v2–v4. */
+
+.lp2 {
+  --papel: #FBF9F3;
+  --grade: rgba(35, 70, 184, 0.07);
+  --grade-forte: rgba(35, 70, 184, 0.12);
+  --caneta: #2346B8;
+  --caneta-vermelha: #D6453D;
+  --marca-texto: rgba(59, 202, 206, 0.45);
+  --fita: rgba(255, 236, 170, 0.85);
+  background:
+    linear-gradient(var(--grade-forte) 1px, transparent 1px) 0 0 / 120px 120px,
+    linear-gradient(90deg, var(--grade-forte) 1px, transparent 1px) 0 0 / 120px 120px,
+    linear-gradient(var(--grade) 1px, transparent 1px) 0 0 / 24px 24px,
+    linear-gradient(90deg, var(--grade) 1px, transparent 1px) 0 0 / 24px 24px,
+    var(--papel);
+}
+
+/* Seções claras deixam o papel aparecer */
+.lp2 .lp2-hero,
+.lp2 .lp2-problema,
+.lp2 .lp2-mdiag,
+.lp2 .lp4-exemplos.lp2-exemplos,
+.lp2 .lp2-faq { background: transparent !important; }
+.lp2 .lp4-exemplos.lp2-exemplos::before { background: transparent; }
+.lp2-hero::after { display: none; }
+
+/* Nav: barra de papel */
+.lp2-nav__bar { background: rgba(251, 249, 243, 0.88) !important; }
+
+/* ─── Tipografia de caderno ───────────────────────────────── */
+.lp4-nota { color: var(--caneta) !important; }
+.lp2-marca::before { background: var(--marca-texto) !important; opacity: 1 !important; height: 0.5em !important; transform: skewX(-8deg) !important; border-radius: 2px; }
+.lp4-selo { background: transparent !important; box-shadow: none !important; padding: 0 !important; font-family: var(--f-mono); font-size: 12px !important; letter-spacing: 0.14em; text-transform: uppercase; color: var(--caneta-vermelha) !important; }
+.lp4-selo::before { content: "§"; margin-right: 4px; }
+.lp4-selo span { display: none; }
+.lp4-hero__selo { background: transparent !important; box-shadow: none !important; padding: 0 !important; font-family: var(--f-mono); font-size: 12px !important; letter-spacing: 0.14em; text-transform: uppercase; color: var(--caneta-vermelha) !important; }
+
+/* ─── Hero: texto à esquerda, folha com fluxograma à direita ── */
+.cd-hero { display: grid; gap: 48px; align-items: center; }
+@media (min-width: 1024px) { .cd-hero { grid-template-columns: 1fr 1.05fr; gap: 56px; } }
+.cd-hero .lp4-hero { align-items: flex-start; text-align: left; }
+.cd-hero .lp4-hero__titulo { margin-left: 0; font-size: clamp(2.5rem, 4.6vw, 4.1rem) !important; max-width: 13ch; }
+.cd-hero .lp4-hero__lead, .cd-hero .lp4-hero__micro { margin-left: 0; text-align: left; }
+.cd-hero .lp4-hero__ctas { justify-content: flex-start; }
+.lp4-rabisco__svg path { stroke: var(--caneta-vermelha); stroke-width: 4; }
+.lp4-ghost { background: transparent !important; box-shadow: inset 0 0 0 1.5px var(--navy) !important; }
+
+.cd-hero__folha {
+  position: relative;
+  padding: 28px 24px 20px;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 1px 2px rgba(0, 3, 61, 0.06), 0 24px 50px -24px rgba(0, 3, 61, 0.3);
+  transform: rotate(1deg);
+}
+.cd-hero__folha::before,
+.lp4-card::before,
+.lp2-mdiag__corpo::before,
+.lp4-vert::before,
+.lp2-contato__card::before {
+  content: "";
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  width: 96px;
+  height: 26px;
+  background: var(--fita);
+  transform: translateX(-50%) rotate(-3deg);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  z-index: 3;
+}
+
+.cf { position: relative; margin: 0; }
+.cf__svg { display: block; width: 100%; height: auto; overflow: visible; }
+.cf__svg text { font-family: var(--f-mao), cursive; font-size: 23px; fill: var(--navy); }
+.cf-rotulo { font-size: 22px !important; fill: var(--ink-soft) !important; }
+.cf-rotulo--teal { fill: var(--teal-ink) !important; }
+.cf-caixa rect { fill: #fff; stroke: var(--navy); stroke-width: 1.8; stroke-dasharray: 1; stroke-dashoffset: 1; animation: cf-traco 700ms ease-out forwards; animation-delay: var(--d); }
+.cf-caixa text { opacity: 0; animation: cf-surge 400ms ease-out forwards; animation-delay: calc(var(--d) + 0.4s); }
+.cf-caixa--gargalo rect { fill: #FFF3F1; }
+.cf-caixa--agente rect { fill: #E6F8F8; stroke: var(--teal-ink); stroke-width: 2.2; }
+.cf-caixa--agente text { fill: var(--teal-ink); font-weight: 600; }
+.cf-seta { fill: none; stroke: var(--navy); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: cf-traco 500ms ease-out forwards; animation-delay: calc(var(--d) + 0.3s); }
+.cf-seta--baixo { stroke: var(--teal-ink); stroke-width: 2.2; --d: 2.2s; }
+.cf-circulo { fill: none; stroke: var(--caneta-vermelha); stroke-width: 2.6; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: cf-traco 900ms ease-in-out forwards; animation-delay: 1.7s; }
+.cf-circulo--2 { opacity: 0; }
+.cf-nota { font-size: 24px !important; fill: var(--caneta) !important; opacity: 0; animation: cf-surge 500ms ease-out forwards; animation-delay: 4s; }
+.cf-nota--vermelha { fill: var(--caneta-vermelha) !important; animation-delay: 2.2s; transform: rotate(-4deg); transform-box: fill-box; transform-origin: center; }
+.cf-rotulo { opacity: 0; animation: cf-surge 400ms ease-out forwards; animation-delay: 0.1s; }
+.cf-rotulo--teal { animation-delay: 2.4s; }
+@keyframes cf-traco { to { stroke-dashoffset: 0; } }
+@keyframes cf-surge { to { opacity: 1; } }
+
+/* Carimbo */
+.cf-carimbo {
+  position: absolute;
+  left: 40px;
+  top: 40%;
+  padding: 6px 14px;
+  border: 3px solid var(--caneta-vermelha);
+  border-radius: 6px;
+  font-family: var(--f-mono);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--caneta-vermelha);
+  opacity: 0;
+  transform: rotate(-12deg) scale(1.6);
+  mix-blend-mode: multiply;
+  filter: url(#rabisco);
+  animation: cd-carimba 380ms cubic-bezier(0.3, 1.6, 0.5, 1) forwards;
+  animation-delay: 4.4s;
+  pointer-events: none;
+}
+@keyframes cd-carimba { to { opacity: 0.9; transform: rotate(-12deg) scale(1); } }
+
+/* ─── Faixa: lista de tarefas com caixinhas marcadas ──────── */
+.lp4-faixa { background: transparent !important; border-top: 1.5px dashed var(--grade-forte); border-bottom: 1.5px dashed var(--grade-forte); }
+.lp4-faixa__nota { color: var(--caneta) !important; }
+.lp4-faixa__item { background: #fff !important; box-shadow: 0 1px 2px rgba(0, 3, 61, 0.08) !important; color: var(--navy) !important; border-radius: 4px !important; padding: 10px 16px 10px 12px !important; font-family: var(--f-mao), cursive; font-size: 22px !important; font-weight: 500 !important; }
+.lp4-faixa__item:nth-child(odd) { transform: rotate(-1deg); }
+.lp4-faixa__item:nth-child(even) { transform: rotate(1deg); }
+.cd-check { position: relative; width: 18px; height: 18px; border: 2px solid var(--navy); border-radius: 3px; flex-shrink: 0; }
+.cd-check::after { content: "✓"; position: absolute; left: 1px; top: -10px; font-size: 24px; line-height: 1; color: var(--teal-ink); font-family: var(--f-mao), cursive; font-weight: 600; }
+
+/* ─── Fichas com fita (dores, método, frentes) ────────────── */
+.lp4-card, .lp2-mdiag__corpo, .lp4-vert {
+  position: relative;
+  background: #fff !important;
+  border-radius: 3px !important;
+  box-shadow: 0 1px 2px rgba(0, 3, 61, 0.06), 0 18px 36px -20px rgba(0, 3, 61, 0.3) !important;
+  background-image: repeating-linear-gradient(transparent 0 31px, rgba(35, 70, 184, 0.08) 31px 32px) !important;
+  background-color: #fff !important;
+}
+.lp4-cards > li:nth-child(1) .lp4-card, .lp4-card:nth-child(1) { transform: rotate(-1.2deg); }
+.lp4-card:nth-child(2) { transform: rotate(0.8deg); }
+.lp4-card:nth-child(3) { transform: rotate(-0.6deg); }
+.lp4-card:hover { transform: rotate(0deg) translateY(-4px) !important; }
+.cd-ficha__num { display: block; margin-bottom: 8px; font-family: var(--f-mao), cursive; font-size: 44px; line-height: 1; color: var(--caneta-vermelha); }
+.lp4-card__titulo { font-family: var(--f-display); }
+.lp4-vert > :first-child { box-shadow: 0 0 0 1px var(--line) !important; border-radius: 2px !important; }
+.lp4-vert { padding: 10px !important; }
+.lp4-frentes__nota { color: var(--caneta) !important; }
+
+/* Método: nós viram números circulados à caneta */
+.lp4-no { padding: 0 !important; background: transparent !important; box-shadow: none !important; }
+.lp4-no b { display: grid; place-items: center; width: 52px; height: 52px; border: 2.5px solid var(--caneta-vermelha); border-radius: 50% 46% 52% 48%; font-family: var(--f-mao), cursive; font-size: 28px; font-weight: 600; color: var(--caneta-vermelha); transform: rotate(-6deg); }
+.lp2-mdiag__corpo { padding: 24px 22px !important; }
+.lp3-mini { border-radius: 3px !important; box-shadow: 0 0 0 1px var(--line) !important; }
+
+/* Antes/depois: folhas soltas */
+.lp2-antes-depois__palco { border-radius: 4px !important; box-shadow: 0 1px 2px rgba(0, 3, 61, 0.06), 0 24px 44px -24px rgba(0, 3, 61, 0.3) !important; }
+.lp2-antes-depois__painel--antes .lp2-antes-depois__palco { transform: rotate(-0.8deg); }
+.lp2-antes-depois__painel--depois .lp2-antes-depois__palco { transform: rotate(0.8deg); }
+.lp2-antes-depois__rotulo { font-family: var(--f-mao), cursive !important; font-size: 30px !important; letter-spacing: 0 !important; text-transform: lowercase; }
+.lp2-antes-depois__painel--antes .lp2-antes-depois__rotulo { color: var(--caneta-vermelha) !important; }
+.lp2-antes-depois__painel--depois .lp2-antes-depois__rotulo { color: var(--teal-ink) !important; }
+
+/* ─── Prova: folha com o número circulado e carimbo ───────── */
+.lp4-exemplos .lp2-prova {
+  background: #fff !important;
+  color: var(--ink) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 1px 2px rgba(0, 3, 61, 0.06), 0 30px 60px -30px rgba(0, 3, 61, 0.35) !important;
+  transform: rotate(-0.5deg);
+}
+.lp4-exemplos .lp2-prova .lp2-rotulo { color: var(--caneta-vermelha) !important; }
+.lp4-exemplos .lp2-prova__num, .lp4-exemplos .lp2-prova__pre, .lp4-exemplos .lp2-prova__pct { color: var(--caneta) !important; }
+.lp4-exemplos .lp2-prova__num { position: relative; }
+.lp4-exemplos .lp2-prova__num::after { content: ""; position: absolute; left: 2%; top: 20%; width: 34%; height: 78%; border: 3px solid var(--caneta-vermelha); border-radius: 50% 44% 52% 46%; transform: rotate(-6deg); }
+.lp4-exemplos .lp2-caso__texto { color: var(--ink) !important; }
+.lp4-exemplos .lp2-prova__cel { background: var(--teal) !important; border-radius: 2px; }
+.lp4-exemplos .lp2-prova__cel--vazia { background: transparent !important; box-shadow: inset 0 0 0 1.5px var(--caneta-vermelha) !important; }
+.lp4-prova__nota { color: var(--caneta) !important; }
+.cd-prova__carimbo { left: 46%; right: auto; top: 46%; bottom: auto; animation-delay: 1.4s; }
+
+/* FAQ: folha pautada */
+.lp4-faq .lp2-faq__item { background: #fff !important; border-radius: 3px !important; box-shadow: 0 1px 2px rgba(0, 3, 61, 0.06) !important; }
+.lp4-faq .lp2-faq__item[open] { box-shadow: 0 1px 2px rgba(0, 3, 61, 0.06), 0 16px 30px -18px rgba(0, 3, 61, 0.3) !important; }
+.lp4-faq .lp2-faq__icone { box-shadow: none !important; background: transparent !important; font-family: var(--f-mao), cursive; font-size: 28px; color: var(--caneta-vermelha); }
+
+/* Contato: navy vira capa do caderno; ficha presa com fita */
+.lp2-contato__card { position: relative; border-radius: 4px !important; transform: rotate(0.6deg); }
+.cd-contato__carimbo { position: relative; display: inline-block; right: auto; bottom: auto; margin-bottom: 24px; border-color: var(--teal); color: var(--teal); mix-blend-mode: normal; animation-delay: 0.6s; }
+
+/* Celular */
+@media (max-width: 1023px) {
+  .cd-hero__folha { transform: none; padding: 20px 12px 14px; }
+  .cf__svg text { font-size: 22px; }
+  .cf-carimbo { font-size: 13px; left: 16px; top: 45%; }
+  .cf__svg text { font-size: 26px; }
+  .cd-prova__carimbo { left: auto; right: 16px; top: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cf-caixa rect, .cf-seta, .cf-circulo { animation: none; stroke-dashoffset: 0; }
+  .cf-caixa text, .cf-nota, .cf-rotulo { animation: none; opacity: 1; }
+  .cf-carimbo { animation: none; opacity: 0.9; transform: rotate(-12deg); }
+}

@@ -1,12 +1,10 @@
 import Link from "next/link";
 import type { ComponentType } from "react";
 import { CtaLink, CTA_MICROCOPY } from "./CtaLink";
-import { HeroScene } from "./HeroScene";
+import { CadernoFluxo } from "./CadernoFluxo";
 import { MockLogistica } from "./MockLogistica";
 import { MockFinanceiro } from "./MockFinanceiro";
 import { MockClinica } from "./MockClinica";
-import { Polaroids } from "./Polaroids";
-import { Icone3D } from "./Icone3D";
 
 type Frente = {
   icone: string;
@@ -48,9 +46,9 @@ export function Hero() {
   return (
     <section id="topo" className="lp2-section lp2-hero lp2-grain">
       <div className="lp2-container">
+        <div className="cd-hero">
         <div className="lp4-hero">
           <p className="lp4-hero__selo lp2-hero__in" style={{ "--in-d": "0ms" } as React.CSSProperties}>
-            <span aria-hidden="true" />
             Agentes de IA para operações
           </p>
           <h1 className="lp2-h1 lp4-hero__titulo">
@@ -85,11 +83,9 @@ export function Hero() {
           </p>
         </div>
 
-        <div className="lp4-palco">
-          <Polaroids />
-          <div className="lp4-palco__cena lp2-hero__in" style={{ "--in-d": "500ms" } as React.CSSProperties}>
-            <HeroScene />
-          </div>
+        <div className="cd-hero__folha lp2-hero__in" style={{ "--in-d": "300ms" } as React.CSSProperties}>
+          <CadernoFluxo />
+        </div>
         </div>
 
         <p className="lp4-nota lp4-frentes__nota" data-rv>
@@ -107,7 +103,6 @@ export function Hero() {
               >
                 <div className="lp2-vertical lp4-vert">
                   <Mock />
-                  <Icone3D nome={f.icone} tamanho={64} className="lp4-vert__ic" />
                   <p className="lp2-rotulo lp2-hero__frente">
                     {f.frente} · {f.exemplo}
                   </p>

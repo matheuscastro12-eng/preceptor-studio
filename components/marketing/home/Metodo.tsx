@@ -1,8 +1,6 @@
 import { Marca } from "./Marca";
 import { CabecaSecao } from "./CabecaSecao";
-import { Icone3D } from "./Icone3D";
 
-const ICONES = ["lupa", "robo", "grafico"];
 const TONS = ["#E3F1FF", "#F1ECFF", "#E6F8E1"];
 
 const PASSOS = [
@@ -114,7 +112,6 @@ export function Metodo() {
                   </span>
                 )}
                 <span className="lp2-mdiag__no lp4-no" aria-hidden="true">
-                  <Icone3D nome={ICONES[i]} tamanho={44} />
                   <b>{String(i + 1).padStart(2, "0")}</b>
                 </span>
                 <div className="lp2-mdiag__corpo">
