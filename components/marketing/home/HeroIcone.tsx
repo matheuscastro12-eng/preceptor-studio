@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { Glifo } from "./Glifo";
 import { useEffect, useState } from "react";
 
 /*
@@ -30,7 +30,7 @@ export function HeroIcone({ icones, atraso, intervalo }: { icones: Ic[]; atraso:
       <span className="mb-slot__in" style={{ animationDelay: `${atraso + 90}ms` }}>
         {icones.map((ic, k) => (
           <span key={ic.nome} className={`mb-slot__camada${k === i ? " is-on" : ""}`} style={{ "--tom": ic.tom } as React.CSSProperties}>
-            <Image src={`/3d/${ic.nome}.png`} alt="" width={64} height={64} priority={k === 0} />
+            <Glifo nome={ic.nome} />
           </span>
         ))}
       </span>

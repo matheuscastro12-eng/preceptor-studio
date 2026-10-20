@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import { AppPreview } from "./AppPreview";
+import { Glifo } from "./Glifo";
 import { HeroIcone } from "./HeroIcone";
 import { CountUp } from "./CountUp";
 import { CTA_MICROCOPY, CTA_TEXTO } from "./CtaLink";
@@ -27,7 +27,7 @@ const FRENTES = [
 
 const PASSOS = [
   { n: "01", titulo: "Diagnóstico", quando: "30 min", texto: "Você sai com o passo a passo de hoje e o ponto onde o tempo se perde.", icone: "lupa", tom: "#E3F1FF" },
-  { n: "02", titulo: "IA aplicada", quando: "Piloto de 2 a 4 semanas", texto: "O agente trabalha junto com a sua equipe, e cada saída é aprovada ou corrigida por uma pessoa.", icone: "robo", tom: "#E6F8F8" },
+  { n: "02", titulo: "IA aplicada", quando: "Piloto de 2 a 4 semanas", texto: "O agente trabalha junto com a sua equipe, e cada saída é aprovada ou corrigida por uma pessoa.", icone: "check", tom: "#E6F8F8" },
   { n: "03", titulo: "Medição", quando: "Última semana do piloto", texto: "Você recebe a comparação com a linha de base e decide se o agente segue rodando.", icone: "grafico", tom: "#EEF0FF" },
 ];
 
@@ -78,24 +78,24 @@ export function MbHome() {
             <span className="mb-linha" style={{ animationDelay: "400ms" }}>
               O documento
               <HeroIcone atraso={1400} intervalo={2600} icones={[
-                { nome: "documento", tom: "#00033D" }, { nome: "recibo", tom: "#0A1A8C" },
-                { nome: "arquivo", tom: "#12888E" }, { nome: "mensagem", tom: "#3BCACE" },
+                { nome: "documento", tom: "#00033D" }, { nome: "recibo", tom: "#00033D" },
+                { nome: "arquivo", tom: "#12888E" }, { nome: "mensagem", tom: "#12888E" },
               ]} />
               chega.
             </span>{" "}
             <span className="mb-linha" style={{ animationDelay: "500ms" }}>
               A conferência
               <HeroIcone atraso={1550} intervalo={3100} icones={[
-                { nome: "lupa", tom: "#3BCACE" }, { nome: "robo", tom: "#00033D" },
-                { nome: "ampulheta", tom: "#0A1A8C" }, { nome: "grafico", tom: "#E9F7F8" },
+                { nome: "lupa", tom: "#12888E" }, { nome: "recibo", tom: "#00033D" },
+                { nome: "ampulheta", tom: "#00033D" }, { nome: "grafico", tom: "#12888E" },
               ]} />
               fica pronta.
             </span>{" "}
             <span className="mb-linha" style={{ animationDelay: "600ms" }}>
               Sua equipe
               <HeroIcone atraso={1700} intervalo={3600} icones={[
-                { nome: "check", tom: "#0A1A8C" }, { nome: "dinheiro", tom: "#12888E" },
-                { nome: "pacote", tom: "#00033D" }, { nome: "caminhao", tom: "#3BCACE" },
+                { nome: "check", tom: "#00033D" }, { nome: "dinheiro", tom: "#12888E" },
+                { nome: "pacote", tom: "#00033D" }, { nome: "caminhao", tom: "#12888E" },
               ]} />
               só aprova.
             </span>
@@ -137,11 +137,8 @@ export function MbHome() {
       <section className="mb-sec">
         <div className="mb-wrap">
           <h2 className="mb-dois-tons" data-rv>
-            Sua equipe passa o dia copiando de uma tela para outra.{" "}
-            <span>
-              A nota chega por e-mail e alguém digita o CT-e. O extrato vai para a planilha e alguém
-              confere linha por linha. O WhatsApp da recepção lota antes das nove.
-            </span>
+            Hoje, alguém digita a nota.{" "}
+            <span>Outra pessoa confere o extrato. A recepção responde o mesmo WhatsApp o dia todo.</span>
           </h2>
         </div>
       </section>
@@ -150,7 +147,7 @@ export function MbHome() {
       <section className="mb-sec mb-sec--colado" aria-labelledby="mb-frentes-t">
         <div className="mb-wrap">
           <h2 id="mb-frentes-t" className="mb-h3t" data-rv>
-            <span className="mb-h3t__ic" aria-hidden="true">✦</span> Onde o agente já trabalha
+            Onde o agente já trabalha
           </h2>
         </div>
         <div className="mb-carrossel" data-rv>
@@ -189,7 +186,7 @@ export function MbHome() {
                 <p className="mb-bloco-grade__n">{p.n}</p>
                 <h3>{p.titulo}</h3>
                 <div className="mb-bloco-grade__arte" aria-hidden="true">
-                  <Image src={`/3d/${p.icone}.png`} alt="" width={120} height={120} />
+                  <Glifo nome={p.icone} />
                 </div>
                 <p className="mb-bloco-grade__quando">{p.quando}</p>
                 <p className="mb-bloco-grade__txt">{p.texto}</p>
