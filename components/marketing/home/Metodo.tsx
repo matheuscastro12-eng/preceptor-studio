@@ -19,54 +19,54 @@ const PASSOS = [
 ];
 
 /*
- * Mini desenhos do diagrama. A mesma linha conta o processo: embolada no
- * diagnóstico, com portões de aprovação na IA aplicada e, na medição, duas
- * barras (linha de base e depois), sem números.
+ * Mini telas do diagrama (aria-hidden, dados de demonstração): o mapa do
+ * processo com o gargalo marcado, a fila em que cada saída do agente passa
+ * por uma pessoa, e a comparação com a linha de base (sem números).
  */
-const SVG = {
-  viewBox: "0 0 160 56",
-  className: "lp2-mdiag__fig",
-  "aria-hidden": true,
-  focusable: false,
-} as const;
-
 function FigDiagnostico() {
+  const etapas = ["E-mail", "Digita", "Confere", "Fatura"];
   return (
-    <svg {...SVG}>
-      <path
-        className="lp2-mdiag__traco lp2-mdiag__traco--draw"
-        pathLength={1}
-        d="M4 34 C 22 34, 30 10, 46 16 S 52 46, 38 40 S 50 8, 70 22 S 84 50, 98 34 S 86 10, 106 18 S 122 44, 132 30 S 146 28, 156 28"
-      />
-      <circle className="lp2-mdiag__alvo" cx="98" cy="34" r="8" />
-      <circle className="lp2-mdiag__ponto" cx="98" cy="34" r="3.5" />
-    </svg>
+    <div className="lp3-mini lp3-mapa" aria-hidden="true">
+      {etapas.map((e, i) => (
+        <span key={e} className={`lp3-mapa__no${i === 1 ? " is-gargalo" : ""}`}>
+          {e}
+        </span>
+      ))}
+      <span className="lp3-mapa__nota">o tempo some aqui</span>
+    </div>
   );
 }
 
 function FigIa() {
-  const portoes = [48, 88, 128];
+  const linhas = [
+    { t: "CT-e 0921", s: "aprovado" },
+    { t: "CT-e 0922", s: "corrigido" },
+    { t: "CT-e 0923", s: "aprovado" },
+  ];
   return (
-    <svg {...SVG}>
-      <line className="lp2-mdiag__traco" x1="4" y1="28" x2="156" y2="28" />
-      {portoes.map((x, i) => (
-        <g key={x} className="lp2-mdiag__portao" style={{ "--k": i } as React.CSSProperties}>
-          <rect className="lp2-mdiag__portao-luz" x={x - 4} y="19" width="8" height="18" />
-          <rect className="lp2-mdiag__portao-borda" x={x - 4} y="19" width="8" height="18" />
-        </g>
+    <div className="lp3-mini lp3-revisao" aria-hidden="true">
+      {linhas.map((l, i) => (
+        <span key={l.t} className="lp3-revisao__l" style={{ "--k": i } as React.CSSProperties}>
+          <span>{l.t}</span>
+          <em className={l.s === "corrigido" ? "is-corr" : undefined}>{l.s}</em>
+        </span>
       ))}
-      <circle className="lp2-mdiag__pulso" cx="156" cy="28" r="3.5" />
-    </svg>
+    </div>
   );
 }
 
 function FigMedicao() {
   return (
-    <svg {...SVG}>
-      <rect className="lp2-mdiag__barra lp2-mdiag__barra--base" x="4" y="14" width="148" height="10" />
-      <rect className="lp2-mdiag__barra lp2-mdiag__barra--depois" x="4" y="32" width="120" height="10" />
-      <line className="lp2-mdiag__ref" x1="152" y1="8" x2="152" y2="48" />
-    </svg>
+    <div className="lp3-mini lp3-medida" aria-hidden="true">
+      <span className="lp3-medida__l">
+        <span>Antes</span>
+        <i className="lp3-medida__b lp3-medida__b--base" />
+      </span>
+      <span className="lp3-medida__l">
+        <span>Com agente</span>
+        <i className="lp3-medida__b lp3-medida__b--depois" />
+      </span>
+    </div>
   );
 }
 

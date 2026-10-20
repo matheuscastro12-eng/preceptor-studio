@@ -1,23 +1,11 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Instrument_Sans } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 import { FunnelTracker } from "@/components/FunnelTracker";
 import "./marketing.css";
 
-/* Display: Bricolage Grotesque, grotesco com personalidade que conversa com
-   o peso do wordmark PRECEPTOR!. Corpo: Instrument Sans. */
-const display = Bricolage_Grotesque({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-display",
-  display: "swap",
-});
-
-const body = Instrument_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-body",
-  display: "swap",
-});
+/* Geist em títulos e corpo (as variáveis --font-display/--font-body apontam
+   para ela em marketing.css); Geist Mono nos rótulos técnicos. */
 
 const SITE_URL = "https://preceptorstudio.com";
 
@@ -72,7 +60,7 @@ export default function MarketingLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`marketing-shell ${display.variable} ${body.variable}`}>
+    <div className={`marketing-shell ${GeistSans.variable} ${GeistMono.variable}`}>
       <FunnelTracker />
       {children}
     </div>

@@ -1,6 +1,5 @@
 /* Design system da landing: branco + navy da marca (#00033D) + teal (#3BCACE).
-   Tipografia: Archivo variavel (display, eco do wordmark), Instrument Sans
-   (texto), JetBrains Mono (tecnico).
+   Tipografia: Geist (títulos e texto) e Geist Mono (técnico).
    Escopado a .marketing-shell para nao vazar pro /dashboard e /diagnostico. */
 
 .marketing-shell {
@@ -16,8 +15,11 @@
   --bg: #FFFFFF;
   --bg-soft: #F4F6FA;
 
-  --font-sans: var(--font-body), "Instrument Sans", system-ui, sans-serif;
-  --font-head: var(--font-display), "Bricolage Grotesque", system-ui, sans-serif;
+  --font-display: var(--font-geist-sans);
+  --font-body: var(--font-geist-sans);
+  --font-mono-lp: var(--font-geist-mono);
+  --font-sans: var(--font-body), system-ui, sans-serif;
+  --font-head: var(--font-display), system-ui, sans-serif;
 
   background: var(--bg);
   color: var(--ink);

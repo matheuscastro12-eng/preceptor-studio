@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { mono } from "@/components/marketing/home/fonts";
 import { RevealObserver } from "@/components/marketing/home/RevealObserver";
 import { HomeNav } from "@/components/marketing/home/HomeNav";
 import { Hero } from "@/components/marketing/home/Hero";
@@ -80,7 +79,7 @@ const ORG_JSONLD = {
 
 export default function MarketingHome() {
   return (
-    <div className={`lp2 ${mono.variable}`}>
+    <div className="lp2">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_JSONLD) }}
