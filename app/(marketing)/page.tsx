@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { mao } from "@/components/marketing/home/fonte-mao";
+import { serif } from "@/components/marketing/home/fonte-serif";
 import { RevealObserver } from "@/components/marketing/home/RevealObserver";
 import { HomeNav } from "@/components/marketing/home/HomeNav";
 import { Hero } from "@/components/marketing/home/Hero";
-import { FaixaTarefas } from "@/components/marketing/home/FaixaTarefas";
 import { Problema } from "@/components/marketing/home/Problema";
 import { Metodo } from "@/components/marketing/home/Metodo";
 import { Exemplos } from "@/components/marketing/home/Exemplos";
@@ -15,7 +15,7 @@ import "../../components/marketing/home/visuais-problema-prova.css";
 import "../../components/marketing/home/visuais-mockups.css";
 import "../../components/marketing/home/visuais-metodo.css";
 import "../../components/marketing/home/visuais-premium.css";
-import "../../components/marketing/home/tech.css";
+import "../../components/marketing/home/sobrio.css";
 
 const SITE_URL = "https://preceptorstudio.com";
 const TITLE = "PRECEPTOR! Studio | Agentes de IA que sua equipe aprova";
@@ -82,7 +82,7 @@ const ORG_JSONLD = {
 
 export default function MarketingHome() {
   return (
-    <div className={`lp2 ${mao.variable}`}>
+    <div className={`lp2 ${mao.variable} ${serif.variable}`}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_JSONLD) }}
@@ -91,7 +91,6 @@ export default function MarketingHome() {
       <HomeNav />
       <main id="conteudo">
         <Hero />
-        <FaixaTarefas />
         <Problema />
         <Metodo />
         <Exemplos />

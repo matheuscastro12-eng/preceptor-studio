@@ -34,7 +34,7 @@ export function Problema() {
               Sua equipe passa o dia copiando de <Marca>uma tela para outra</Marca>.
             </>
           }
-          nota="// soa familiar?"
+         
         />
 
         <ProblemaVisual />

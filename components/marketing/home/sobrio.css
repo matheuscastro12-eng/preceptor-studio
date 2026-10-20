@@ -1,0 +1,243 @@
+/* ═══ Estilo claro e sóbrio (referências: Harvey, Decagon, Attio, Factory) ══
+   Off-white, linhas de 1px, títulos em serifa, rótulos mono discretos,
+   botões retangulares escuros, um print grande do produto sobre textura.
+   Carregado por último: neutraliza brilhos, pílulas, 3D e notas à mão. */
+
+.lp2 {
+  --sb-bg: #FAFAF8;
+  --sb-tinta: #0B0D1F;
+  --sb-texto: #3D4155;
+  --sb-suave: #6B7084;
+  --sb-linha: #E6E7EC;
+  --sb-painel: #FFFFFF;
+  background: var(--sb-bg);
+  color: var(--sb-texto);
+}
+.lp2 .lp2-hero,
+.lp2 .lp2-problema,
+.lp2 .lp2-mdiag,
+.lp2 .lp4-exemplos.lp2-exemplos,
+.lp2 .lp2-faq { background: transparent !important; }
+.lp2-hero::before, .lp2-hero::after, .lp2-grain::before { display: none !important; }
+.lp2 .lp2-section + .lp2-section { border-top: 1px solid var(--sb-linha); }
+@media (min-width: 1024px) { .lp2 .lp2-section { padding: 112px 0; } }
+
+/* ─── Tipografia ──────────────────────────────────────────── */
+.lp2 .lp2-h1, .lp2 .lp2-h2 {
+  font-family: var(--f-serif), Georgia, serif !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.02em !important;
+  color: var(--sb-tinta) !important;
+}
+.lp2 .lp2-h2 { font-size: clamp(2rem, 3.6vw, 3rem) !important; line-height: 1.1 !important; max-width: 22ch !important; }
+.lp2 .lp2-h3, .lp4-card__titulo { color: var(--sb-tinta) !important; font-family: var(--f-display) !important; font-weight: 600 !important; }
+.lp2 .lp2-lead { color: var(--sb-texto) !important; }
+.lp2 .lp2-micro { color: var(--sb-suave) !important; font-size: 13.5px !important; }
+.lp2-marca { background: none !important; color: inherit !important; -webkit-background-clip: initial !important; font-style: italic; }
+.lp2-marca::before { display: none !important; }
+.lp4-nota { display: none !important; }
+
+.lp4-selo, .lp4-hero__selo, .lp2 .lp2-rotulo {
+  display: inline-block !important;
+  padding: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+  font-family: var(--f-mono) !important;
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase;
+  color: var(--sb-suave) !important;
+}
+.lp4-selo::before, .lp4-hero__selo::before { display: none !important; }
+
+/* Cabeças de seção: à esquerda, como nas referências */
+.lp4-cabeca { align-items: flex-start !important; text-align: left !important; margin: 0 0 56px !important; max-width: none !important; }
+.lp4-cabeca__titulo { margin-left: 0 !important; margin-top: 14px !important; }
+
+/* ─── Nav: barra cheia com linha embaixo ──────────────────── */
+.lp2 .lp2-nav { padding-top: 0 !important; background: rgba(250, 250, 248, 0.9) !important; backdrop-filter: blur(10px); border-bottom: 1px solid var(--sb-linha) !important; }
+.lp2 .lp2-nav__bar { max-width: 1160px; height: 64px !important; padding: 0 32px !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; backdrop-filter: none !important; }
+.lp2 .lp2-nav__logo img { filter: none !important; height: 24px !important; }
+.lp2 .lp2-nav__links a { color: var(--sb-texto) !important; font-size: 14px !important; }
+.lp2 .lp2-nav__cta { padding: 9px 14px !important; border-radius: 6px !important; background: var(--sb-tinta) !important; color: #fff !important; font-size: 13.5px !important; gap: 6px !important; }
+.lp2 .lp2-nav__cta span { width: auto !important; height: auto !important; background: none !important; color: #fff !important; }
+.lp2 .lp2-nav__toggle { color: var(--sb-tinta) !important; }
+.lp2 .lp2-nav__menu { background: var(--sb-bg) !important; }
+.lp2 .lp2-hero { margin-top: 0 !important; padding-top: 88px !important; }
+
+/* ─── Botões ──────────────────────────────────────────────── */
+.lp2 .lp2-cta {
+  gap: 10px !important;
+  padding: 13px 18px !important;
+  border-radius: 6px !important;
+  background: var(--sb-tinta) !important;
+  color: #fff !important;
+  font-family: var(--f-body) !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+}
+.lp2 .lp2-cta:hover { background: #262A45 !important; }
+.lp2 .lp2-cta__seta { width: auto !important; height: auto !important; background: none !important; color: #fff !important; font-size: 15px !important; }
+.lp2 .lp2-navy .lp2-cta, .lp2 .lp2-cta--navy { background: #fff !important; color: var(--sb-tinta) !important; }
+.sb-btn-sec { display: inline-flex; align-items: center; padding: 12px 18px; border-radius: 6px; box-shadow: inset 0 0 0 1px #CDD0DA; color: var(--sb-tinta); font-size: 15px; font-weight: 500; text-decoration: none; transition: box-shadow 200ms ease; }
+.sb-btn-sec:hover { box-shadow: inset 0 0 0 1px var(--sb-tinta); }
+.lp2 .lp2-btn { border-radius: 6px !important; background: var(--sb-tinta) !important; color: #fff !important; box-shadow: none !important; min-height: 48px !important; }
+
+/* ─── Hero ────────────────────────────────────────────────── */
+.sb-hero { display: grid; gap: 32px; align-items: end; }
+@media (min-width: 1024px) { .sb-hero { grid-template-columns: 1.35fr 1fr; gap: 72px; } }
+.lp2 .sb-hero__titulo { margin: 0 !important; max-width: 15ch; font-size: clamp(2.6rem, 5.2vw, 4.6rem) !important; line-height: 1.04 !important; text-wrap: balance; }
+.sb-hero__titulo em { font-style: italic; color: var(--sb-tinta); }
+.sb-hero__lead { margin: 0 !important; max-width: 44ch !important; font-size: 17px !important; }
+.sb-hero__ctas { display: flex; flex-wrap: wrap; gap: 10px; margin: 24px 0 12px; }
+
+/* Palco do print: textura escura e o app saindo por baixo */
+.sb-palco {
+  position: relative;
+  margin-top: 64px;
+  padding: 56px 56px 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 60% 70% at 20% 0%, rgba(59, 202, 206, 0.22), transparent 70%),
+    radial-gradient(ellipse 60% 80% at 100% 100%, rgba(120, 130, 190, 0.35), transparent 70%),
+    linear-gradient(160deg, #2A3150, #11152B);
+}
+.sb-palco::after { content: ""; position: absolute; inset: 0; background-image: var(--grain); opacity: 0.12; pointer-events: none; }
+@media (max-width: 880px) { .sb-palco { padding: 20px 14px 0; margin-top: 40px; } }
+
+/* App */
+.ap { position: relative; z-index: 1; margin: 0; border-radius: 10px 10px 0 0; background: #fff; box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.55); overflow: hidden; font-family: var(--f-body); font-size: 13px; color: #2B2F45; }
+.ap__barra { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-bottom: 1px solid #ECEDF1; background: #F7F7F9; }
+.ap__pontos { display: inline-flex; gap: 6px; }
+.ap__pontos i { width: 10px; height: 10px; border-radius: 999px; background: #DCDDE3; }
+.ap__url { font-family: var(--f-mono); font-size: 11.5px; color: #80859A; }
+.ap__demo { margin-left: auto; font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #A3A7B7; }
+.ap__corpo { display: grid; grid-template-columns: 170px 1fr 300px; min-height: 380px; }
+.ap__lado { padding: 16px 12px; border-right: 1px solid #ECEDF1; background: #FBFBFC; }
+.ap__ws { margin: 0 0 14px; padding: 0 8px; font-weight: 600; color: var(--sb-tinta); }
+.ap__lado ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.ap__lado li { display: flex; justify-content: space-between; padding: 7px 8px; border-radius: 6px; color: #5A5F74; }
+.ap__lado li.is-on { background: #EEF0F4; color: var(--sb-tinta); font-weight: 500; }
+.ap__lado li b { padding: 0 6px; border-radius: 4px; background: #FFF1D6; color: #8A5A00; font-size: 11px; font-weight: 600; }
+.ap__main { padding: 18px 20px; min-width: 0; }
+.ap__cab { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.ap__titulo { margin: 0; font-size: 15px; font-weight: 600; color: var(--sb-tinta); }
+.ap__sub { margin: 2px 0 0; font-size: 12px; color: #80859A; }
+.ap__btn { display: inline-block; padding: 7px 12px; border-radius: 6px; background: var(--sb-tinta); color: #fff; font-size: 12px; font-weight: 500; white-space: nowrap; }
+.ap__btn--sec { background: #fff; color: var(--sb-tinta); box-shadow: inset 0 0 0 1px #D5D7E0; }
+.ap__abas { display: flex; gap: 18px; margin: 16px 0 0; border-bottom: 1px solid #ECEDF1; }
+.ap__abas span { padding: 0 0 9px; color: #80859A; font-size: 12.5px; }
+.ap__abas span.is-on { color: var(--sb-tinta); box-shadow: inset 0 -2px 0 var(--sb-tinta); font-weight: 500; }
+.ap__tab { width: 100%; border-collapse: collapse; margin-top: 4px; }
+.ap__tab th { padding: 10px 6px; text-align: left; font-weight: 500; font-size: 11.5px; color: #9095A8; border-bottom: 1px solid #ECEDF1; }
+.ap__tab td { padding: 10px 6px; border-bottom: 1px solid #F2F3F6; white-space: nowrap; }
+.ap__tab tr.is-ativo td { background: #F7F8FB; }
+.ap__mono { font-family: var(--f-mono); font-size: 12px; color: var(--sb-tinta); }
+.ap__st { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; }
+.ap__st::before { content: ""; width: 6px; height: 6px; border-radius: 999px; }
+.ap__st--ok { color: #1E7A5A; }
+.ap__st--ok::before { background: #2BA57A; }
+.ap__st--exc { color: #9A6200; }
+.ap__st--exc::before { background: #E3A12F; }
+.ap__det { padding: 18px 18px; border-left: 1px solid #ECEDF1; background: #FCFCFD; }
+.ap__det-tag { margin: 0; font-family: var(--f-mono); font-size: 11.5px; color: #80859A; }
+.ap__det-titulo { margin: 4px 0 14px; font-size: 14px; font-weight: 600; color: var(--sb-tinta); }
+.ap__campos { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.ap__campos li { display: grid; grid-template-columns: 18px 1fr; gap: 2px 8px; padding: 8px 10px; border-radius: 6px; box-shadow: inset 0 0 0 1px #ECEDF1; background: #fff; }
+.ap__campos li.is-erro { box-shadow: inset 0 0 0 1px #F1D39B; background: #FFFBF2; }
+.ap__ic { grid-row: span 2; display: grid; place-items: center; width: 18px; height: 18px; border-radius: 999px; background: #E6F4EE; color: #1E7A5A; font-size: 10px; font-weight: 700; }
+.is-erro .ap__ic { background: #FFEBC2; color: #9A6200; }
+.ap__k { font-size: 12px; color: #5A5F74; }
+.ap__v { font-family: var(--f-mono); font-size: 11.5px; color: var(--sb-tinta); }
+.ap__nota { margin: 12px 0; font-size: 12px; line-height: 1.5; color: #5A5F74; }
+.ap__acoes { display: flex; gap: 8px; justify-content: flex-end; }
+@media (max-width: 1023px) { .ap__corpo { grid-template-columns: 1fr; } .ap__lado, .ap__det { display: none; } }
+
+/* ─── Frentes ─────────────────────────────────────────────── */
+.lp4-frentes__nota { display: block !important; margin: 96px 0 0 !important; text-align: left !important; font-family: var(--f-mono) !important; font-size: 11.5px !important; letter-spacing: 0.12em; text-transform: uppercase; color: var(--sb-suave) !important; }
+.lp4-vert, .lp2-vertical {
+  background: var(--sb-painel) !important;
+  border-radius: 10px !important;
+  box-shadow: inset 0 0 0 1px var(--sb-linha) !important;
+  transform: none !important;
+  padding: 8px !important;
+}
+.lp4-vert::before, .lp4-card::before, .lp2-mdiag__corpo::before { display: none !important; }
+.lp4-vert:hover, .lp2-vertical:hover { transform: none !important; box-shadow: inset 0 0 0 1px #C9CCD6 !important; }
+.lp4-vert > :first-child, .lp2-vertical > :first-child { box-shadow: none !important; border-radius: 6px !important; }
+.lp4-vert .lp2-rotulo { margin-left: 12px !important; margin-top: 16px !important; }
+.lp2 .lp2-textlink { color: var(--sb-tinta) !important; text-decoration-color: #C9CCD6 !important; margin-left: 12px; margin-bottom: 12px; font-size: 14.5px; }
+
+/* ─── Cards de texto ──────────────────────────────────────── */
+.lp4-card, .lp2-mdiag__corpo {
+  background: var(--sb-painel) !important;
+  border-radius: 10px !important;
+  box-shadow: inset 0 0 0 1px var(--sb-linha) !important;
+  transform: none !important;
+}
+.lp4-card:hover { transform: none !important; box-shadow: inset 0 0 0 1px #C9CCD6 !important; }
+.lp4-card p, .lp2-mdiag__texto { color: var(--sb-texto) !important; }
+.cd-ficha__num { display: block; margin-bottom: 28px; font-family: var(--f-mono); font-size: 11.5px; letter-spacing: 0.1em; color: var(--sb-suave); }
+.lp4-card__titulo { font-size: 18px !important; }
+
+/* Método */
+.lp4-no b { display: inline-block; width: auto; height: auto; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; transform: none; font-family: var(--f-mono); font-size: 11.5px; letter-spacing: 0.1em; color: var(--sb-suave); }
+.lp4-no b::before { content: "FIG "; }
+.lp2 .lp2-mdiag__quando { color: var(--sb-suave) !important; }
+.lp3-mini { border-radius: 6px !important; box-shadow: inset 0 0 0 1px var(--sb-linha) !important; background: #FBFBFC !important; }
+.lp2-mdiag__piloto-txt { background: var(--sb-bg) !important; color: var(--sb-suave) !important; }
+
+/* Antes/depois */
+.lp2-antes-depois__palco { border-radius: 10px !important; transform: none !important; box-shadow: inset 0 0 0 1px var(--sb-linha) !important; background: #F2F3F6 !important; }
+.lp2-antes-depois__painel--depois .lp2-antes-depois__palco { background: #EEF4F4 !important; }
+.lp2-antes-depois__rotulo { font-family: var(--f-mono) !important; font-size: 11.5px !important; letter-spacing: 0.12em !important; text-transform: uppercase; color: var(--sb-suave) !important; }
+.lp3-postit { font-family: var(--f-mono) !important; font-size: 11px !important; transform: rotate(3deg) !important; }
+
+/* ─── Prova ───────────────────────────────────────────────── */
+.lp4-exemplos > .lp2-container > .lp2-rotulo { display: block !important; text-align: left !important; }
+.lp4-exemplos .lp2-prova {
+  background: var(--sb-painel) !important;
+  border-radius: 10px !important;
+  box-shadow: inset 0 0 0 1px var(--sb-linha) !important;
+  transform: none !important;
+  color: var(--sb-texto) !important;
+}
+.lp4-exemplos .lp2-prova__num { font-family: var(--f-serif), Georgia, serif !important; font-weight: 400 !important; color: var(--sb-tinta) !important; }
+.lp4-exemplos .lp2-prova__pre { color: var(--sb-suave) !important; }
+.lp4-exemplos .lp2-prova__pct { color: var(--sb-tinta) !important; }
+.lp4-exemplos .lp2-caso__texto { color: var(--sb-texto) !important; }
+.lp4-exemplos .lp2-prova__cel { background: #2A3150 !important; box-shadow: none !important; border-radius: 1px; }
+.lp4-exemplos .lp2-prova__cel--vazia { background: transparent !important; box-shadow: inset 0 0 0 1px #E3A12F !important; }
+.lp4-prova__ic { display: none !important; }
+
+/* ─── FAQ: lista com linhas ───────────────────────────────── */
+.lp4-faq .lp2-faq__lista { max-width: none !important; gap: 0 !important; border-top: 1px solid var(--sb-linha) !important; }
+.lp4-faq .lp2-faq__item { background: transparent !important; box-shadow: none !important; border-radius: 0 !important; border-bottom: 1px solid var(--sb-linha) !important; padding: 0 !important; }
+.lp4-faq .lp2-faq__q { color: var(--sb-tinta) !important; font-size: 18px !important; }
+.lp4-faq .lp2-faq__icone { background: none !important; box-shadow: none !important; color: var(--sb-suave) !important; }
+
+/* ─── Contato ─────────────────────────────────────────────── */
+.lp2 .lp2-contato { background: var(--sb-tinta) !important; }
+.lp2 .lp2-contato .lp2-h2 { color: #fff !important; }
+.lp2 .lp2-contato .lp2-lead { color: #B6BACB !important; }
+.lp2 .lp2-contato .lp2-marca { color: #fff !important; }
+.tc-tag { margin: 0 0 18px; font-family: var(--f-mono); font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: #8C91A8; }
+.lp2-contato__card { border-radius: 10px !important; transform: none !important; box-shadow: none !important; background: #fff !important; }
+.lp2-contato__card::before { display: none !important; }
+
+/* Rodapé */
+.lp2 .lp2-footer { background: var(--sb-tinta) !important; border-top: 1px solid rgba(255, 255, 255, 0.08) !important; }
+.lp2-footer__marca { font-family: var(--f-serif), Georgia, serif !important; font-weight: 400 !important; -webkit-text-stroke: 1px rgba(255, 255, 255, 0.14) !important; letter-spacing: -0.03em !important; }
+.lp2-footer__assinatura { font-family: var(--f-serif), Georgia, serif !important; font-weight: 400 !important; }
+
+/* Ajustes */
+.lp2 .lp4-frentes__nota { transform: none !important; }
+.lp2 .lp2-mdiag__no.lp4-no { padding: 0 6px 0 0 !important; background: var(--sb-bg) !important; box-shadow: none !important; border-radius: 0 !important; }
+.lp2 .lp2-antes-depois__painel--antes .lp2-antes-depois__palco { background: #F2F3F6 !important; }
+.lp2 .lp2-antes-depois__painel--depois .lp2-antes-depois__palco { background: #EEF2F3 !important; }
+.lp2 .lp3-fila__btn, .lp2 .lp3-fila { border-radius: 6px !important; }
+.lp2 .lp3-fila__btn { background: var(--sb-tinta) !important; box-shadow: none !important; }
+.lp2 .lp4-selo span, .lp2 .lp4-hero__selo span { display: none !important; }

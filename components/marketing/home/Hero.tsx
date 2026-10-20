@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ComponentType } from "react";
 import { CtaLink, CTA_MICROCOPY } from "./CtaLink";
-import { GrafoAgente } from "./GrafoAgente";
+import { AppPreview } from "./AppPreview";
 import { MockLogistica } from "./MockLogistica";
 import { MockFinanceiro } from "./MockFinanceiro";
 import { MockClinica } from "./MockClinica";
@@ -46,50 +46,29 @@ export function Hero() {
   return (
     <section id="topo" className="lp2-section lp2-hero lp2-grain">
       <div className="lp2-container">
-        <div className="cd-hero">
-        <div className="lp4-hero">
-          <p className="lp4-hero__selo lp2-hero__in" style={{ "--in-d": "0ms" } as React.CSSProperties}>
-            Agentes de IA para operações
-          </p>
-          <h1 className="lp2-h1 lp4-hero__titulo">
-            <span className="lp2-h1__line">
-              <span className="lp2-h1__txt" style={{ "--in-d": "80ms" } as React.CSSProperties}>
-                O documento chega.
-              </span>
-            </span>{" "}
-            <span className="lp2-h1__line">
-              <span className="lp2-h1__txt" style={{ "--in-d": "200ms" } as React.CSSProperties}>
-                A conferência fica pronta.
-              </span>
-            </span>{" "}
-            <span className="lp2-h1__line">
-              <span className="lp2-h1__txt" style={{ "--in-d": "320ms" } as React.CSSProperties}>
-                Sua equipe <span className="lp4-rabisco">só aprova.<Rabisco /></span>
-              </span>
-            </span>
+        <div className="sb-hero">
+          <h1 className="lp2-h1 sb-hero__titulo">
+            O documento chega. A conferência fica pronta. <em>Sua equipe só aprova.</em>
           </h1>
-          <p className="lp2-lead lp4-hero__lead lp2-hero__in" style={{ "--in-d": "440ms" } as React.CSSProperties}>
-            Primeiro a gente desenha o processo com quem faz o trabalho, depois põe um agente de IA
-            na parte repetitiva: documentos, conferências e mensagens.
-          </p>
-          <div className="lp4-hero__ctas lp2-hero__in" style={{ "--in-d": "560ms" } as React.CSSProperties}>
-            <CtaLink />
-            <a href="#metodo" className="lp4-ghost">
-              Ver como funciona
-            </a>
+          <div className="sb-hero__lado lp2-hero__in" style={{ "--in-d": "200ms" } as React.CSSProperties}>
+            <p className="lp2-lead sb-hero__lead">
+              Primeiro a gente desenha o processo com quem faz o trabalho, depois põe um agente de IA
+              na parte repetitiva: documentos, conferências e mensagens.
+            </p>
+            <div className="sb-hero__ctas">
+              <CtaLink />
+              <a href="#metodo" className="sb-btn-sec">Como funciona</a>
+            </div>
+            <p className="lp2-micro">{CTA_MICROCOPY}</p>
           </div>
-          <p className="lp2-micro lp4-hero__micro lp2-hero__in" style={{ "--in-d": "620ms" } as React.CSSProperties}>
-            {CTA_MICROCOPY}
-          </p>
         </div>
 
-        <div className="cd-hero__folha lp2-hero__in" style={{ "--in-d": "300ms" } as React.CSSProperties}>
-          <GrafoAgente />
-        </div>
+        <div className="sb-palco lp2-hero__in" style={{ "--in-d": "350ms" } as React.CSSProperties}>
+          <AppPreview />
         </div>
 
         <p className="lp4-nota lp4-frentes__nota" data-rv>
-          {"// onde já dá pra começar"}
+          Onde já dá para começar
         </p>
         <ul className="lp2-verticais__grid lp2-hero__frentes">
           {FRENTES.map((f, i) => {
