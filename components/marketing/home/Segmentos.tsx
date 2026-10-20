@@ -26,7 +26,7 @@ const SEGMENTOS: Seg[] = [
     aba: "Transportadoras",
     icone: "caminhao",
     titulo: "Feito para transportadoras.",
-    texto: "Seja qual for o TMS que vocês usam, o agente trabalha dentro dele, do jeito que a sua equipe já trabalha.",
+    texto: "Seja qual for o TMS que vocês usam, o agente é montado em cima dele, do jeito que a sua equipe já trabalha.",
     sistemas: ["TMS", "CT-e, MDF-e e CIOT", "WhatsApp", "E-mail", "Planilhas"],
     tarefa: "Emissão de CT-e",
     hoje: ["O pedido chega no grupo do WhatsApp", "Alguém confere pedido × NF-e no e-mail", "Emite CT-e, CIOT e MDF-e na mão no TMS", "Manda os documentos ao motorista"],
@@ -125,6 +125,10 @@ export function Segmentos() {
             </ol>
           </div>
         </div>
+        <p className="mb-seg__nota">
+          Isto é um exemplo. O seu agente é desenhado a partir do seu processo, das suas regras e dos sistemas que
+          você já usa.
+        </p>
       </div>
     </div>
   );

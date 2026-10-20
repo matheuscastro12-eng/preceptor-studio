@@ -180,7 +180,10 @@ export function MbHome() {
               <span className="mb-seg__destaque">o agente trabalha nele</span>
               <span className="mb-ponto">.</span>
             </h2>
-            <p>Com API, pela tela ou pelo e-mail. Escolha a sua operação:</p>
+            <p>
+              Nada de pacote pronto: cada agente é feito sob medida para a sua operação, ligado ao seu sistema por API,
+              pela tela ou pelo e-mail. Veja como fica em cada setor:
+            </p>
           </div>
           <div data-rv>
             <Segmentos />
