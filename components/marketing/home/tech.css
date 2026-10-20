@@ -255,3 +255,74 @@
 /* Telas claras (mocks) mantêm texto escuro */
 .lp3-win, .lp3-zap, .lp3-fila, .lp3-mini, .lp4-vert > :first-child { color: var(--ink); }
 .lp3-zap b, .lp3-revisao__l > span { color: var(--ink); }
+
+/* ═══ Telas de produto em modo escuro (padrão Linear) ═══════════════════
+   Mesma paleta da página, painel um tom acima, borda de 1px quase
+   invisível, texto cinza-claro e o teal como único destaque. */
+.lp2 .lp2-mock,
+.lp2 .lp3-antes,
+.lp2 .lp3-depois,
+.lp2 .lp3-mini,
+.lp2 .lp2-contato__card {
+  --bg: #0E1230;
+  --bg-soft: #0A0D26;
+  --line: rgba(255, 255, 255, 0.08);
+  --navy: #E7EAF6;
+  --ink: #D5D9EA;
+  --ink-soft: #8C94B0;
+  --ink-mute: #5E6684;
+  --teal-tint: rgba(59, 202, 206, 0.12);
+  color: var(--ink);
+}
+/* Botões "Aprovar" dentro das telas: claros, como o botão primário do Linear */
+.lp2 .lp2-mock [class*="botao"], .lp2 .lp2-mock-log__estado--pendente { color: #0A0D26 !important; }
+
+/* Mocks das frentes */
+.lp4-vert > .lp2-mock, .lp4-vert > :first-child { background: #0B0F2A !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07) !important; }
+.lp2 .lp2-mock__selo { color: var(--ink-mute) !important; border-color: rgba(255, 255, 255, 0.1) !important; background: transparent !important; }
+.lp2 .lp2-mock-cli__msg--out { background: #1B2150 !important; color: #E7EAF6 !important; }
+.lp2 .lp2-mock-cli__msg--in { background: #141838 !important; color: #E7EAF6 !important; border-color: rgba(255,255,255,0.08) !important; }
+
+/* Antes: janelas escuras */
+.lp3-win { background: #0E1230 !important; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 20px 40px -16px rgba(0, 0, 0, 0.7) !important; color: var(--ink); }
+.lp3-win__bar { background: #0A0D26 !important; border-bottom-color: rgba(255, 255, 255, 0.06) !important; }
+.lp3-win__bar i { background: rgba(255, 255, 255, 0.12) !important; }
+.lp3-mail li { border-bottom-color: rgba(255, 255, 255, 0.05) !important; }
+.lp3-mail__de { color: #fff; }
+.lp3-sheet th, .lp3-sheet td { border-color: rgba(255, 255, 255, 0.06) !important; }
+.lp3-sheet th { background: #0A0D26 !important; }
+.lp3-sheet tr.is-erro td { background: rgba(229, 72, 77, 0.12) !important; color: #FF8A8E !important; }
+.lp3-zap { background: #0E1230 !important; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 16px 30px -12px rgba(0, 0, 0, 0.7) !important; }
+.lp3-zap b { color: #fff !important; }
+.lp3-postit { background: #2A2410 !important; color: #FFD77A !important; box-shadow: 0 0 0 1px rgba(255, 215, 122, 0.25), 0 16px 30px -12px rgba(0, 0, 0, 0.7) !important; font-family: var(--f-mono) !important; font-size: 11px !important; }
+
+/* Depois: fila escura */
+.lp3-fila { background: #0E1230 !important; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 30px 60px -20px rgba(59, 202, 206, 0.25) !important; }
+.lp3-fila__head { border-bottom-color: rgba(255, 255, 255, 0.07) !important; color: #fff !important; }
+.lp3-fila__foot { border-top-color: rgba(255, 255, 255, 0.07) !important; }
+.lp3-fila__doc { color: var(--ink) !important; }
+.lp3-fila li.is-exc { background: rgba(255, 196, 87, 0.08) !important; box-shadow: inset 0 0 0 1px rgba(255, 196, 87, 0.3) !important; }
+.lp3-fila li.is-exc .lp3-fila__ic { background: rgba(255, 196, 87, 0.16) !important; color: #FFC457 !important; }
+.lp3-fila li.is-exc .lp3-fila__st { color: #FFC457 !important; }
+.lp3-fila__ic { background: rgba(59, 202, 206, 0.12) !important; color: #3BCACE !important; }
+.lp3-fila__st { color: #3BCACE !important; }
+.lp3-fila__btn { background: #E7EAF6 !important; color: #0A0D26 !important; box-shadow: none !important; }
+
+/* Método: mini telas */
+.lp3-mini { background: #0B0F2A !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07) !important; }
+.lp3-mapa__no { background: #141838 !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08) !important; color: var(--ink-soft) !important; }
+.lp3-mapa__no + .lp3-mapa__no::before { background: rgba(255, 255, 255, 0.2) !important; }
+.lp3-mapa__no.is-gargalo { background: rgba(229, 72, 77, 0.12) !important; color: #FF8A8E !important; box-shadow: inset 0 0 0 1px rgba(229, 72, 77, 0.45) !important; }
+.lp3-mapa__nota { color: #FF8A8E !important; }
+.lp3-revisao__l { background: #141838 !important; }
+.lp3-revisao__l > span { color: var(--ink) !important; }
+.lp3-revisao__l em { color: #3BCACE !important; }
+.lp3-revisao__l em.is-corr { color: #FFC457 !important; }
+.lp3-medida__b--base { background: rgba(255, 255, 255, 0.14) !important; }
+
+/* Formulário escuro */
+.lp2-contato__card { background: #0E1230 !important; }
+.lp2 .lp2-contato__card input, .lp2 .lp2-contato__card select, .lp2 .lp2-contato__card textarea { background: #0A0D26 !important; color: #E7EAF6 !important; border-color: rgba(255, 255, 255, 0.12) !important; }
+.lp2 .lp2-contato__card input::placeholder { color: #5E6684 !important; }
+.lp2 .lp2-contato__card a { color: #3BCACE !important; }
+.lp2 .lp2-contato__card label { color: #E7EAF6 !important; }
