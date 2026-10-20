@@ -209,3 +209,92 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
 .mb-marca--contato .mb-marca__traco, .mb-marca--contato .mb-marca__ponto { animation-play-state: paused; }
 .mb-marca--contato.is-in .mb-marca__traco, .mb-marca--contato.is-in .mb-marca__ponto { animation-play-state: running; }
 .lp2.js-ready .mb-sec .mb-marca--contato[data-rv] { filter: none; transform: none; opacity: 1; }
+
+/* ===== Layout WANDER com a marca ===== */
+:root { --mb-ardosia: #56638C; --mb-baia: #E8ECF4; }
+.mb-hero { overflow: visible; padding-top: 16px; }
+@media (min-width: 1024px) { .mb-hero { padding-top: 24px; } }
+
+/* Palco navy do hero */
+.mb-palco { position: relative; isolation: isolate; overflow: hidden; padding: 88px 40px 0; border-radius: 32px; background: radial-gradient(120% 80% at 85% 0%, #0A1A8C 0%, transparent 60%), var(--mb-navy); color: #fff; }
+.mb-palco > :not(.mb-marca) { position: relative; z-index: 1; }
+.mb-palco .mb-marca { top: -40px; right: -220px; width: 820px; }
+.mb-palco .mb-marca__traco { stroke: var(--mb-teal); stroke-opacity: 0.28; }
+.mb-palco .mb-marca__ponto { fill: var(--mb-teal); }
+.mb-palco__selo { display: inline-block; margin: 0 0 22px; padding: 6px 14px; border-radius: 999px; background: rgba(59, 202, 206, 0.14); color: var(--mb-teal); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+.mb-palco .mb-h1 { color: #fff; }
+.mb-palco .mb-sub { color: rgba(255, 255, 255, 0.74); }
+.mb-palco .mb-micro { color: rgba(255, 255, 255, 0.5); }
+.mb-palco .mb-slot__camada { box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.22); }
+.mb-palco__tela { max-width: 1000px; max-height: 460px; margin: 56px auto 0; padding: 12px 12px 0; overflow: hidden; border-radius: 22px 22px 0 0; background: rgba(255, 255, 255, 0.1); text-align: left; -webkit-mask-image: linear-gradient(#000 75%, transparent); mask-image: linear-gradient(#000 75%, transparent); }
+@media (max-width: 720px) { .mb-palco { padding: 56px 18px 0; border-radius: 24px; } .mb-palco__tela { margin-top: 36px; max-height: 340px; padding: 8px 8px 0; } }
+.mb-pilula--teal { background: var(--mb-teal); color: var(--mb-navy); }
+.mb-pilula--teal:hover { background: #5FD8DB; }
+.mb-pilula--vazada { color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.4); }
+.mb-pilula--vazada:hover { background: rgba(255, 255, 255, 0.08); }
+
+/* Por que */
+.mb-h2--m { font-size: clamp(1.7rem, 3vw, 2.3rem); max-width: 20ch; }
+.mb-porque { display: grid; gap: 40px; align-items: center; }
+@media (min-width: 900px) { .mb-porque { grid-template-columns: 1.1fr 1fr; gap: 72px; } }
+.mb-porque__txt { max-width: 46ch; margin: 18px 0 0; font-size: 16px; line-height: 1.6; color: var(--mb-texto); }
+.mb-fatos { display: flex; flex-wrap: wrap; gap: 28px 44px; margin: 40px 0 0; padding: 0; list-style: none; }
+.mb-fatos li { display: grid; justify-items: center; text-align: center; gap: 4px; }
+.mb-fatos__ic { display: grid; place-items: center; width: 44px; height: 44px; margin-bottom: 8px; border-radius: 999px; background: var(--mb-navy); color: #fff; }
+.mb-fatos__ic svg { width: 22px; }
+.mb-fatos b { font-family: var(--f-display); font-size: 20px; letter-spacing: -0.02em; color: var(--mb-tinta); }
+.mb-fatos span:last-child { font-size: 13px; color: var(--mb-texto); }
+.mb-motivos { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+.mb-motivo { display: flex; gap: 18px; align-items: center; padding: 16px 22px 16px 16px; border-radius: 22px; background: var(--mb-ardosia); color: #fff; transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1); }
+.mb-motivo:hover { transform: translateX(-6px); }
+.mb-motivo__ic { display: grid; place-items: center; flex-shrink: 0; width: 72px; height: 72px; border-radius: 16px; background: #fff; color: var(--mb-navy); }
+.mb-motivo__ic svg { width: 40px; }
+.mb-motivo h3 { margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+.mb-motivo p { margin: 4px 0 0; font-size: 14px; line-height: 1.45; color: rgba(255, 255, 255, 0.82); }
+
+/* Baia azulada com as frentes */
+.mb-baia { padding: 48px; border-radius: 32px; background: var(--mb-baia); }
+.mb-baia__topo { display: grid; gap: 12px; margin-bottom: 32px; }
+@media (min-width: 900px) { .mb-baia__topo { grid-template-columns: 1fr 1fr; align-items: end; } }
+.mb-baia__topo p { margin: 0; max-width: 44ch; font-size: 15px; line-height: 1.55; color: var(--mb-texto); }
+.mb-frentes { display: grid; gap: 16px; }
+@media (min-width: 900px) { .mb-frentes { grid-template-columns: repeat(3, 1fr); } }
+.mb-frentes .mb-card { background: #fff; transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 300ms ease; }
+.mb-frentes .mb-card:hover { transform: translateY(-6px); box-shadow: 0 24px 40px -24px rgba(0, 3, 61, 0.35); }
+.mb-frentes .mb-seta { background: var(--mb-navy); color: #fff; }
+@media (max-width: 720px) { .mb-baia { padding: 24px 14px; border-radius: 24px; } }
+
+/* Bento */
+.mb-bento { display: grid; gap: 16px; }
+@media (min-width: 900px) { .mb-bento { grid-template-columns: 1.5fr 1fr 1fr 1fr; } }
+.mb-bento__grande { position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; min-height: 340px; padding: 32px; border-radius: 28px; background: var(--mb-ardosia); color: #fff; }
+.mb-bento__grande .mb-h2 { color: #fff; }
+.mb-bento__grande p { margin: 0 0 auto; max-width: 30ch; font-size: 15px; line-height: 1.55; color: rgba(255, 255, 255, 0.82); }
+.mb-bento__grande .mb-pilula { position: relative; z-index: 1; background: #fff; color: var(--mb-navy); }
+.mb-bento__p { position: absolute; right: -14px; bottom: -64px; font-family: var(--f-display); font-size: 220px; font-weight: 700; line-height: 1; letter-spacing: -0.06em; color: rgba(255, 255, 255, 0.08); }
+.mb-tarefa { position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; gap: 18px; min-height: 340px; padding: 24px; border-radius: 28px; color: #fff; transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1); }
+.mb-tarefa:hover { transform: translateY(-6px); }
+.mb-tarefa--1 { background: linear-gradient(160deg, #0A1A8C, var(--mb-navy)); }
+.mb-tarefa--2 { background: linear-gradient(160deg, #1BA9AE, #0D6E73); }
+.mb-tarefa--3 { background: linear-gradient(160deg, #2B3BB0, #141E6B); }
+.mb-tarefa__ic { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 999px; background: rgba(255, 255, 255, 0.16); }
+.mb-tarefa__ic svg { width: 26px; }
+.mb-tarefa__antes { align-self: flex-start; margin: -6px 0 auto !important; padding: 4px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.14); font-family: var(--f-mono, ui-monospace, monospace); font-size: 11px; }
+.mb-tarefa h3 { margin: 0; font-family: var(--f-display); font-size: 22px; font-weight: 600; letter-spacing: -0.02em; }
+.mb-tarefa p { margin: 6px 0 0; font-size: 14px; line-height: 1.5; color: rgba(255, 255, 255, 0.82); }
+
+/* 1-2-3 */
+.mb-passos { display: grid; gap: 28px; margin: 36px 0 0; padding: 0; list-style: none; counter-reset: p; }
+@media (min-width: 900px) { .mb-passos { grid-template-columns: repeat(3, 1fr); gap: 40px; } }
+.mb-passos li { position: relative; padding-left: 64px; }
+.mb-passos__n { position: absolute; left: 0; top: -4px; display: grid; place-items: center; width: 46px; height: 46px; font-family: var(--f-display); font-size: 18px; font-weight: 600; color: var(--mb-navy); }
+.mb-passos__n::before, .mb-passos__n::after { content: ""; position: absolute; top: 0; bottom: 0; width: 12px; border: 2px solid var(--mb-teal); }
+.mb-passos__n::before { left: 0; border-right: 0; border-radius: 12px 0 0 12px; }
+.mb-passos__n::after { right: 0; border-left: 0; border-radius: 0 12px 12px 0; }
+.mb-passos h3 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.02em; }
+.mb-passos__quando { margin: 4px 0 8px !important; font-size: 13px !important; font-weight: 600; color: var(--mb-teal-ink) !important; }
+.mb-passos p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--mb-texto); }
+@media (prefers-reduced-motion: reduce) { .mb-motivo, .mb-tarefa, .mb-frentes .mb-card { transition: none; } }
+
+#como .mb-h2--m { max-width: none; }
+@media (max-width: 899px) { .mb-tarefa, .mb-bento__grande { min-height: 220px; } }

@@ -32,6 +32,24 @@ const PASSOS = [
   { n: "03", titulo: "Medição", quando: "Última semana do piloto", texto: "Você recebe a comparação com a linha de base e decide se o agente segue rodando.", icone: "grafico", tom: "#EEF0FF" },
 ];
 
+const FATOS = [
+  { valor: "30 min", rot: "de diagnóstico", icone: "lupa" },
+  { valor: "2 a 4 sem.", rot: "de piloto", icone: "ampulheta" },
+  { valor: "1 pessoa", rot: "aprova cada saída", icone: "check" },
+];
+
+const MOTIVOS = [
+  { titulo: "Primeiro o processo", texto: "Mapeamos o passo a passo de hoje antes de pôr IA em qualquer coisa.", icone: "arquivo" },
+  { titulo: "Uma pessoa aprova", texto: "O agente só segue sozinho onde a regra é fechada e você autorizou.", icone: "check" },
+  { titulo: "Medido de verdade", texto: "No fim do piloto, a comparação com a linha de base decide se ele fica.", icone: "grafico" },
+];
+
+const TAREFAS = [
+  { titulo: "Lê documentos", antes: "NF-e, CT-e, boleto", texto: "Tira os dados da nota e do e-mail e preenche o sistema.", icone: "documento" },
+  { titulo: "Confere", antes: "Extrato × ERP", texto: "Cruza extrato, romaneio e pedido e aponta só o que diverge.", icone: "lupa" },
+  { titulo: "Responde", antes: "WhatsApp", texto: "Responde as perguntas de sempre e passa o resto para a equipe.", icone: "mensagem" },
+];
+
 const PERGUNTAS = [
   {
     q: "Minha empresa não é de logística nem de clínica. Serve?",
@@ -72,126 +90,159 @@ export function MbNav() {
 export function MbHome() {
   return (
     <main id="conteudo">
-      {/* Hero */}
+      {/* Hero: palco navy com o P! desenhado e a central subindo de dentro */}
       <section className="mb-hero">
-        <MarcaFundo />
         <div className="mb-wrap">
-          <h1 className="mb-h1">
-            <span className="mb-linha" style={{ animationDelay: "400ms" }}>
-              O documento
-              <HeroIcone atraso={1400} intervalo={2600} icones={[
-                { nome: "documento", tom: "#00033D" }, { nome: "recibo", tom: "#00033D" },
-                { nome: "arquivo", tom: "#12888E" }, { nome: "mensagem", tom: "#12888E" },
-              ]} />
-              chega<span className="mb-ponto">.</span>
-            </span>{" "}
-            <span className="mb-linha" style={{ animationDelay: "500ms" }}>
-              A conferência
-              <HeroIcone atraso={1550} intervalo={3100} icones={[
-                { nome: "lupa", tom: "#12888E" }, { nome: "recibo", tom: "#00033D" },
-                { nome: "ampulheta", tom: "#00033D" }, { nome: "grafico", tom: "#12888E" },
-              ]} />
-              fica pronta<span className="mb-ponto">.</span>
-            </span>{" "}
-            <span className="mb-linha" style={{ animationDelay: "600ms" }}>
-              Sua equipe
-              <HeroIcone atraso={1700} intervalo={3600} icones={[
-                { nome: "check", tom: "#00033D" }, { nome: "dinheiro", tom: "#12888E" },
-                { nome: "pacote", tom: "#00033D" }, { nome: "caminhao", tom: "#12888E" },
-              ]} />
-              só aprova<span className="mb-ponto">.</span>
-            </span>
-          </h1>
-          <p className="mb-sub mb-sobe">
-            Agentes de IA para a parte repetitiva da operação: documentos, conferências e mensagens.
-            Primeiro o processo, depois a IA.
-          </p>
-          <div className="mb-ctas mb-sobe">
-            <a href="#contato" className="mb-pilula mb-pilula--navy">{CTA_TEXTO}</a>
-            <a href="#como" className="mb-pilula mb-pilula--cinza">
-              Como funciona <span aria-hidden="true">→</span>
-            </a>
-          </div>
-          <p className="mb-micro mb-sobe">{CTA_MICROCOPY}</p>
-        </div>
-
-        <div className="mb-wrap">
-          <div className="mb-caixa mb-caixa--produto mb-superficie">
-            <div className="mb-video">
-              <AppPreview />
+          <div className="mb-palco">
+            <MarcaFundo />
+            <p className="mb-palco__selo mb-sobe">Agentes de IA para operações</p>
+            <h1 className="mb-h1">
+              <span className="mb-linha" style={{ animationDelay: "400ms" }}>
+                O documento
+                <HeroIcone atraso={1400} intervalo={2600} icones={[
+                  { nome: "documento", tom: "#3BCACE" }, { nome: "recibo", tom: "#2B3BB0" },
+                  { nome: "arquivo", tom: "#3BCACE" }, { nome: "mensagem", tom: "#2B3BB0" },
+                ]} />
+                chega<span className="mb-ponto">.</span>
+              </span>{" "}
+              <span className="mb-linha" style={{ animationDelay: "500ms" }}>
+                A conferência
+                <HeroIcone atraso={1550} intervalo={3100} icones={[
+                  { nome: "lupa", tom: "#2B3BB0" }, { nome: "recibo", tom: "#3BCACE" },
+                  { nome: "ampulheta", tom: "#2B3BB0" }, { nome: "grafico", tom: "#3BCACE" },
+                ]} />
+                fica pronta<span className="mb-ponto">.</span>
+              </span>{" "}
+              <span className="mb-linha" style={{ animationDelay: "600ms" }}>
+                Sua equipe
+                <HeroIcone atraso={1700} intervalo={3600} icones={[
+                  { nome: "check", tom: "#3BCACE" }, { nome: "dinheiro", tom: "#2B3BB0" },
+                  { nome: "pacote", tom: "#3BCACE" }, { nome: "caminhao", tom: "#2B3BB0" },
+                ]} />
+                só aprova<span className="mb-ponto">.</span>
+              </span>
+            </h1>
+            <p className="mb-sub mb-sobe">
+              Documentos, conferências e mensagens: o agente faz a parte repetitiva e uma pessoa da sua equipe decide.
+            </p>
+            <div className="mb-ctas mb-sobe">
+              <a href="#contato" className="mb-pilula mb-pilula--teal">{CTA_TEXTO}</a>
+              <a href="#como" className="mb-pilula mb-pilula--vazada">
+                Como funciona <span aria-hidden="true">→</span>
+              </a>
+            </div>
+            <p className="mb-micro mb-sobe">{CTA_MICROCOPY}</p>
+            <div className="mb-palco__tela mb-superficie">
+              <div className="mb-video">
+                <AppPreview />
+              </div>
             </div>
           </div>
         </div>
+      </section>
 
-        <div className="mb-wrap">
-          <p className="mb-confia">Para operações de</p>
-          <ul className="mb-setores">
-            <li>Logística</li>
-            <li>Financeiro</li>
-            <li>Clínicas</li>
-            <li>Agro</li>
-            <li>Back-office</li>
+      {/* Por que: texto à esquerda, três cartões à direita */}
+      <section className="mb-sec mb-sec--colado">
+        <div className="mb-wrap mb-porque">
+          <div data-rv>
+            <h2 className="mb-h2 mb-h2--m">
+              A parte repetitiva sai da mesa da sua equipe<span className="mb-ponto">.</span>
+            </h2>
+            <p className="mb-porque__txt">
+              Nota digitada à mão, extrato conferido linha por linha, a mesma pergunta no WhatsApp o dia todo. O agente
+              assume essa parte e entrega pronto para alguém aprovar.
+            </p>
+            <ul className="mb-fatos">
+              {FATOS.map((f) => (
+                <li key={f.rot}>
+                  <span className="mb-fatos__ic"><Glifo nome={f.icone} /></span>
+                  <b>{f.valor}</b>
+                  <span>{f.rot}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <ul className="mb-motivos" data-rv>
+            {MOTIVOS.map((m) => (
+              <li key={m.titulo} className="mb-motivo">
+                <span className="mb-motivo__ic"><Glifo nome={m.icone} /></span>
+                <div>
+                  <h3>{m.titulo}</h3>
+                  <p>{m.texto}</p>
+                </div>
+              </li>
+            ))}
           </ul>
         </div>
       </section>
 
-      {/* Problema em dois tons */}
-      <section className="mb-sec">
+      {/* Frentes numa caixa azulada */}
+      <section className="mb-sec" aria-labelledby="mb-frentes-t">
         <div className="mb-wrap">
-          <h2 className="mb-dois-tons" data-rv>
-            Hoje, alguém digita a nota.{" "}
-            <span>Outra pessoa confere o extrato. A recepção responde o mesmo WhatsApp o dia todo.</span>
-          </h2>
+          <div className="mb-baia" data-rv>
+            <div className="mb-baia__topo">
+              <h2 id="mb-frentes-t" className="mb-h2 mb-h2--m">Onde o agente já trabalha</h2>
+              <p>Três frentes em que o trabalho tem regra. As telas são demonstrações, com dados de exemplo.</p>
+            </div>
+            <div className="mb-frentes">
+              {FRENTES.map(({ titulo, sub, Mock, href }) => (
+                <article key={titulo} className="mb-card">
+                  <div className="mb-card__tela">
+                    <Mock />
+                  </div>
+                  <div className="mb-card__rodape">
+                    <div>
+                      <h3>{titulo}</h3>
+                      <p>{sub}</p>
+                    </div>
+                    {href ? (
+                      <Link href={href} className="mb-seta" aria-label={`Ver como funciona em ${titulo}`}>
+                        →
+                      </Link>
+                    ) : null}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Carrossel das frentes */}
-      <section className="mb-sec mb-sec--colado" aria-labelledby="mb-frentes-t">
-        <div className="mb-wrap">
-          <h2 id="mb-frentes-t" className="mb-h3t" data-rv>
-            Onde o agente já trabalha
-          </h2>
-        </div>
-        <div className="mb-carrossel" data-rv>
-          {FRENTES.map(({ titulo, sub, Mock, href }) => (
-            <article key={titulo} className="mb-card">
-              <div className="mb-card__tela">
-                <Mock />
-              </div>
-              <div className="mb-card__rodape">
-                <div>
-                  <h3>{titulo}</h3>
-                  <p>{sub}</p>
-                </div>
-                {href ? (
-                  <Link href={href} className="mb-seta" aria-label={`Ver como funciona em ${titulo}`}>
-                    →
-                  </Link>
-                ) : null}
+      {/* O que o agente faz: bento com bloco grande e três cartões altos */}
+      <section className="mb-sec">
+        <div className="mb-wrap mb-bento">
+          <div className="mb-bento__grande" data-rv>
+            <h2 className="mb-h2 mb-h2--m">O que o agente faz no dia a dia</h2>
+            <p>Ele trabalha no ERP, na planilha e no WhatsApp que você já usa. Sem trocar de sistema.</p>
+            <a href="#contato" className="mb-pilula mb-pilula--navy mb-pilula--p">Ver na minha operação</a>
+            <span className="mb-bento__p" aria-hidden="true">P!</span>
+          </div>
+          {TAREFAS.map((t, i) => (
+            <article key={t.titulo} className={`mb-tarefa mb-tarefa--${i + 1}`} data-rv>
+              <span className="mb-tarefa__ic"><Glifo nome={t.icone} /></span>
+              <p className="mb-tarefa__antes">{t.antes}</p>
+              <div>
+                <h3>{t.titulo}</h3>
+                <p>{t.texto}</p>
               </div>
             </article>
           ))}
         </div>
       </section>
 
-      {/* Como funciona: grade de blocos */}
+      {/* Como funciona: 1-2-3 */}
       <section id="como" className="mb-sec">
         <div className="mb-wrap">
-          <h2 className="mb-h2 mb-centro" data-rv>
-            Primeiro o processo,
-            <br />
-            depois a IA<span className="mb-ponto">.</span>
+          <h2 className="mb-h2 mb-h2--m" data-rv>
+            Começar é simples como 1, 2, 3<span className="mb-ponto">.</span>
           </h2>
-          <ol className="mb-grade">
+          <ol className="mb-passos">
             {PASSOS.map((p) => (
-              <li key={p.n} className="mb-bloco-grade" data-rv style={{ "--tom": p.tom } as React.CSSProperties}>
-                <p className="mb-bloco-grade__n">{p.n}</p>
+              <li key={p.n} data-rv>
+                <span className="mb-passos__n">{p.n}</span>
                 <h3>{p.titulo}</h3>
-                <div className="mb-bloco-grade__arte" aria-hidden="true">
-                  <Glifo nome={p.icone} />
-                </div>
-                <p className="mb-bloco-grade__quando">{p.quando}</p>
-                <p className="mb-bloco-grade__txt">{p.texto}</p>
+                <p className="mb-passos__quando">{p.quando}</p>
+                <p>{p.texto}</p>
               </li>
             ))}
           </ol>
