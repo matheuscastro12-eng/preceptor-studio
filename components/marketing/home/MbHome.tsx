@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { AppPreview } from "./AppPreview";
 import { Glifo } from "./Glifo";
 import { HeroIcone } from "./HeroIcone";
 import { MarcaFundo } from "./MarcaFundo";
@@ -165,8 +164,20 @@ export function MbHome() {
             </div>
             <p className="mb-micro mb-sobe">{CTA_MICROCOPY}</p>
             <div className="mb-palco__tela mb-superficie">
-              <div className="mb-video">
-                <AppPreview />
+              <div className="mb-video mb-janela">
+                <div className="mb-janela__barra" aria-hidden="true">
+                  <i /><i /><i />
+                  <span>preceptor · torre de expedição</span>
+                  <b>Demonstração</b>
+                </div>
+                <Image
+                  src="/telas/hero-torre.jpg"
+                  alt="Torre de expedição de uma transportadora: a IA rodou os passos do dia e separou 11 itens para uma pessoa validar. Dados de exemplo."
+                  width={2000}
+                  height={1194}
+                  priority
+                  sizes="(min-width: 1024px) 1000px, 100vw"
+                />
               </div>
             </div>
           </div>
