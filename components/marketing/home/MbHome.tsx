@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { AppPreview } from "./AppPreview";
 import { Glifo } from "./Glifo";
@@ -9,7 +10,6 @@ import { CTA_MICROCOPY, CTA_TEXTO } from "./CtaLink";
 import { LeadForm } from "./LeadForm";
 import { MockClinica } from "./MockClinica";
 import { MockFinanceiro } from "./MockFinanceiro";
-import { MockLogistica } from "./MockLogistica";
 
 /*
  * Home no molde da Mobbin (hero centralizado com ícones no título, caixa
@@ -20,9 +20,13 @@ import { MockLogistica } from "./MockLogistica";
 const WHATS =
   "https://wa.me/5535999191919?text=Ol%C3%A1!%20Quero%20falar%20sobre%20a%20opera%C3%A7%C3%A3o%20da%20minha%20empresa.";
 
+const TELAS = [
+  { titulo: "Torre de expedição", sub: "Pedido, NF-e, CT-e e MDF-e do dia, com a fila do que precisa de uma pessoa", src: "/telas/torre.jpg", w: 1600, h: 1000, classe: "mb-tela--larga" },
+  { titulo: "App do motorista", sub: "Entregas do dia e baixa com foto, no celular", src: "/telas/motorista.jpg", w: 780, h: 1560, classe: "mb-tela--fone" },
+];
+
 const FRENTES = [
-  { titulo: "Logística", sub: "CT-e pronto para conferir", Mock: MockLogistica, href: "/transporte" },
-  { titulo: "Financeiro", sub: "Extrato conciliado com prova", Mock: MockFinanceiro },
+  { titulo: "Financeiro", sub: "Extrato conciliado com prova", Mock: MockFinanceiro, href: undefined as string | undefined },
   { titulo: "Clínicas", sub: "WhatsApp da recepção em dia", Mock: MockClinica, href: "/medicina" },
 ];
 
@@ -232,9 +236,23 @@ export function MbHome() {
           <div className="mb-baia" data-rv>
             <div className="mb-baia__topo">
               <h2 id="mb-frentes-t" className="mb-h2 mb-h2--m">Onde o agente já trabalha</h2>
-              <p>Três frentes em que o trabalho tem regra. As telas são demonstrações, com dados de exemplo.</p>
+              <p>Telas de sistemas que já construímos, com dados de exemplo. Cada uma foi desenhada para o processo de um cliente.</p>
             </div>
-            <div className="mb-frentes">
+            <div className="mb-telas">
+              {TELAS.map((t) => (
+                <figure key={t.titulo} className={`mb-tela ${t.classe}`}>
+                  <div className="mb-tela__moldura">
+                    <Image src={t.src} alt={`${t.titulo}: tela de demonstração com dados de exemplo`} width={t.w} height={t.h} sizes="(min-width: 900px) 700px, 100vw" />
+                    <span className="mb-tela__selo">Demonstração</span>
+                  </div>
+                  <figcaption>
+                    <b>{t.titulo}</b>
+                    <span>{t.sub}</span>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+            <div className="mb-frentes mb-frentes--2">
               {FRENTES.map(({ titulo, sub, Mock, href }) => (
                 <article key={titulo} className="mb-card">
                   <div className="mb-card__tela">

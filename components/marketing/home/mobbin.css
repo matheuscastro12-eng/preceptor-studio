@@ -469,3 +469,72 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
 .mb-casos--um { grid-template-columns: 1fr !important; } .mb-casos--um .mb-medida__num { font-size: clamp(6rem, 16vw, 11rem) !important; }
 .mb-casos--um { grid-template-columns: 1fr !important; } .mb-casos--um .mb-medida__num { font-size: clamp(6rem, 16vw, 11rem) !important; }
 .mb-seg__nota { margin: 20px 0 0; font-size: 13.5px; color: rgba(255, 255, 255, 0.6); }
+
+/* ===== Telas reais (dados de exemplo) ===== */
+.mb-telas { display: grid; gap: 16px; margin-bottom: 16px; }
+@media (min-width: 900px) { .mb-telas { grid-template-columns: 2.4fr 1fr; align-items: stretch; } }
+.mb-tela { display: flex; flex-direction: column; margin: 0; padding: 14px; border-radius: var(--mb-raio); background: #fff; transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 300ms ease; }
+.mb-tela:hover { transform: translateY(-6px); box-shadow: 0 24px 40px -24px rgba(0, 3, 61, 0.35); }
+.mb-tela__moldura { position: relative; flex: 1; overflow: hidden; border-radius: 16px; background: #F6F7FA; box-shadow: inset 0 0 0 1px rgba(0, 3, 61, 0.08); }
+.mb-tela__moldura img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top left; }
+.mb-tela--fone .mb-tela__moldura { max-height: 470px; display: grid; place-items: start center; padding: 18px 18px 0; background: linear-gradient(160deg, var(--mb-navy), #0A1A8C); }
+.mb-tela--fone .mb-tela__moldura img { width: 78%; height: auto; border-radius: 26px 26px 0 0; box-shadow: 0 0 0 6px #10153F, 0 20px 40px -10px rgba(0, 0, 0, 0.5); }
+.mb-tela--larga .mb-tela__moldura { max-height: 470px; }
+.mb-tela__selo { position: absolute; top: 10px; right: 10px; padding: 4px 10px; border-radius: 999px; background: rgba(0, 3, 61, 0.78); color: #fff; font-family: var(--f-mono, ui-monospace, monospace); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; }
+.mb-tela figcaption { display: grid; gap: 2px; padding: 16px 8px 4px; }
+.mb-tela figcaption b { font-size: 17px; font-weight: 600; letter-spacing: -0.02em; color: var(--mb-tinta); }
+.mb-tela figcaption span { font-size: 14px; color: var(--mb-texto); }
+@media (min-width: 900px) { .mb-frentes--2 { grid-template-columns: 1fr 1fr; } }
+@supports (animation-timeline: view()) { @media (prefers-reduced-motion: no-preference) {
+  .mb-tela { animation: mb-rol-sobe linear both; animation-timeline: view(); animation-range: entry 0% entry 70%; }
+  .mb-tela--fone { animation-range: entry 10% entry 90%; }
+} }
+@media (prefers-reduced-motion: reduce) { .mb-tela { transition: none; } }
+
+/* ===== Rolagem com profundidade (mesma família da tela do hero) ===== */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    #segmentos .mb-wrap, .mb-telas, .mb-bento, .mb-porque, .mb-casos { perspective: 1400px; }
+
+    /* Painel dos segmentos: deitado, levanta e chega */
+    .mb-seg { transform-origin: 50% 100%; animation: mb-p-levanta linear both; animation-timeline: view(); animation-range: entry 0% cover 40%; }
+    @keyframes mb-p-levanta { from { rotate: x 22deg; scale: 0.88; translate: 0 60px; opacity: 0.3; } to { rotate: x 0deg; scale: 1; translate: 0 0; opacity: 1; } }
+
+    /* Torre: inclina como a tela do hero, e a imagem passeia por dentro */
+    .mb-tela--larga { transform-origin: 50% 0; animation: mb-p-tela linear both; animation-timeline: view(); animation-range: entry 0% cover 45%; }
+    @keyframes mb-p-tela { from { rotate: x 18deg; scale: 0.9; opacity: 0.4; } to { rotate: x 0deg; scale: 1; opacity: 1; } }
+    .mb-tela--larga .mb-tela__moldura img { animation: mb-p-passeia linear both; animation-timeline: view(); animation-range: cover 0% cover 100%; }
+    @keyframes mb-p-passeia { from { scale: 1.12; translate: 0 0; } to { scale: 1; translate: 0 -6%; } }
+    /* Celular: gira de lado e sobe de dentro da moldura */
+    .mb-tela--fone { animation: mb-p-fone-card linear both; animation-timeline: view(); animation-range: entry 10% cover 45%; }
+    @keyframes mb-p-fone-card { from { rotate: y -28deg; translate: 80px 0; opacity: 0.3; } to { rotate: y 0deg; translate: 0 0; opacity: 1; } }
+    .mb-tela--fone .mb-tela__moldura img { animation: mb-p-fone linear both; animation-timeline: view(); animation-range: entry 20% cover 60%; }
+    @keyframes mb-p-fone { from { translate: 0 45%; rotate: -6deg; } to { translate: 0 0; rotate: 0deg; } }
+
+    /* Por que: cartões começam empilhados e se abrem em leque */
+    .mb-motivo { transform-origin: 0 50%; animation: mb-p-leque linear both; animation-timeline: view(); }
+    .mb-motivo:nth-child(1) { --dy: 110%; animation-range: entry 0% cover 40%; }
+    .mb-motivo:nth-child(2) { --dy: 0%; animation-range: entry 0% cover 40%; }
+    .mb-motivo:nth-child(3) { --dy: -110%; animation-range: entry 0% cover 40%; }
+    @keyframes mb-p-leque { from { translate: 60px var(--dy); rotate: y -35deg; scale: 0.9; opacity: 0.2; } to { translate: 0 0; rotate: y 0deg; scale: 1; opacity: 1; } }
+
+    /* Bento: as três cartas saem de trás do bloco grande, como um baralho */
+    .mb-tarefa { transform-origin: 50% 100%; animation: mb-p-carta linear both; animation-timeline: view(); }
+    .mb-tarefa--1 { --dx: -60%; --rz: -10deg; animation-range: entry 0% cover 45%; }
+    .mb-tarefa--2 { --dx: -170%; --rz: -16deg; animation-range: entry 5% cover 50%; }
+    .mb-tarefa--3 { --dx: -280%; --rz: -22deg; animation-range: entry 10% cover 55%; }
+    @keyframes mb-p-carta { from { translate: var(--dx) 40px; rotate: z var(--rz); scale: 0.85; opacity: 0; } to { translate: 0 0; rotate: z 0deg; scale: 1; opacity: 1; } }
+    .mb-bento__grande { animation: mb-p-tela linear both; animation-timeline: view(); animation-range: entry 0% cover 40%; transform-origin: 50% 0; }
+
+    /* 99%: a barra enche junto com a rolagem e o número aproxima */
+    .mb-medida__barra i { transition: none; transform: none; animation: mb-p-barra linear both; animation-timeline: view(); animation-range: entry 30% cover 55%; }
+    @keyframes mb-p-barra { from { scale: 0 1; } to { scale: 1 1; } }
+    .mb-medida__barra i { transform-origin: left; }
+    .mb-medida__num { animation: mb-p-num linear both; animation-timeline: view(); animation-range: entry 0% cover 50%; }
+    @keyframes mb-p-num { from { scale: 0.5; rotate: x 40deg; opacity: 0; filter: blur(10px); } to { scale: 1; rotate: x 0deg; opacity: 1; filter: blur(0); } }
+  }
+  @media (max-width: 899px) {
+    .mb-tarefa--1, .mb-tarefa--2, .mb-tarefa--3 { --dx: 0%; --rz: -6deg; }
+    .mb-motivo:nth-child(n) { --dy: 0%; }
+  }
+}
