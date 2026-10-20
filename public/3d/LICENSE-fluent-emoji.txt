@@ -1,0 +1,2 @@
+Ícones 3D desta pasta: Microsoft Fluent Emoji (https://github.com/microsoft/fluentui-emoji)
+Licença MIT, Copyright (c) Microsoft Corporation.

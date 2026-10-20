@@ -2,10 +2,10 @@ import Link from "next/link";
 import type { ComponentType } from "react";
 import { CtaLink, CTA_MICROCOPY } from "./CtaLink";
 import { HeroScene } from "./HeroScene";
-import { Marca } from "./Marca";
 import { MockLogistica } from "./MockLogistica";
 import { MockFinanceiro } from "./MockFinanceiro";
 import { MockClinica } from "./MockClinica";
+import { Polaroids } from "./Polaroids";
 
 type Frente = {
   frente: string;
@@ -39,35 +39,46 @@ export function Hero() {
   return (
     <section id="topo" className="lp2-section lp2-hero lp2-grain">
       <div className="lp2-container">
-        <div className="lp2-hero__grid">
-          <div className="lp2-hero__copy">
-            <h1 className="lp2-h1">
-              <span className="lp2-h1__line">
-                <span className="lp2-h1__txt" style={{ "--in-d": "0ms" } as React.CSSProperties}>
-                  O documento chega.
-                </span>
-              </span>{" "}
-              <span className="lp2-h1__line">
-                <span className="lp2-h1__txt" style={{ "--in-d": "140ms" } as React.CSSProperties}>
-                  A conferência fica pronta.
-                </span>
-              </span>{" "}
-              <span className="lp2-h1__line">
-                <span className="lp2-h1__txt" style={{ "--in-d": "280ms" } as React.CSSProperties}>
-                  Sua equipe <Marca>só aprova.</Marca>
-                </span>
+        <div className="lp4-hero">
+          <p className="lp4-hero__selo lp2-hero__in" style={{ "--in-d": "0ms" } as React.CSSProperties}>
+            <span aria-hidden="true" />
+            Agentes de IA para operações
+          </p>
+          <h1 className="lp2-h1 lp4-hero__titulo">
+            <span className="lp2-h1__line">
+              <span className="lp2-h1__txt" style={{ "--in-d": "80ms" } as React.CSSProperties}>
+                O documento chega.
               </span>
-            </h1>
-            <p className="lp2-lead lp2-hero__in" style={{ "--in-d": "440ms" } as React.CSSProperties}>
-              Primeiro a gente desenha o processo com quem faz o trabalho, depois põe um agente de IA
-              na parte repetitiva: documentos, conferências e mensagens.
-            </p>
-            <div className="lp2-cta-wrap lp2-hero__in" style={{ "--in-d": "560ms" } as React.CSSProperties}>
-              <CtaLink />
-              <p className="lp2-micro">{CTA_MICROCOPY}</p>
-            </div>
+            </span>{" "}
+            <span className="lp2-h1__line">
+              <span className="lp2-h1__txt" style={{ "--in-d": "200ms" } as React.CSSProperties}>
+                A conferência fica pronta.
+              </span>
+            </span>{" "}
+            <span className="lp2-h1__line">
+              <span className="lp2-h1__txt" style={{ "--in-d": "320ms" } as React.CSSProperties}>
+                Sua equipe <span className="lp4-rabisco">só aprova.<Rabisco /></span>
+              </span>
+            </span>
+          </h1>
+          <p className="lp2-lead lp4-hero__lead lp2-hero__in" style={{ "--in-d": "440ms" } as React.CSSProperties}>
+            Primeiro a gente desenha o processo com quem faz o trabalho, depois põe um agente de IA
+            na parte repetitiva: documentos, conferências e mensagens.
+          </p>
+          <div className="lp4-hero__ctas lp2-hero__in" style={{ "--in-d": "560ms" } as React.CSSProperties}>
+            <CtaLink />
+            <a href="#metodo" className="lp4-ghost">
+              Ver como funciona
+            </a>
           </div>
-          <div className="lp2-hero__scene lp2-hero__in" style={{ "--in-d": "300ms" } as React.CSSProperties}>
+          <p className="lp2-micro lp4-hero__micro lp2-hero__in" style={{ "--in-d": "620ms" } as React.CSSProperties}>
+            {CTA_MICROCOPY}
+          </p>
+        </div>
+
+        <div className="lp4-palco">
+          <Polaroids />
+          <div className="lp4-palco__cena lp2-hero__in" style={{ "--in-d": "500ms" } as React.CSSProperties}>
             <HeroScene />
           </div>
         </div>
@@ -99,5 +110,14 @@ export function Hero() {
         </ul>
       </div>
     </section>
+  );
+}
+
+/* Sublinhado à mão sob "só aprova." (SVG que se desenha na entrada). */
+function Rabisco() {
+  return (
+    <svg className="lp4-rabisco__svg" viewBox="0 0 300 18" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M3 13 C 60 4, 120 3, 170 7 S 260 14, 297 6" pathLength={1} />
+    </svg>
   );
 }
