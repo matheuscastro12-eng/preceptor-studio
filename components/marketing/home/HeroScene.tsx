@@ -1,40 +1,79 @@
 /*
- * Cena do hero (CSS puro, loop de 9s): o documento entra, as três linhas de
- * conferência ganham o visto uma a uma, a etiqueta "Aprovado" aparece e o
- * documento sai. Só barras abstratas, nada legível.
- *
- * Foto real de mesa de escritório (copy v3, seção 1) entra aqui quando for
- * produzida. Alt já definido na copy: "Mesa de escritório com pilha de papéis
- * e uma planilha aberta na tela, no fim do expediente."
+ * Cena do hero (CSS puro, loop de 10s): o documento de carga é lido pela linha
+ * de varredura, o painel do agente marca cada conferência, a exceção vai para
+ * a equipe e o botão "Aprovar" recebe o clique. Dados fictícios de
+ * demonstração, rotulados como tal.
  */
+
+const CAMPOS = [
+  ["Remetente", "Distribuidora Sul"],
+  ["NF-e", "4821"],
+  ["Volumes", "12"],
+  ["Peso bruto", "380 kg"],
+  ["Destino", "Campinas · SP"],
+];
+
+const CHECKS = [
+  { k: "NF-e 4821 × romaneio", v: "confere" },
+  { k: "Volumes 12 × 12", v: "confere" },
+  { k: "Peso 380 kg", v: "confere" },
+  { k: "CFOP do destino", v: "equipe", exc: true },
+];
+
 export function HeroScene() {
   return (
-    <div className="lp2-scene" aria-hidden="true">
-      <div className="lp2-scene__doc">
-        <div className="lp2-scene__head">
-          <span className="lp2-scene__bar lp2-scene__bar--title" />
-          <span className="lp2-scene__bar lp2-scene__bar--sub" />
+    <div className="lp3-scene" aria-hidden="true">
+      <div className="lp3-scene__glow" />
+
+      <div className="lp3-doc">
+        <div className="lp3-doc__head">
+          <span className="lp3-doc__tipo">Nota de transporte</span>
+          <span className="lp3-doc__num">CT-e 35-0921</span>
         </div>
-        <div className="lp2-scene__block">
-          <span className="lp2-scene__bar lp2-scene__bar--w90" />
-          <span className="lp2-scene__bar lp2-scene__bar--w70" />
-          <span className="lp2-scene__bar lp2-scene__bar--w80" />
+        <dl className="lp3-doc__campos">
+          {CAMPOS.map(([k, v]) => (
+            <div key={k} className="lp3-doc__campo">
+              <dt>{k}</dt>
+              <dd>{v}</dd>
+            </div>
+          ))}
+        </dl>
+        <span className="lp3-doc__scan" />
+      </div>
+
+      <div className="lp3-agent">
+        <div className="lp3-agent__core">
+          <div className="lp3-agent__head">
+            <span className="lp3-agent__dot" />
+            <span>Agente de conferência</span>
+            <span className="lp3-agent__tag">demonstração</span>
+          </div>
+          <ul className="lp3-agent__lista">
+            {CHECKS.map((c, i) => (
+              <li
+                key={c.k}
+                className={`lp3-agent__row${c.exc ? " is-exc" : ""}`}
+                style={{ "--i": i } as React.CSSProperties}
+              >
+                <span className="lp3-agent__ic">{c.exc ? "!" : "✓"}</span>
+                <span className="lp3-agent__k">{c.k}</span>
+                <span className="lp3-agent__v">{c.v}</span>
+              </li>
+            ))}
+          </ul>
+          <div className="lp3-agent__foot">
+            <span>Pronto para aprovar</span>
+            <span className="lp3-agent__btn">
+              Aprovar
+              <span className="lp3-agent__cursor" />
+            </span>
+          </div>
         </div>
-        <ul className="lp2-scene__checks">
-          <li className="lp2-scene__row lp2-scene__row--a">
-            <span className="lp2-scene__tick">✓</span>
-            <span className="lp2-scene__bar lp2-scene__bar--w60" />
-          </li>
-          <li className="lp2-scene__row lp2-scene__row--b">
-            <span className="lp2-scene__tick">✓</span>
-            <span className="lp2-scene__bar lp2-scene__bar--w75" />
-          </li>
-          <li className="lp2-scene__row lp2-scene__row--c">
-            <span className="lp2-scene__tick">✓</span>
-            <span className="lp2-scene__bar lp2-scene__bar--w50" />
-          </li>
-        </ul>
-        <span className="lp2-scene__stamp">Aprovado</span>
+      </div>
+
+      <div className="lp3-chip">
+        <span className="lp3-chip__dot" />
+        Exceção enviada para a equipe
       </div>
     </div>
   );

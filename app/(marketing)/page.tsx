@@ -13,6 +13,7 @@ import "../../components/marketing/home/home.css";
 import "../../components/marketing/home/visuais-problema-prova.css";
 import "../../components/marketing/home/visuais-mockups.css";
 import "../../components/marketing/home/visuais-metodo.css";
+import "../../components/marketing/home/visuais-premium.css";
 
 const SITE_URL = "https://preceptorstudio.com";
 const TITLE = "PRECEPTOR! Studio | Agentes de IA que sua equipe aprova";

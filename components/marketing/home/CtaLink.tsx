@@ -1,7 +1,7 @@
 const CTA_TEXTO = "Quero meu diagnóstico de 30 min";
 
-/* CTA único da página: link de texto grande, sublinhado que cresce no hover
-   e seta que anda 4px. Sempre leva ao formulário. */
+/* CTA único da página: pílula com a seta num círculo próprio, que anda no
+   hover e afunda no clique. Sempre leva ao formulário. */
 export function CtaLink({ onNavy = false }: { onNavy?: boolean }) {
   return (
     <a href="#contato" className={`lp2-cta${onNavy ? " lp2-cta--navy" : ""}`}>
