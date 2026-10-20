@@ -547,3 +547,25 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
 .mb-janela__barra b { margin-left: auto; font-family: var(--f-mono, ui-monospace, monospace); font-size: 10.5px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #9AA0AE; }
 .mb-janela img { display: block; width: 100%; height: auto; }
 @media (max-width: 720px) { .mb-janela__barra span { display: none; } }
+
+/* Galeria: 2 em cima (larga + celular), 3 embaixo */
+@media (min-width: 900px) {
+  .mb-telas { grid-template-columns: repeat(6, 1fr); }
+  .mb-telas .mb-tela { grid-column: span 2; }
+  .mb-telas .mb-tela--larga { grid-column: span 4; }
+}
+.mb-telas .mb-tela:not(.mb-tela--larga):not(.mb-tela--fone) .mb-tela__moldura { aspect-ratio: 16 / 10; }
+
+/* Mini cenas do bento no mesmo formato das telas reais: janela branca */
+.mb-cena { padding: 30px 10px 10px; background: #fff; box-shadow: 0 18px 30px -18px rgba(0, 0, 0, 0.5); }
+.mb-cena::before { content: ""; position: absolute; top: 10px; left: 10px; width: 34px; height: 8px; background: radial-gradient(circle, #DADDE4 3.5px, transparent 4px) 0 0 / 12px 8px repeat-x; }
+.mb-cena::after { content: "Demonstração"; position: absolute; top: 7px; right: 10px; font-family: var(--f-mono, ui-monospace, monospace); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: #9AA0AE; }
+.mb-cena p { color: var(--mb-tinta) !important; }
+.mb-cena--doc p span { opacity: 1; color: #8A8FA0; }
+.mb-cena--doc .mb-cena__ok { color: var(--mb-teal-ink) !important; }
+@keyframes mb-cena-linha { 0%, 8% { background: transparent; } 15%, 80% { background: rgba(59, 202, 206, 0.16); } 95%, 100% { background: transparent; } }
+.mb-cena__scan { top: 22px; }
+.mb-cena--conf p { background: #F4F5F7; }
+.mb-cena--conf b { background: var(--mb-teal); color: #fff; }
+.mb-cena--chat .in { background: #F0F2F5; }
+.mb-cena--chat .out { color: var(--mb-navy) !important; }

@@ -7,8 +7,6 @@ import { Segmentos } from "./Segmentos";
 import { CountUp } from "./CountUp";
 import { CTA_MICROCOPY, CTA_TEXTO } from "./CtaLink";
 import { LeadForm } from "./LeadForm";
-import { MockClinica } from "./MockClinica";
-import { MockFinanceiro } from "./MockFinanceiro";
 
 /*
  * Home no molde da Mobbin (hero centralizado com ícones no título, caixa
@@ -20,13 +18,11 @@ const WHATS =
   "https://wa.me/5535999191919?text=Ol%C3%A1!%20Quero%20falar%20sobre%20a%20opera%C3%A7%C3%A3o%20da%20minha%20empresa.";
 
 const TELAS = [
-  { titulo: "Torre de expedição", sub: "Pedido, NF-e, CT-e e MDF-e do dia, com a fila do que precisa de uma pessoa", src: "/telas/torre.jpg", w: 1600, h: 1000, classe: "mb-tela--larga" },
+  { titulo: "DRE gerencial", sub: "Resultado do mês contra o mês e o ano anteriores, para uma transportadora", src: "/telas/dre.jpg", w: 1600, h: 1000, classe: "mb-tela--larga" },
   { titulo: "App do motorista", sub: "Entregas do dia e baixa com foto, no celular", src: "/telas/motorista.jpg", w: 780, h: 1560, classe: "mb-tela--fone" },
-];
-
-const FRENTES = [
-  { titulo: "Financeiro", sub: "Extrato conciliado com prova", Mock: MockFinanceiro, href: undefined as string | undefined },
-  { titulo: "Clínicas", sub: "WhatsApp da recepção em dia", Mock: MockClinica, href: "/medicina" },
+  { titulo: "Compras", sub: "Gasto por mês e por setor, sem planilha", src: "/telas/compras.jpg", w: 1600, h: 1000, classe: "" },
+  { titulo: "Caixa do mês", sub: "Quanto sobra, quanto falta receber e o que precisa de você", src: "/telas/caixa.jpg", w: 1600, h: 1000, classe: "" },
+  { titulo: "Pessoas e clima", sub: "eNPS e notas por tema, com respostas anônimas", src: "/telas/clima.jpg", w: 1600, h: 1000, classe: "" },
 ];
 
 const PASSOS = [
@@ -260,26 +256,6 @@ export function MbHome() {
                     <span>{t.sub}</span>
                   </figcaption>
                 </figure>
-              ))}
-            </div>
-            <div className="mb-frentes mb-frentes--2">
-              {FRENTES.map(({ titulo, sub, Mock, href }) => (
-                <article key={titulo} className="mb-card">
-                  <div className="mb-card__tela">
-                    <Mock />
-                  </div>
-                  <div className="mb-card__rodape">
-                    <div>
-                      <h3>{titulo}</h3>
-                      <p>{sub}</p>
-                    </div>
-                    {href ? (
-                      <Link href={href} className="mb-seta" aria-label={`Ver como funciona em ${titulo}`}>
-                        →
-                      </Link>
-                    ) : null}
-                  </div>
-                </article>
               ))}
             </div>
           </div>
