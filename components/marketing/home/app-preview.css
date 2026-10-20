@@ -1,0 +1,46 @@
+.ap { position: relative; z-index: 1; margin: 0; border-radius: 10px 10px 0 0; background: #fff; box-shadow: 0 20px 60px -24px rgba(0, 3, 61, 0.25), 0 0 0 1px rgba(0, 3, 61, 0.06); overflow: hidden; font-family: var(--f-body), system-ui, sans-serif; font-size: 13px; color: #2B2F45; }
+.ap__barra { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-bottom: 1px solid #ECEDF1; background: #F7F7F9; }
+.ap__pontos { display: inline-flex; gap: 6px; }
+.ap__pontos i { width: 10px; height: 10px; border-radius: 999px; background: #DCDDE3; }
+.ap__url { font-family: var(--f-mono); font-size: 11.5px; color: #80859A; }
+.ap__demo { margin-left: auto; font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #A3A7B7; }
+.ap__corpo { display: grid; grid-template-columns: 170px 1fr 300px; min-height: 380px; }
+.ap__lado { padding: 16px 12px; border-right: 1px solid #ECEDF1; background: #FBFBFC; }
+.ap__ws { margin: 0 0 14px; padding: 0 8px; font-weight: 600; color: #0B0D1F; }
+.ap__lado ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.ap__lado li { display: flex; justify-content: space-between; padding: 7px 8px; border-radius: 6px; color: #5A5F74; }
+.ap__lado li.is-on { background: #EEF0F4; color: #0B0D1F; font-weight: 500; }
+.ap__lado li b { padding: 0 6px; border-radius: 4px; background: #FFF1D6; color: #8A5A00; font-size: 11px; font-weight: 600; }
+.ap__main { padding: 18px 20px; min-width: 0; }
+.ap__cab { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.ap__titulo { margin: 0; font-size: 15px; font-weight: 600; color: #0B0D1F; }
+.ap__sub { margin: 2px 0 0; font-size: 12px; color: #80859A; }
+.ap__btn { display: inline-block; padding: 7px 12px; border-radius: 6px; background: #0B0D1F; color: #fff; font-size: 12px; font-weight: 500; white-space: nowrap; }
+.ap__btn--sec { background: #fff; color: #0B0D1F; box-shadow: inset 0 0 0 1px #D5D7E0; }
+.ap__abas { display: flex; gap: 18px; margin: 16px 0 0; border-bottom: 1px solid #ECEDF1; }
+.ap__abas span { padding: 0 0 9px; color: #80859A; font-size: 12.5px; }
+.ap__abas span.is-on { color: #0B0D1F; box-shadow: inset 0 -2px 0 #0B0D1F; font-weight: 500; }
+.ap__tab { width: 100%; border-collapse: collapse; margin-top: 4px; }
+.ap__tab th { padding: 10px 6px; text-align: left; font-weight: 500; font-size: 11.5px; color: #9095A8; border-bottom: 1px solid #ECEDF1; }
+.ap__tab td { padding: 10px 6px; border-bottom: 1px solid #F2F3F6; white-space: nowrap; }
+.ap__tab tr.is-ativo td { background: #F7F8FB; }
+.ap__mono { font-family: var(--f-mono); font-size: 12px; color: #0B0D1F; }
+.ap__st { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; }
+.ap__st::before { content: ""; width: 6px; height: 6px; border-radius: 999px; }
+.ap__st--ok { color: #1E7A5A; }
+.ap__st--ok::before { background: #2BA57A; }
+.ap__st--exc { color: #9A6200; }
+.ap__st--exc::before { background: #E3A12F; }
+.ap__det { padding: 18px 18px; border-left: 1px solid #ECEDF1; background: #FCFCFD; }
+.ap__det-tag { margin: 0; font-family: var(--f-mono); font-size: 11.5px; color: #80859A; }
+.ap__det-titulo { margin: 4px 0 14px; font-size: 14px; font-weight: 600; color: #0B0D1F; }
+.ap__campos { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.ap__campos li { display: grid; grid-template-columns: 18px 1fr; gap: 2px 8px; padding: 8px 10px; border-radius: 6px; box-shadow: inset 0 0 0 1px #ECEDF1; background: #fff; }
+.ap__campos li.is-erro { box-shadow: inset 0 0 0 1px #F1D39B; background: #FFFBF2; }
+.ap__ic { grid-row: span 2; display: grid; place-items: center; width: 18px; height: 18px; border-radius: 999px; background: #E6F4EE; color: #1E7A5A; font-size: 10px; font-weight: 700; }
+.is-erro .ap__ic { background: #FFEBC2; color: #9A6200; }
+.ap__k { font-size: 12px; color: #5A5F74; }
+.ap__v { font-family: var(--f-mono); font-size: 11.5px; color: #0B0D1F; }
+.ap__nota { margin: 12px 0; font-size: 12px; line-height: 1.5; color: #5A5F74; }
+.ap__acoes { display: flex; gap: 8px; justify-content: flex-end; }
+@media (max-width: 1023px) { .ap__corpo { grid-template-columns: 1fr; } .ap__lado, .ap__det { display: none; } }
