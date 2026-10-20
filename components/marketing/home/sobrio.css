@@ -24,16 +24,16 @@
 
 /* ─── Tipografia ──────────────────────────────────────────── */
 .lp2 .lp2-h1, .lp2 .lp2-h2 {
-  font-family: var(--f-serif), Georgia, serif !important;
-  font-weight: 400 !important;
-  letter-spacing: -0.02em !important;
+  font-family: var(--f-display) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.035em !important;
   color: var(--sb-tinta) !important;
 }
 .lp2 .lp2-h2 { font-size: clamp(2rem, 3.6vw, 3rem) !important; line-height: 1.1 !important; max-width: 22ch !important; }
 .lp2 .lp2-h3, .lp4-card__titulo { color: var(--sb-tinta) !important; font-family: var(--f-display) !important; font-weight: 600 !important; }
 .lp2 .lp2-lead { color: var(--sb-texto) !important; }
 .lp2 .lp2-micro { color: var(--sb-suave) !important; font-size: 13.5px !important; }
-.lp2-marca { background: none !important; color: inherit !important; -webkit-background-clip: initial !important; font-style: italic; }
+.lp2-marca { background: none !important; color: #12888E !important; -webkit-background-clip: initial !important; font-style: normal; }
 .lp2-marca::before { display: none !important; }
 .lp4-nota { display: none !important; }
 
@@ -89,7 +89,7 @@
 .sb-hero { display: grid; gap: 32px; align-items: end; }
 @media (min-width: 1024px) { .sb-hero { grid-template-columns: 1.35fr 1fr; gap: 72px; } }
 .lp2 .sb-hero__titulo { margin: 0 !important; max-width: 15ch; font-size: clamp(2.6rem, 5.2vw, 4.6rem) !important; line-height: 1.04 !important; text-wrap: balance; }
-.sb-hero__titulo em { font-style: italic; color: var(--sb-tinta); }
+.sb-hero__titulo em { font-style: normal; color: #12888E; }
 .sb-hero__lead { margin: 0 !important; max-width: 44ch !important; font-size: 17px !important; }
 .sb-hero__ctas { display: flex; flex-wrap: wrap; gap: 10px; margin: 24px 0 12px; }
 
@@ -196,21 +196,23 @@
 .lp2-antes-depois__rotulo { font-family: var(--f-mono) !important; font-size: 11.5px !important; letter-spacing: 0.12em !important; text-transform: uppercase; color: var(--sb-suave) !important; }
 .lp3-postit { font-family: var(--f-mono) !important; font-size: 11px !important; transform: rotate(3deg) !important; }
 
-/* ─── Prova ───────────────────────────────────────────────── */
+/* ─── Prova: card navy saturado, 99% e grade em teal ─────── */
 .lp4-exemplos > .lp2-container > .lp2-rotulo { display: block !important; text-align: left !important; }
 .lp4-exemplos .lp2-prova {
-  background: var(--sb-painel) !important;
-  border-radius: 10px !important;
-  box-shadow: inset 0 0 0 1px var(--sb-linha) !important;
+  position: relative;
+  color: #fff !important;
+  background: radial-gradient(ellipse 60% 80% at 85% 20%, rgba(59, 202, 206, 0.45), transparent 60%), linear-gradient(135deg, #0A1A8C 0%, #00033D 70%) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 40px 80px -30px rgba(0, 3, 61, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
   transform: none !important;
-  color: var(--sb-texto) !important;
 }
-.lp4-exemplos .lp2-prova__num { font-family: var(--f-serif), Georgia, serif !important; font-weight: 400 !important; color: var(--sb-tinta) !important; }
-.lp4-exemplos .lp2-prova__pre { color: var(--sb-suave) !important; }
-.lp4-exemplos .lp2-prova__pct { color: var(--sb-tinta) !important; }
-.lp4-exemplos .lp2-caso__texto { color: var(--sb-texto) !important; }
-.lp4-exemplos .lp2-prova__cel { background: #2A3150 !important; box-shadow: none !important; border-radius: 1px; }
-.lp4-exemplos .lp2-prova__cel--vazia { background: transparent !important; box-shadow: inset 0 0 0 1px #E3A12F !important; }
+.lp4-exemplos .lp2-prova .lp2-rotulo { color: #3BCACE !important; }
+.lp4-exemplos .lp2-prova__num { font-family: var(--f-display) !important; font-weight: 600 !important; color: #3BCACE !important; }
+.lp4-exemplos .lp2-prova__pre { font-family: var(--f-display) !important; color: #9FE7E9 !important; }
+.lp4-exemplos .lp2-prova__pct { color: #3BCACE !important; }
+.lp4-exemplos .lp2-caso__texto { color: #fff !important; }
+.lp4-exemplos .lp2-prova__cel { background: #3BCACE !important; box-shadow: none !important; border-radius: 2px; }
+.lp4-exemplos .lp2-prova__cel--vazia { background: transparent !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5) !important; }
 .lp4-prova__ic { display: none !important; }
 
 /* ─── FAQ: lista com linhas ───────────────────────────────── */
@@ -230,8 +232,8 @@
 
 /* Rodapé */
 .lp2 .lp2-footer { background: var(--sb-tinta) !important; border-top: 1px solid rgba(255, 255, 255, 0.08) !important; }
-.lp2-footer__marca { font-family: var(--f-serif), Georgia, serif !important; font-weight: 400 !important; -webkit-text-stroke: 1px rgba(255, 255, 255, 0.14) !important; letter-spacing: -0.03em !important; }
-.lp2-footer__assinatura { font-family: var(--f-serif), Georgia, serif !important; font-weight: 400 !important; }
+.lp2-footer__marca { font-weight: 700 !important; -webkit-text-stroke: 1px rgba(255, 255, 255, 0.14) !important; letter-spacing: -0.03em !important; }
+
 
 /* Ajustes */
 .lp2 .lp4-frentes__nota { transform: none !important; }
@@ -246,7 +248,7 @@
 .o3-hero { display: grid; gap: 40px; align-items: center; }
 @media (min-width: 1024px) { .o3-hero { grid-template-columns: 1fr 1.1fr; gap: 24px; } }
 .lp2 .o3-hero__titulo { margin: 0 !important; max-width: 13ch; font-size: clamp(2.5rem, 4.6vw, 4.1rem) !important; line-height: 1.05 !important; text-wrap: balance; }
-.o3-hero__titulo em { font-style: italic; }
+.o3-hero__titulo em { font-style: normal; color: #12888E; }
 .o3-hero__lead { margin: 22px 0 0 !important; max-width: 46ch !important; }
 .o3-hero__obj { position: relative; min-width: 0; }
 
