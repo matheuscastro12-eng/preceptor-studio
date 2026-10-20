@@ -4,7 +4,7 @@ import { createSupabaseServiceClient } from "@/lib/supabase";
 
 export async function PATCH() {
   try {
-    const supabase = getServerSupabase();
+    const supabase = await getServerSupabase();
     const {
       data: { user },
     } = await supabase.auth.getUser();

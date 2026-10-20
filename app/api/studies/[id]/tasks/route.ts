@@ -5,7 +5,8 @@ function apiError(error: unknown, status = 500) {
   return NextResponse.json({ error: error instanceof Error ? error.message : "Erro interno" }, { status });
 }
 
-export async function GET(_: Request, { params }: { params: { id: string } }) {
+export async function GET(_: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const supabase = createSupabaseServiceClient();
     const { data, error } = await supabase
@@ -22,7 +23,8 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
   }
 }
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const input = await req.json();
     const supabase = createSupabaseServiceClient();
@@ -45,7 +47,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   }
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const input = await req.json();
     const tasks = Array.isArray(input.tasks) ? input.tasks : [];

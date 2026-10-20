@@ -9,12 +9,10 @@ import {
 
 export const maxDuration = 60;
 
-export async function POST(
-  _req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function POST(_req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
-    const auth = getServerSupabase();
+    const auth = await getServerSupabase();
     const {
       data: { user },
     } = await auth.auth.getUser();

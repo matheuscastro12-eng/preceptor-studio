@@ -35,7 +35,7 @@ function initialsFromName(name: string, email: string) {
 
 async function fetchProfile(): Promise<SidebarProfile | undefined> {
   try {
-    const supabase = getServerSupabase();
+    const supabase = await getServerSupabase();
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -67,7 +67,7 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   // Middleware should already redirect anonymous users, but double-check for safety.
-  const supabase = getServerSupabase();
+  const supabase = await getServerSupabase();
   const {
     data: { user },
   } = await supabase.auth.getUser();

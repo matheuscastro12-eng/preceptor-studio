@@ -51,7 +51,7 @@ const FULLY_GATED_API_PREFIXES = [
 
 const MUTATION_METHODS = new Set(["POST", "PATCH", "PUT", "DELETE"]);
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Always refresh the Supabase session cookies.

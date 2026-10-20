@@ -10,7 +10,8 @@ function apiError(error: unknown, status = 500) {
 }
 
 // POST /api/ventures/:id/time  -> lança horas na venture
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const guard = await requireUser();
   if (guard) return guard;
   try {

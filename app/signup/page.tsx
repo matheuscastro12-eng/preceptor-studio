@@ -40,11 +40,12 @@ async function loadInvite(token: string | undefined): Promise<Invite | null> {
   }
 }
 
-export default async function SignupPage({
-  searchParams,
-}: {
-  searchParams: { token?: string };
-}) {
+export default async function SignupPage(
+  props: {
+    searchParams: Promise<{ token?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const invite = await loadInvite(searchParams.token);
 
   return (

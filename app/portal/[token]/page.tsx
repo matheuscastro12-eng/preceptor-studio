@@ -5,8 +5,8 @@ import { PortalShell } from "./PortalShell";
 export const dynamic = "force-dynamic";
 
 interface PortalPageProps {
-  params: { token: string };
-  searchParams: { tab?: string };
+  params: Promise<{ token: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }
 
 function ExpiredView({ reason }: { reason: string }) {
@@ -26,10 +26,9 @@ function ExpiredView({ reason }: { reason: string }) {
   );
 }
 
-export default async function PortalPage({
-  params,
-  searchParams,
-}: PortalPageProps) {
+export default async function PortalPage(props: PortalPageProps) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const supabase = createSupabaseServiceClient();
 
   const { data: tokenRow } = await supabase

@@ -43,7 +43,7 @@ function pickPatch(body: Record<string, unknown>): Partial<Record<AllowedField, 
 
 export async function GET() {
   try {
-    const sb = getServerSupabase();
+    const sb = await getServerSupabase();
     const {
       data: { user },
     } = await sb.auth.getUser();
@@ -80,7 +80,7 @@ export async function GET() {
 
 export async function PATCH(req: Request) {
   try {
-    const sb = getServerSupabase();
+    const sb = await getServerSupabase();
     const {
       data: { user },
     } = await sb.auth.getUser();

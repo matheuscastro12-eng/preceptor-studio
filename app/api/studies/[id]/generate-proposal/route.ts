@@ -53,9 +53,10 @@ function summarizeDiagnostic(study: StudyRow): string {
   return lines.join("\n");
 }
 
-export async function POST(_: Request, { params }: { params: { id: string } }) {
+export async function POST(_: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
-    const sb = getServerSupabase();
+    const sb = await getServerSupabase();
     const {
       data: { user },
     } = await sb.auth.getUser();

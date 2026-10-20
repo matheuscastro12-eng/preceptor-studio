@@ -4,7 +4,7 @@ import { getServerSupabase } from "@/lib/supabase/server";
 
 export async function GET(req: NextRequest) {
   try {
-    const auth = getServerSupabase();
+    const auth = await getServerSupabase();
     const {
       data: { user },
     } = await auth.auth.getUser();

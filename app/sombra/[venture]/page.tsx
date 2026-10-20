@@ -7,7 +7,8 @@ import { TIPOS_DA_SOMBRA } from "@/lib/opera/sombra";
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Sombra · OPERA", robots: { index: false, follow: false } };
 
-export default async function SombraPage({ params }: { params: { venture: string } }) {
+export default async function SombraPage(props: { params: Promise<{ venture: string }> }) {
+  const params = await props.params;
   if (!slugValido(params.venture)) notFound();
   const tipos = TIPOS_DA_SOMBRA[params.venture];
   if (!tipos) notFound();

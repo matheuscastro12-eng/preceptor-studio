@@ -12,7 +12,7 @@ function apiError(error: unknown, status = 500) {
 }
 
 async function requireOwnerOrAdmin() {
-  const supabase = getServerSupabase();
+  const supabase = await getServerSupabase();
   const {
     data: { user },
   } = await supabase.auth.getUser();

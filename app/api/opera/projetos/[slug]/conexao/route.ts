@@ -2,8 +2,9 @@ import { NextResponse } from 'next/server';
 import { acessoOpera, corpo, sha, validarPublicacao } from '@/lib/opera/conexao';
 import { operaDB } from '@/lib/opera/server';
 export const dynamic='force-dynamic';
-export async function GET(req:Request,{params}:{params:{slug:string}}) {
-  const a=await acessoOpera(params.slug,'ler',req); if(!a) return NextResponse.json({error:'Sem acesso a esta construção.'},{status:403});
+export async function GET(req:Request, props:{params: Promise<{slug:string}>}) {
+  const params = await props.params;
+  const a=await acessoOpera(params.slug,'ler',req);if(!a) return NextResponse.json({error:'Sem acesso a esta construção.'},{status:403});
   const db=operaDB();
   const {data:p,error}=await db.from('opera_projetos').select('construcao_id,venture_id,processo_slug,ultimo_contato').eq('slug',params.slug).single();
   if(error) return NextResponse.json({error:'Aplique a migração de conexão OPERA.'},{status:503});
@@ -11,8 +12,9 @@ export async function GET(req:Request,{params}:{params:{slug:string}}) {
   if(e) return NextResponse.json({error:'Não foi possível consultar as decisões.'},{status:503});
   return NextResponse.json({...p,decisoes: a.integracao ? decisoes?.filter(d=>d.estado==='pendente') : decisoes},{headers:{'Cache-Control':'no-store'}});
 }
-export async function POST(req:Request,{params}:{params:{slug:string}}) {
-  const a=await acessoOpera(params.slug,'publicar',req); if(!a) return NextResponse.json({error:'Publicação não autorizada.'},{status:403});
+export async function POST(req:Request, props:{params: Promise<{slug:string}>}) {
+  const params = await props.params;
+  const a=await acessoOpera(params.slug,'publicar',req);if(!a) return NextResponse.json({error:'Publicação não autorizada.'},{status:403});
   try {
     const v=await corpo(req); validarPublicacao(v);
     const db=operaDB(); const {data:p}=await db.from('opera_projetos').select('construcao_id').eq('slug',params.slug).single();
@@ -23,8 +25,9 @@ export async function POST(req:Request,{params}:{params:{slug:string}}) {
     return NextResponse.json({id:data});
   } catch(e) {return NextResponse.json({error:e instanceof Error?e.message:'Publicação inválida.'},{status:400});}
 }
-export async function PATCH(req:Request,{params}:{params:{slug:string}}) {
-  const a=await acessoOpera(params.slug,'publicar',req); if(!a) return NextResponse.json({error:'Conexão não autorizada.'},{status:403});
+export async function PATCH(req:Request, props:{params: Promise<{slug:string}>}) {
+  const params = await props.params;
+  const a=await acessoOpera(params.slug,'publicar',req);if(!a) return NextResponse.json({error:'Conexão não autorizada.'},{status:403});
   const {error}=await operaDB().from('opera_projetos').update({ultimo_contato:new Date().toISOString()}).eq('slug',params.slug);
   return NextResponse.json(error?{error:'Falha ao registrar contato.'}:{ok:true},{status:error?503:200});
 }

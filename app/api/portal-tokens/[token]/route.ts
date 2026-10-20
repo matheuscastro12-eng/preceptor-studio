@@ -8,10 +8,8 @@ function apiError(error: unknown, status = 500) {
   );
 }
 
-export async function DELETE(
-  _req: Request,
-  { params }: { params: { token: string } }
-) {
+export async function DELETE(_req: Request, props: { params: Promise<{ token: string }> }) {
+  const params = await props.params;
   try {
     const supabase = createSupabaseServiceClient();
     const { error } = await supabase

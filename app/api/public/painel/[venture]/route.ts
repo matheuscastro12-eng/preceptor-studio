@@ -25,7 +25,8 @@ function clienteSemCache() {
 
 const SLUG = /^[a-z0-9][a-z0-9-]{1,60}$/;
 
-export async function GET(_req: NextRequest, { params }: { params: { venture: string } }) {
+export async function GET(_req: NextRequest, props: { params: Promise<{ venture: string }> }) {
+  const params = await props.params;
   const venture = String(params?.venture ?? "").toLowerCase();
   if (!SLUG.test(venture)) return new NextResponse("Painel não encontrado.", { status: 404 });
   try {

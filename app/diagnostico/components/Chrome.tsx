@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 interface ChromeProps {
   onHome?: () => void;
   cta?: string;
@@ -22,7 +24,7 @@ export function Chrome({ onHome, cta = "Fazer diagnóstico", onCta, inset }: Chr
         <img src="/brand/logo-horizontal.png" alt="PRECEPTOR!" />
       </a>
       <nav className="bar__nav">
-        <a href="/">Voltar ao site</a>
+        <Link href="/">Voltar ao site</Link>
       </nav>
       <button type="button" className="btn-pill btn-pill--top" onClick={onCta}>
         {cta}

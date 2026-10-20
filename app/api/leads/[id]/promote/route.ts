@@ -20,7 +20,8 @@ const STATUS_TO_STAGE: Record<string, string> = {
 };
 
 // POST /api/leads/:id/promote -> cria (ou vincula) uma venture a partir do lead.
-export async function POST(_req: Request, { params }: { params: { id: string } }) {
+export async function POST(_req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const guard = await requireUser();
   if (guard) return guard;
   try {

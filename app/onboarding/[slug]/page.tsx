@@ -14,7 +14,8 @@ export function generateStaticParams() {
   return onboardingsRegistrados().map((o) => ({ slug: o.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const def = onboardingDe(params.slug);
   return {
     title: def ? `Onboarding ${def.cliente}` : "Onboarding",
@@ -22,7 +23,8 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
   };
 }
 
-export default function OnboardingPage({ params }: { params: { slug: string } }) {
+export default async function OnboardingPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const def = onboardingDe(params.slug);
   if (!def) notFound();
   return (

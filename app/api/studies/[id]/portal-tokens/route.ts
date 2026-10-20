@@ -35,10 +35,8 @@ async function guardStudyAccess(studyId: string) {
   return { ok: true as const, admin };
 }
 
-export async function GET(
-  _req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(_req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const guard = await guardStudyAccess(params.id);
   if (!guard.ok) return guard.res;
   try {
@@ -54,10 +52,8 @@ export async function GET(
   }
 }
 
-export async function POST(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function POST(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const guard = await guardStudyAccess(params.id);
   if (!guard.ok) return guard.res;
   try {

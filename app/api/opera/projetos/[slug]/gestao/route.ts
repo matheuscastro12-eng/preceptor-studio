@@ -4,8 +4,9 @@ import { acessoOpera, corpo, sha, uuid } from '@/lib/opera/conexao';
 import { operaDB } from '@/lib/opera/server';
 import { slugValido } from '@/lib/opera/model';
 export const dynamic='force-dynamic';
-export async function POST(req:Request,{params}:{params:{slug:string}}) {
-  const a=await acessoOpera(params.slug,'gerenciar',req); if(!a) return NextResponse.json({error:'Somente o responsável ou administrador pode configurar.'},{status:403});
+export async function POST(req:Request, props:{params: Promise<{slug:string}>}) {
+  const params = await props.params;
+  const a=await acessoOpera(params.slug,'gerenciar',req);if(!a) return NextResponse.json({error:'Somente o responsável ou administrador pode configurar.'},{status:403});
   const db=operaDB();
   try {
     const v=await corpo(req,15000); let error:any; let resposta:any={ok:true};

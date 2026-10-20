@@ -10,7 +10,7 @@ export interface AuthedUser {
 // Retorna o usuário autenticado ou null.
 export async function getAuthedUser(): Promise<AuthedUser | null> {
   try {
-    const supabase = getServerSupabase();
+    const supabase = await getServerSupabase();
     const {
       data: { user },
     } = await supabase.auth.getUser();

@@ -10,7 +10,7 @@ function apiError(error: unknown, status = 500) {
 }
 
 async function getRoleAndUser() {
-  const auth = getServerSupabase();
+  const auth = await getServerSupabase();
   const {
     data: { user },
   } = await auth.auth.getUser();
@@ -24,10 +24,8 @@ async function getRoleAndUser() {
   return { user, role: (profile?.role as string | undefined) || "member" };
 }
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const { user, role } = await getRoleAndUser();
     if (!user) return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
@@ -73,10 +71,8 @@ export async function PATCH(
   }
 }
 
-export async function DELETE(
-  _req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(_req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const { user, role } = await getRoleAndUser();
     if (!user) return NextResponse.json({ error: "Não autenticado" }, { status: 401 });

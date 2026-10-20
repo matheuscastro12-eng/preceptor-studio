@@ -43,7 +43,7 @@ const SPRINT_CAPACITY_HOURS = 80;
 export default async function TimePage() {
   const supabase = createSupabaseServiceClient();
 
-  const sb = getServerSupabase();
+  const sb = await getServerSupabase();
   const {
     data: { user },
   } = await sb.auth.getUser();

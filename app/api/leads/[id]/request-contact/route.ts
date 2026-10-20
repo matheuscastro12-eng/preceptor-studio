@@ -6,7 +6,8 @@ type Internal = {
   recommendation?: string;
 };
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     // Source is optional metadata only; we don't act on it.
     try {

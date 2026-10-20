@@ -12,7 +12,8 @@ function apiError(error: unknown, status = 500) {
 const COST_TYPES = new Set(["ia_anthropic", "infra", "saas", "freelance", "outro"]);
 
 // POST /api/ventures/:id/cost  -> lança um custo na venture
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const guard = await requireUser();
   if (guard) return guard;
   try {

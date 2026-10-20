@@ -4,8 +4,10 @@ import { acessoOpera,saudeContato } from '@/lib/opera/conexao';
 import { operaDB } from '@/lib/opera/server';
 import { OperaHeader } from '@/components/opera/OperaUI';
 import ConexaoProjeto from '@/components/opera/ConexaoProjeto';
+
 export const dynamic='force-dynamic';
-export default async function Conexao({params}:{params:{slug:string}}){
+export default async function Conexao(props:{params: Promise<{slug:string}>}) {
+  const params = await props.params;
   const a=await acessoOpera(params.slug,'ler');if(!a)notFound();const db=operaDB();
   const [p,pubs,decs,ent,ventures,membros,chaves,decidir,publicar]=await Promise.all([
     db.from('opera_projetos').select('*').eq('slug',params.slug).single(),

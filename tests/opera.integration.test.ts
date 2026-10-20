@@ -60,10 +60,10 @@ test("cadastro → publicação → colheita, com acesso e versões validados", 
     assert.equal((await cadastrar(req("POST", projeto))).status, 409);
     const snapshot = { atualizadoEm: "2026-09-09T12:00:00.000Z", etapa: "corpus", resumo: "Coleta iniciada", proximaAcao: "Revisar casos", testes: null, corpus: null, achados: [], atividades: [] };
     const envelope={snapshot,eventoId:'33333333-3333-4333-8333-333333333333',construcaoId,artefatos:[]};
-    assert.equal((await publicar(req("POST", envelope), { params: { slug: projeto.slug } })).status, 200);
-    assert.equal((await publicar(req("POST", envelope), { params: { slug: projeto.slug } })).status, 200);
-    assert.equal((await publicar(req("POST", {...envelope,snapshot:{...snapshot,resumo:'alterado'}}), { params: { slug: projeto.slug } })).status, 409);
-    assert.equal((await painelLegado(new NextRequest("http://localhost"), { params: { venture: projeto.slug } })).status, 404);
+    assert.equal((await publicar(req("POST", envelope), { params: Promise.resolve({ slug: projeto.slug }) })).status, 200);
+    assert.equal((await publicar(req("POST", envelope), { params: Promise.resolve({ slug: projeto.slug }) })).status, 200);
+    assert.equal((await publicar(req("POST", {...envelope,snapshot:{...snapshot,resumo:'alterado'}}), { params: Promise.resolve({ slug: projeto.slug }) })).status, 409);
+    assert.equal((await painelLegado(new NextRequest("http://localhost"), { params: Promise.resolve({ venture: projeto.slug }) })).status, 404);
     const enviar = (body: any) => colher(new NextRequest("http://localhost/api/public/colheita", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }));
     const body = { venture: projeto.slug, instrumento_versao: 1, nome: "Operador", grupos: ["operacao"], respostas: { fluxo: { texto: "O pedido chega e é conferido." }, q1: { texto: "não pertence a este projeto" } } };
     assert.equal((await enviar({ ...body, instrumento_versao: 2 })).status, 409);

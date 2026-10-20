@@ -37,8 +37,9 @@ function mostrar(c: Campo | undefined, v: unknown): React.ReactNode {
   return String(v);
 }
 
-export default async function OnboardingRespostas({ params }: { params: { slug: string } }) {
-  if (!await membroOpera()) redirect(`/login?redirect=/dashboard/onboarding/${params.slug}`);
+export default async function OnboardingRespostas(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
+  if (!(await membroOpera())) redirect(`/login?redirect=/dashboard/onboarding/${params.slug}`);
   const def = onboardingDe(params.slug);
   if (!def) notFound();
   const campos = new Map(todosOsCampos(def).map((c) => [c.id, c]));

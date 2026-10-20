@@ -52,10 +52,8 @@ async function callImagen(
   return { images, mimeType };
 }
 
-export async function GET(
-  _req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(_req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const supabase = createSupabaseServiceClient();
     const { data, error } = await supabase
@@ -71,10 +69,8 @@ export async function GET(
   }
 }
 
-export async function POST(
-  _req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function POST(_req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const apiKey = (process.env.ANTHROPIC_API_KEY || process.env.GOOGLE_API_KEY);
     if (!apiKey) {

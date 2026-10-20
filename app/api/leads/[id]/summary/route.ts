@@ -13,9 +13,10 @@ function apiError(error: unknown, status = 500) {
 }
 
 // Regenera manualmente a summary_line de um lead. Requer usuário autenticado.
-export async function POST(_req: Request, { params }: { params: { id: string } }) {
+export async function POST(_req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
-    const auth = getServerSupabase();
+    const auth = await getServerSupabase();
     const {
       data: { user },
     } = await auth.auth.getUser();

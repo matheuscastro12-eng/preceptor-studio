@@ -13,12 +13,10 @@ interface Body {
   answer?: string;
 }
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function POST(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
-    const auth = getServerSupabase();
+    const auth = await getServerSupabase();
     const {
       data: { user },
     } = await auth.auth.getUser();

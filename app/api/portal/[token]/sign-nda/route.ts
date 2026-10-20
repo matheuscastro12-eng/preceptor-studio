@@ -9,10 +9,8 @@ function apiError(error: unknown, status = 500) {
   );
 }
 
-export async function POST(
-  req: Request,
-  { params }: { params: { token: string } }
-) {
+export async function POST(req: Request, props: { params: Promise<{ token: string }> }) {
+  const params = await props.params;
   // Protege contra brute force de tokens de portal.
   const limited = await enforceRateLimit(req, "sign_nda", 10, 1);
   if (limited) return limited;

@@ -42,9 +42,9 @@ test('IA exige consentimento, valida citação e não dá acesso de integração
     assert.equal((await analisar(req({ transcricao, consentimento: false }))).status, 400); assert.equal(chamadasIA, 0);
     assert.equal((await analisar(req({ transcricao, consentimento: true }))).status, 200);
     inventar = true; assert.equal((await analisar(req({ transcricao, consentimento: true }))).status, 502);
-    assert.equal((await registrar(req({}, 'opr_token'), { params: { slug: 'teste' } })).status, 403);
-    assert.equal((await baixar(req({}, 'opr_token'), { params: { slug: 'teste' } })).status, 403);
-    assert.equal((await registrar(req({}), { params: { slug: 'teste' } })).status, 403);
+    assert.equal((await registrar(req({}, 'opr_token'), { params: Promise.resolve({ slug: 'teste' }) })).status, 403);
+    assert.equal((await baixar(req({}, 'opr_token'), { params: Promise.resolve({ slug: 'teste' }) })).status, 403);
+    assert.equal((await registrar(req({}), { params: Promise.resolve({ slug: 'teste' }) })).status, 403);
     delete process.env.ANTHROPIC_API_KEY;
     assert.equal((await analisar(req({ transcricao, consentimento: true }))).status, 503);
   } finally { global.fetch = original; nomes.forEach((k, i) => { if (env[i] === undefined) delete process.env[k]; else process.env[k] = env[i]; }); }

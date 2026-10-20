@@ -4,10 +4,11 @@ import { getServerSupabase } from "@/lib/supabase/server";
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { id: string; version_id: string } }
+  props: { params: Promise<{ id: string; version_id: string }> }
 ) {
+  const params = await props.params;
   try {
-    const auth = getServerSupabase();
+    const auth = await getServerSupabase();
     const {
       data: { user },
     } = await auth.auth.getUser();

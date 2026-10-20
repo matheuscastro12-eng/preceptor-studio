@@ -5,7 +5,8 @@ function apiError(error: unknown, status = 500) {
   return NextResponse.json({ error: error instanceof Error ? error.message : "Erro interno" }, { status });
 }
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const patch = await req.json();
     const supabase = createSupabaseServiceClient();
@@ -23,7 +24,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   }
 }
 
-export async function DELETE(_: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const supabase = createSupabaseServiceClient();
     const { error } = await supabase.from("tasks").delete().eq("id", params.id);

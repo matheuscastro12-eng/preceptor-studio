@@ -5,11 +5,13 @@ import { membroOpera, projetoOpera, evidenciaProjeto, operaDB } from "@/lib/oper
 import { slugValido } from "@/lib/opera/model";
 import { OperaHeader, PainelProjeto, DataOpera } from "@/components/opera/OperaUI";
 import { acessoOpera, saudeContato } from '@/lib/opera/conexao';
+
 export const dynamic = "force-dynamic";
-export default async function Projeto({ params }: { params: { slug: string } }) {
-  if (!await membroOpera()) redirect("/login?redirect=/dashboard/opera");
+export default async function Projeto(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
+  if (!(await membroOpera())) redirect("/login?redirect=/dashboard/opera");
   if (!slugValido(params.slug)) notFound();
-  if(!await acessoOpera(params.slug,'ler')) notFound();
+  if(!(await acessoOpera(params.slug,'ler'))) notFound();
   const p = await projetoOpera(params.slug);
   if (!p) notFound();
   const ev = await evidenciaProjeto(p.slug);

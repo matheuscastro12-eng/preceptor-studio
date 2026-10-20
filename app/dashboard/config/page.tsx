@@ -13,7 +13,7 @@ interface ProfileRow {
 }
 
 export default async function ConfigPage() {
-  const sb = getServerSupabase();
+  const sb = await getServerSupabase();
   const admin = createSupabaseServiceClient();
 
   const {

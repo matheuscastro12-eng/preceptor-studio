@@ -33,9 +33,10 @@ interface DiagnosticInternal {
 // Lê o diagnóstico do lead e devolve um briefing inicial de estudo (best-effort).
 // Requer usuário autenticado. Nunca derruba o fluxo: se o Gemini falhar, devolve
 // um fallback determinístico com status 200.
-export async function POST(_req: Request, { params }: { params: { id: string } }) {
+export async function POST(_req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
-    const auth = getServerSupabase();
+    const auth = await getServerSupabase();
     const {
       data: { user },
     } = await auth.auth.getUser();

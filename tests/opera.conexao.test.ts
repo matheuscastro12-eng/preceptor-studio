@@ -24,6 +24,6 @@ test('membro sem vínculo e integração não podem decidir; token é limitado a
     assert.equal(await acessoOpera('projeto-a','ler',req('pessoa')),null);
     assert.ok(await acessoOpera('projeto-a','publicar',req('opr_token')));
     assert.equal(await acessoOpera('projeto-b','publicar',req('opr_token')),null);
-    assert.equal((await decidir(req('opr_token'),{params:{slug:'projeto-a'}})).status,403);
+    assert.equal((await decidir(req('opr_token'),{params:Promise.resolve({slug:'projeto-a'})})).status,403);
   }finally{global.fetch=original;if(url===undefined)delete process.env.NEXT_PUBLIC_SUPABASE_URL;else process.env.NEXT_PUBLIC_SUPABASE_URL=url;if(key===undefined)delete process.env.SUPABASE_SERVICE_ROLE_KEY;else process.env.SUPABASE_SERVICE_ROLE_KEY=key;}
 });

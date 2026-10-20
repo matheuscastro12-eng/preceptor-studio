@@ -6,11 +6,12 @@
 // é defesa em profundidade (bloqueia frame embedding, objetos, e restringe origens).
 const ContentSecurityPolicy = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+  // GA4 e Meta Pixel: só carregam após consentimento (components/ConsentManager.tsx).
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://connect.facebook.net",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https://fonts.gstatic.com",
-  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://generativelanguage.googleapis.com",
+  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://generativelanguage.googleapis.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://www.facebook.com",
   "frame-ancestors 'none'",
   "object-src 'none'",
   "base-uri 'self'",
@@ -31,13 +32,11 @@ const securityHeaders = [
 ];
 
 const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: [
-      "puppeteer",
-      "puppeteer-core",
-      "@sparticuz/chromium-min",
-    ],
-  },
+  serverExternalPackages: [
+    "puppeteer",
+    "puppeteer-core",
+    "@sparticuz/chromium-min",
+  ],
   // Painel de construcao do OPERA: /painel/<venture> serve o HTML publicado pela venture.
   async rewrites() {
     return { beforeFiles: [{ source: "/painel/oasis-cte", destination: "/api/public/painel/oasis-cte" }, { source: "/painel/mtor", destination: "/api/public/painel/mtor" }] };
@@ -49,13 +48,6 @@ const nextConfig = {
         headers: securityHeaders,
       },
     ];
-  },
-  // Evita que o webpack tente embutir o tar do chromium
-  webpack: (config) => {
-    config.resolve.alias = {
-      ...(config.resolve.alias || {}),
-    };
-    return config;
   },
 };
 

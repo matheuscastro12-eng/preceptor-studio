@@ -6,11 +6,12 @@ import { listarProjetos } from '@/lib/opera/server';
 
 export const dynamic = "force-dynamic";
 
-export default async function VentureDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function VentureDetailPage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
   const detail = await getVentureDetail(params.id);
   if (!detail) notFound();
   const {projetos}=await listarProjetos();

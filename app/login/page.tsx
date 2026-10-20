@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function LoginPage() {
-  const supabase = getServerSupabase();
+  const supabase = await getServerSupabase();
   const { data: { user } } = await supabase.auth.getUser();
   if (user) redirect("/dashboard");
 

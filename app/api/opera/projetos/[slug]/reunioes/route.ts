@@ -3,7 +3,8 @@ import { acessoOpera, corpo, sha, uuid } from '@/lib/opera/conexao';
 import { operaDB } from '@/lib/opera/server';
 import { validarReuniao, fonteDaReuniao } from '@/lib/opera/reuniao';
 export const dynamic = 'force-dynamic';
-export async function GET(req: Request, { params }: { params: { slug: string } }) {
+export async function GET(req: Request, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const a = await acessoOpera(params.slug, 'ler', req);
   if (!a || a.integracao) return NextResponse.json({ error: 'Acesso restrito aos membros deste projeto.' }, { status: 403 });
   const id = new URL(req.url).searchParams.get('fonte');
@@ -13,7 +14,8 @@ export async function GET(req: Request, { params }: { params: { slug: string } }
   if (!data) return NextResponse.json({ error: 'Fonte não encontrada.' }, { status: 404 });
   return new Response(fonteDaReuniao(data, `${data.id} · sha256:${data.fonte_hash} · autor:${data.criado_por} · ${data.criado_em}`), { headers: { 'Content-Type': 'text/markdown; charset=utf-8', 'Content-Disposition': `attachment; filename="reuniao-${data.id}.md"`, 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
 }
-export async function POST(req: Request, { params }: { params: { slug: string } }) {
+export async function POST(req: Request, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const a = await acessoOpera(params.slug, 'publicar', req);
   if (!a || a.integracao) return NextResponse.json({ error: 'Somente operadores e revisores do projeto podem registrar reuniões.' }, { status: 403 });
   let v;

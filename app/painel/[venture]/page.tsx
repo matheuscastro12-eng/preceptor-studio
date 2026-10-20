@@ -4,9 +4,11 @@ import { projetoOpera, operaDB } from "@/lib/opera/server";
 import { slugValido } from "@/lib/opera/model";
 import { OperaHeader, PainelProjeto } from "@/components/opera/OperaUI";
 import "@/app/dashboard/opera/opera.css";
+
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Painel de construção · OPERA", robots: { index: false, follow: false } };
-export default async function Painel({ params }: { params: { venture: string } }) {
+export default async function Painel(props: { params: Promise<{ venture: string }> }) {
+  const params = await props.params;
   if (!slugValido(params.venture)) notFound();
   const p = await projetoOpera(params.venture);
   if (!p) {

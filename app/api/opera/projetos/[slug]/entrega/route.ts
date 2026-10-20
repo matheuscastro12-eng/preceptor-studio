@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 import { acessoOpera, corpo, uuid } from '@/lib/opera/conexao';
 import { operaDB } from '@/lib/opera/server';
 export const dynamic='force-dynamic';
-export async function POST(req:Request,{params}:{params:{slug:string}}) {
+export async function POST(req:Request, props:{params: Promise<{slug:string}>}) {
+  const params = await props.params;
   try {
     const v=await corpo(req,50000);
     const a=await acessoOpera(params.slug,v.aceitar?'decidir':'publicar',req);

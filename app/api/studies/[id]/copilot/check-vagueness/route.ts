@@ -18,10 +18,10 @@ interface VaguenessResult {
 
 export async function POST(
   req: NextRequest,
-  _ctx: { params: { id: string } }
+  _ctx: { params: Promise<{ id: string }> }
 ) {
   try {
-    const auth = getServerSupabase();
+    const auth = await getServerSupabase();
     const {
       data: { user },
     } = await auth.auth.getUser();

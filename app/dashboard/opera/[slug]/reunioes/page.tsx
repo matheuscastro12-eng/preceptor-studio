@@ -5,11 +5,13 @@ import { acessoOpera } from '@/lib/opera/conexao';
 import { OperaHeader, DataOpera } from '@/components/opera/OperaUI';
 import ReunioesProjeto from '@/components/opera/ReunioesProjeto';
 import { CAMPOS_REUNIAO, type CampoReuniao } from '@/lib/opera/reuniao';
+
 export const dynamic = 'force-dynamic';
-export default async function Reunioes({ params }: { params: { slug: string } }) {
-  if (!await membroOpera()) redirect('/login');
-  if (!await acessoOpera(params.slug, 'ler')) notFound();
-  const podeRegistrar = !!await acessoOpera(params.slug, 'publicar');
+export default async function Reunioes(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
+  if (!(await membroOpera())) redirect('/login');
+  if (!(await acessoOpera(params.slug, 'ler'))) notFound();
+  const podeRegistrar = !!(await acessoOpera(params.slug, 'publicar'));
   const { data, error } = await operaDB().from('opera_reunioes').select('*').eq('projeto', params.slug).order('criado_em', { ascending: false }).limit(50);
   return <><Link className="op-back" href={`/dashboard/opera/${params.slug}`}>← Construção</Link><OperaHeader titulo="O que a conversa revelou." descricao="Reuniões alimentam o contexto comercial e técnico. A fonte permanece privada, com leitura rastreável e lacunas explícitas." />
     <p className="op-note">Baixe a fonte e leve ao Construtor com <code>opera-construtor comecar --dir /caminho/solucao --fonte /caminho/reuniao.md --manifesto &lt;o da página de conexão&gt;</code>: a pasta nasce já ligada a este projeto. O manifesto está em <b>Conexão</b>, com o comando montado. A leitura não substitui corpus validado, aprovação de etapas nem aceite da entrega. Novas reuniões não sobrescrevem o escopo ou o instrumento existente.</p>

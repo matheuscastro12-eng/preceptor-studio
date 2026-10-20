@@ -3,9 +3,10 @@ import { Plus, ArrowRight, Sprout, GitBranch } from "lucide-react";
 import { listarProjetos, membroOpera } from "@/lib/opera/server";
 import { redirect } from "next/navigation";
 import { OperaHeader, OperaNav, ProjetoCard } from "@/components/opera/OperaUI";
+
 export const dynamic = "force-dynamic";
 export default async function OperaPage() {
-  if (!await membroOpera()) redirect("/login?redirect=/dashboard/opera");
+  if (!(await membroOpera())) redirect("/login?redirect=/dashboard/opera");
   const { projetos, aviso } = await listarProjetos();
   return <><OperaHeader titulo="O trabalho, à vista." descricao="Da primeira pergunta à operação. Acompanhe cada construção, reúna evidências e encontre o próximo movimento."><Link className="op-button" href="/dashboard/opera/novo"><Plus size={16} /> Novo projeto</Link></OperaHeader><OperaNav />
     <section className="op-intro"><div><div className="op-eyebrow">CÉREBRO DA OPERAÇÃO</div><h2>Cada projeto com uma casa.</h2><p>Colheita, construção e revisão no mesmo lugar. O que a equipe sabe fica visível para quem precisa agir.</p></div><div className="op-intro-path">Colher <ArrowRight size={14} /> Construir <ArrowRight size={14} /> Verificar</div></section>

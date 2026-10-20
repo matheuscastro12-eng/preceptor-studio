@@ -143,7 +143,7 @@ export function LeadForm() {
       ? { "aria-invalid": true as const, "aria-describedby": `${IDS[c]}-erro` }
       : { "aria-invalid": false as const };
 
-  const Erro = ({ c }: { c: Campo }) =>
+  const erro = (c: Campo) =>
     errors[c] ? (
       <p id={`${IDS[c]}-erro`} className="lp2-field__erro">
         {errors[c]}
@@ -166,7 +166,7 @@ export function LeadForm() {
           required
           {...erroProps("nome")}
         />
-        <Erro c="nome" />
+        {erro("nome")}
       </div>
 
       <div className="lp2-form__row">
@@ -184,7 +184,7 @@ export function LeadForm() {
             required
             {...erroProps("email")}
           />
-          <Erro c="email" />
+          {erro("email")}
         </div>
         <div className="lp2-field">
           <label htmlFor={IDS.telefone}>WhatsApp</label>
@@ -200,7 +200,7 @@ export function LeadForm() {
             required
             {...erroProps("telefone")}
           />
-          <Erro c="telefone" />
+          {erro("telefone")}
         </div>
       </div>
 
@@ -220,7 +220,7 @@ export function LeadForm() {
             </option>
           ))}
         </select>
-        <Erro c="segmento" />
+        {erro("segmento")}
       </div>
 
       <div className="lp2-field lp2-field--check">
@@ -247,7 +247,7 @@ export function LeadForm() {
             .
           </label>
         </div>
-        <Erro c="consent" />
+        {erro("consent")}
       </div>
 
       <p className="lp2-form__aviso">

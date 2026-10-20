@@ -4,11 +4,12 @@ import { NdaForm } from "./NdaForm";
 
 export const dynamic = "force-dynamic";
 
-export default async function NdaPage({
-  params,
-}: {
-  params: { token: string };
-}) {
+export default async function NdaPage(
+  props: {
+    params: Promise<{ token: string }>;
+  }
+) {
+  const params = await props.params;
   const supabase = createSupabaseServiceClient();
 
   const { data: tokenRow } = await supabase
