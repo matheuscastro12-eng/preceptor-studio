@@ -3,6 +3,7 @@ import { AppPreview } from "./AppPreview";
 import { Glifo } from "./Glifo";
 import { HeroIcone } from "./HeroIcone";
 import { MarcaFundo } from "./MarcaFundo";
+import { Segmentos } from "./Segmentos";
 import { CountUp } from "./CountUp";
 import { CTA_MICROCOPY, CTA_TEXTO } from "./CtaLink";
 import { LeadForm } from "./LeadForm";
@@ -169,8 +170,26 @@ export function MbHome() {
         </div>
       </section>
 
+      {/* Segmentos: falar como em reunião de vendas */}
+      <section id="segmentos" className="mb-sec mb-sec--colado">
+        <div className="mb-wrap">
+          <div className="mb-seg__cab" data-rv>
+            <h2 className="mb-h2">
+              Seja qual for o seu sistema,
+              <br />
+              <span className="mb-seg__destaque">o agente trabalha nele</span>
+              <span className="mb-ponto">.</span>
+            </h2>
+            <p>Com API, pela tela ou pelo e-mail. Escolha a sua operação:</p>
+          </div>
+          <div data-rv>
+            <Segmentos />
+          </div>
+        </div>
+      </section>
+
       {/* Por que: texto à esquerda, três cartões à direita */}
-      <section className="mb-sec mb-sec--colado">
+      <section className="mb-sec">
         <div className="mb-wrap mb-porque">
           <div data-rv>
             <h2 className="mb-h2 mb-h2--m">
