@@ -34,6 +34,7 @@ export function HomeFooter() {
             </li>
           </ul>
         </nav>
+        <p className="lp2-footer__marca" aria-hidden="true">PRECEPTOR!</p>
         <p className="lp2-footer__copy">
           © {ano} PRECEPTOR! Studio
         </p>

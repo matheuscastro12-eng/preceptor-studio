@@ -3,6 +3,7 @@ import { mao } from "@/components/marketing/home/fonte-mao";
 import { RevealObserver } from "@/components/marketing/home/RevealObserver";
 import { HomeNav } from "@/components/marketing/home/HomeNav";
 import { Hero } from "@/components/marketing/home/Hero";
+import { FaixaTarefas } from "@/components/marketing/home/FaixaTarefas";
 import { Problema } from "@/components/marketing/home/Problema";
 import { Metodo } from "@/components/marketing/home/Metodo";
 import { Exemplos } from "@/components/marketing/home/Exemplos";
@@ -89,6 +90,7 @@ export default function MarketingHome() {
       <HomeNav />
       <main id="conteudo">
         <Hero />
+        <FaixaTarefas />
         <Problema />
         <Metodo />
         <Exemplos />

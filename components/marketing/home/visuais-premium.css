@@ -512,3 +512,32 @@
 .lp2-btn:active { transform: scale(0.98); }
 .lp4-vert__ic { position: static !important; width: 52px !important; margin: 20px 20px 0 !important; }
 .lp4-vert__ic + .lp2-rotulo { margin-top: 8px !important; }
+
+/* ═══ Ritmo, faixa de tarefas, frentes e rodapé ═══ */
+@media (min-width: 1024px) { .lp2-section { padding: 104px 0; } .lp2-hero { padding-bottom: 72px !important; } }
+.lp4-frentes__nota { margin: 72px 0 0; text-align: center; }
+.lp2-hero__frentes { margin-top: 28px !important; }
+
+.lp4-faixa { position: relative; padding: 28px 0 36px; background: var(--navy); overflow: hidden; }
+.lp4-faixa__nota { position: absolute; top: 10px; left: 50%; transform: translateX(-50%) rotate(-2deg); margin: 0; color: var(--teal-soft) !important; font-size: 22px; white-space: nowrap; z-index: 1; }
+.lp4-faixa__trilho { display: flex; width: max-content; margin-top: 18px; animation: lp4-faixa 45s linear infinite; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.lp4-faixa:hover .lp4-faixa__trilho { animation-play-state: paused; }
+.lp4-faixa__lista { display: flex; gap: 12px; margin: 0; padding: 0 6px; list-style: none; }
+.lp4-faixa__item { display: inline-flex; align-items: center; gap: 10px; padding: 8px 18px 8px 8px; border-radius: 999px; background: rgba(255, 255, 255, 0.07); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1); color: #fff; font-size: 15px; font-weight: 500; white-space: nowrap; }
+.lp4-faixa__item .lp4-ic3d { width: 32px; filter: none; }
+@keyframes lp4-faixa { to { transform: translateX(-50%); } }
+
+/* Fundos alternados: método em lilás muito claro, FAQ em branco, problema com bolhas de cor */
+.lp2-problema { background: radial-gradient(ellipse 30% 30% at 5% 10%, rgba(255, 196, 120, 0.12), transparent 70%), radial-gradient(ellipse 30% 30% at 95% 40%, rgba(59, 202, 206, 0.12), transparent 70%), #fff; }
+.lp2-mdiag { background: radial-gradient(ellipse 50% 40% at 50% 0%, rgba(150, 120, 255, 0.1), transparent 70%), linear-gradient(180deg, #F7F5FF, #fff) !important; }
+
+/* Rodapé em navy, emendado no contato, com a marca grande */
+.lp2-footer { background: var(--navy) !important; color: rgba(255, 255, 255, 0.7); border-top: 1px solid rgba(255, 255, 255, 0.08) !important; padding: 64px 0 32px !important; overflow: hidden; }
+.lp2-footer__logo img { filter: brightness(0) invert(1); }
+.lp2-footer__assinatura { color: #fff !important; }
+.lp2-footer__nav a, .lp2-footer__cookies { color: rgba(255, 255, 255, 0.8) !important; text-decoration-color: rgba(255, 255, 255, 0.25) !important; }
+.lp2-footer__nav a:hover, .lp2-footer__cookies:hover { color: #fff !important; }
+.lp2-footer__copy { color: rgba(255, 255, 255, 0.45) !important; border-color: rgba(255, 255, 255, 0.1) !important; }
+.lp2-footer__marca { margin: 56px 0 0; font-family: var(--f-display); font-weight: 700; font-size: clamp(3rem, 13.4vw, 12.4rem); line-height: 0.85; letter-spacing: -0.06em; color: transparent; -webkit-text-stroke: 1px rgba(59, 202, 206, 0.35); user-select: none; white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) { .lp4-faixa__trilho { animation: none; flex-wrap: wrap; width: auto; } .lp4-faixa__lista[aria-hidden] { display: none; } .lp4-faixa__lista { flex-wrap: wrap; justify-content: center; } }
