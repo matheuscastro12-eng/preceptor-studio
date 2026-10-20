@@ -2,9 +2,9 @@
  * P! da marca em contorno, gigante, atrás do hero: o traço se desenha,
  * o ponto cai em teal e depois a marca flutua devagar. Decorativo.
  */
-export function MarcaFundo() {
+export function MarcaFundo({ variante }: { variante?: "contato" }) {
   return (
-    <svg className="mb-marca" viewBox="0 0 1600 1600" aria-hidden="true">
+    <svg className={`mb-marca${variante ? ` mb-marca--${variante}` : ""}`} viewBox="0 0 1600 1600" aria-hidden="true" data-rv={variante ? "" : undefined}>
       <path
         className="mb-marca__traco"
         pathLength={1}

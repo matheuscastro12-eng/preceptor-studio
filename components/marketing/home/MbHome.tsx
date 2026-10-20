@@ -83,7 +83,7 @@ export function MbHome() {
                 { nome: "documento", tom: "#00033D" }, { nome: "recibo", tom: "#00033D" },
                 { nome: "arquivo", tom: "#12888E" }, { nome: "mensagem", tom: "#12888E" },
               ]} />
-              chega.
+              chega<span className="mb-ponto">.</span>
             </span>{" "}
             <span className="mb-linha" style={{ animationDelay: "500ms" }}>
               A conferência
@@ -91,7 +91,7 @@ export function MbHome() {
                 { nome: "lupa", tom: "#12888E" }, { nome: "recibo", tom: "#00033D" },
                 { nome: "ampulheta", tom: "#00033D" }, { nome: "grafico", tom: "#12888E" },
               ]} />
-              fica pronta.
+              fica pronta<span className="mb-ponto">.</span>
             </span>{" "}
             <span className="mb-linha" style={{ animationDelay: "600ms" }}>
               Sua equipe
@@ -99,7 +99,7 @@ export function MbHome() {
                 { nome: "check", tom: "#00033D" }, { nome: "dinheiro", tom: "#12888E" },
                 { nome: "pacote", tom: "#00033D" }, { nome: "caminhao", tom: "#12888E" },
               ]} />
-              só aprova.
+              só aprova<span className="mb-ponto">.</span>
             </span>
           </h1>
           <p className="mb-sub mb-sobe">
@@ -180,7 +180,7 @@ export function MbHome() {
           <h2 className="mb-h2 mb-centro" data-rv>
             Primeiro o processo,
             <br />
-            depois a IA.
+            depois a IA<span className="mb-ponto">.</span>
           </h2>
           <ol className="mb-grade">
             {PASSOS.map((p) => (
@@ -222,7 +222,7 @@ export function MbHome() {
       <section id="faq" className="mb-sec">
         <div className="mb-wrap mb-faq">
           <h2 className="mb-h2 mb-centro" data-rv>
-            O que costumam perguntar.
+            O que costumam perguntar<span className="mb-ponto">.</span>
           </h2>
           <div className="mb-faq__lista" data-rv>
             {PERGUNTAS.map((p) => (
@@ -242,9 +242,10 @@ export function MbHome() {
       <section id="contato" className="mb-sec">
         <div className="mb-wrap">
           <div className="mb-caixa mb-contato">
+            <MarcaFundo variante="contato" />
             <div className="mb-contato__txt" data-rv>
               <h2 className="mb-h2">
-                Qual processo come o dia da sua equipe?
+                Qual processo come o dia da sua equipe<span className="mb-ponto">?</span>
               </h2>
               <p className="mb-sub mb-sub--esq">
                 Em 30 minutos de conversa, você sai sabendo se dá para automatizar e por onde começar.
