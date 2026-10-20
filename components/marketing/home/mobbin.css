@@ -570,3 +570,48 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
 .mb-cena--chat .in { background: #F0F2F5; }
 .mb-cena--chat .out { color: var(--mb-navy) !important; }
 @media (min-width: 900px) { .mb-telas .mb-tela--meia { grid-column: span 3; } }
+
+/* ===== Sem desfoque fora do hero: máscara, preenchimento e zoom (padrões scrolltide) ===== */
+/* Entrada genérica: sobe de dentro de uma máscara, sem blur */
+.lp2.js-ready .mb-sec [data-rv]:not(.is-in) { filter: none; opacity: 0; transform: translateY(40px); }
+.lp2.js-ready .mb-sec [data-rv].is-in { filter: none; transition: opacity 0.5s ease, transform 0.9s cubic-bezier(0.16, 1, 0.3, 1); }
+.lp2.js-ready .mb-sec [data-rv].is-in:not(.mb-tarefa):not(.mb-bento__grande):not(.mb-passos li):not(.mb-marca) { animation-name: mb-mascara; animation-duration: 0.9s; animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); animation-fill-mode: both; }
+@keyframes mb-mascara { from { clip-path: inset(0 0 100% 0 round 28px); } to { clip-path: inset(0 0 0 0 round 0); } }
+@keyframes mb-seg-in { from { opacity: 0; translate: 0 14px; } to { opacity: 1; translate: 0 0; } }
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Títulos: o texto "acende" do cinza para o navy conforme rola (Focus Reveal sem blur) */
+    .mb-sec .mb-h2 { background: linear-gradient(90deg, var(--mb-tinta) 0 50%, #C9CDD8 50% 100%) 100% 0 / 200% 100% no-repeat; -webkit-background-clip: text; background-clip: text; color: transparent; animation: mb-acende linear both; animation-timeline: view(); animation-range: entry 20% cover 45%; }
+    .mb-sec .mb-h2 .mb-ponto { color: var(--mb-teal); -webkit-text-fill-color: var(--mb-teal); }
+    .mb-seg__destaque { -webkit-text-fill-color: transparent; }
+    .mb-bento__grande .mb-h2 { background-image: linear-gradient(90deg, #fff 0 50%, rgba(255, 255, 255, 0.35) 50% 100%); }
+    @keyframes mb-acende { from { background-position: 100% 0; } to { background-position: 0 0; } }
+
+    /* Galeria: cada tela abre de uma janelinha até a moldura inteira (Zoom Reveal) */
+    .mb-tela__moldura { animation: mb-zoom-revela linear both; animation-timeline: view(); animation-range: entry 0% cover 40%; }
+    @keyframes mb-zoom-revela { from { clip-path: inset(18% 22% 18% 22% round 28px); } to { clip-path: inset(0 0 0 0 round 16px); } }
+    .mb-tela .mb-tela__moldura img { animation: mb-zoom-img linear both; animation-timeline: view(); animation-range: entry 0% cover 60%; }
+    @keyframes mb-zoom-img { from { scale: 1.35; } to { scale: 1; } }
+    .mb-tela--larga, .mb-tela--fone, .mb-tela { animation: none; }
+    .mb-tela--fone .mb-tela__moldura img { animation: mb-p-fone linear both; animation-timeline: view(); animation-range: entry 20% cover 60%; }
+
+    /* 99%: número sobe de trás de uma régua, sem blur */
+    @keyframes mb-p-num { from { scale: 0.7; translate: 0 40%; clip-path: inset(0 0 100% 0); opacity: 0.4; } to { scale: 1; translate: 0 0; clip-path: inset(0 0 0 0); opacity: 1; } }
+
+    /* Passos 1-2-3: colchetes abrem e o número entra girando */
+    .mb-passos__n::before { animation: mb-colchete-e linear both; animation-timeline: view(); animation-range: entry 10% cover 35%; }
+    .mb-passos__n::after { animation: mb-colchete-d linear both; animation-timeline: view(); animation-range: entry 10% cover 35%; }
+    @keyframes mb-colchete-e { from { translate: 16px 0; opacity: 0; } to { translate: 0 0; opacity: 1; } }
+    @keyframes mb-colchete-d { from { translate: -16px 0; opacity: 0; } to { translate: 0 0; opacity: 1; } }
+
+    /* FAQ: itens entram em leque, um atrás do outro */
+    .mb-faq__item { animation: mb-faq linear both; animation-timeline: view(); animation-range: entry 0% entry 90%; transform-origin: 50% 0; }
+    @keyframes mb-faq { from { rotate: x -70deg; opacity: 0; } to { rotate: x 0deg; opacity: 1; } }
+    .mb-faq__lista { perspective: 900px; }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp2.js-ready .mb-sec [data-rv]:not(.is-in) { transform: none; opacity: 1; }
+  .lp2.js-ready .mb-sec [data-rv].is-in { animation-name: none; }
+}
