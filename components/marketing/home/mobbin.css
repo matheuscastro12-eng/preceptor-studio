@@ -298,3 +298,28 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
 
 #como .mb-h2--m { max-width: none; }
 @media (max-width: 899px) { .mb-tarefa, .mb-bento__grande { min-height: 220px; } }
+
+/* ===== Hero sangrado (sem caixa) e nav navy ===== */
+.mb-nav { background: rgba(0, 3, 61, 0.92); }
+.mb-nav__logo img { filter: brightness(0) invert(1); }
+.mb-nav__links a, .mb-nav__entrar { color: rgba(255, 255, 255, 0.86); }
+.mb-nav__links a:hover { color: var(--mb-teal); }
+.mb-nav .mb-pilula--navy { background: var(--mb-teal); color: var(--mb-navy); }
+.mb-hero { position: relative; overflow: hidden; padding-top: 0 !important; background: linear-gradient(var(--mb-navy) 0, var(--mb-navy) calc(100% - 200px), #fff calc(100% - 200px)); }
+.mb-hero::before { content: ""; position: absolute; inset: 0 0 200px; background: radial-gradient(70% 60% at 80% 10%, rgba(10, 26, 140, 0.9), transparent 70%); pointer-events: none; }
+.mb-palco { position: static; overflow: visible; padding: 72px 0 0; border-radius: 0; background: none; }
+.mb-palco .mb-marca { top: -20px; right: max(-200px, calc((100vw - 1120px) / 2 - 300px)); width: 760px; }
+.mb-palco__tela { max-height: 520px; padding: 10px; border-radius: 22px; background: rgba(255, 255, 255, 0.12); -webkit-mask-image: none; mask-image: none; box-shadow: 0 40px 80px -40px rgba(0, 3, 61, 0.55); }
+.mb-palco__tela .mb-video { overflow: hidden; max-height: 500px; border-radius: 14px; }
+@media (max-width: 720px) { .mb-palco { padding: 44px 0 0; } .mb-palco__tela { max-height: 360px; } .mb-palco__tela .mb-video { max-height: 340px; } }
+
+/* ===== Prova como medida, sem cartão ===== */
+.mb-medida { max-width: 760px; margin: 0 auto; text-align: center; }
+.mb-medida__rot { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mb-teal-ink); }
+.mb-medida__num { display: flex; align-items: baseline; justify-content: center; gap: 10px; margin: 12px 0 0; font-family: var(--f-display); font-size: clamp(6rem, 16vw, 11rem); font-weight: 600; line-height: 0.95; letter-spacing: -0.06em; color: var(--mb-navy); }
+.mb-medida__pre { font-size: 18px; font-weight: 500; letter-spacing: 0; color: var(--mb-texto); }
+.mb-medida__barra { position: relative; height: 10px; margin: 28px auto 0; border-radius: 999px; background: var(--mb-cinza-2); overflow: hidden; }
+.mb-medida__barra i { position: absolute; inset: 0 auto 0 0; width: 99%; border-radius: inherit; background: linear-gradient(90deg, var(--mb-navy), var(--mb-teal)); transform-origin: left; transform: scaleX(0); transition: transform 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s; }
+.mb-medida.is-in .mb-medida__barra i, .lp2:not(.js-ready) .mb-medida__barra i { transform: scaleX(1); }
+.mb-medida__txt { max-width: 40ch; margin: 18px auto 0; font-size: 17px; line-height: 1.55; color: var(--mb-texto); }
+@media (prefers-reduced-motion: reduce) { .mb-medida__barra i { transform: none; transition: none; } }

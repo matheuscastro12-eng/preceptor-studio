@@ -9,7 +9,6 @@ import { LeadForm } from "./LeadForm";
 import { MockClinica } from "./MockClinica";
 import { MockFinanceiro } from "./MockFinanceiro";
 import { MockLogistica } from "./MockLogistica";
-import { ProvaGrade } from "./ProvaGrade";
 
 /*
  * Home no molde da Mobbin (hero centralizado com ícones no título, caixa
@@ -252,19 +251,17 @@ export function MbHome() {
       {/* Prova */}
       <section id="exemplo" className="mb-sec">
         <div className="mb-wrap">
-          <div className="mb-prova lp2-prova" data-rv>
-            <div>
-              <p className="mb-prova__rot">Financeiro · um cliente de logística · caso anônimo</p>
-              <p className="mb-prova__num">
-                <span className="mb-prova__pre">Cerca de</span>
-                <CountUp to={99} />
-                <span className="mb-prova__pct">%</span>
-              </p>
-              <p className="mb-prova__txt">
-                dos recebimentos conciliados no período medido. O financeiro confirma as baixas.
-              </p>
-            </div>
-            <ProvaGrade />
+          <div className="mb-medida" data-rv>
+            <p className="mb-medida__rot">Financeiro · um cliente de logística · caso anônimo</p>
+            <p className="mb-medida__num">
+              <span className="mb-medida__pre">cerca de</span>
+              <CountUp to={99} />
+              <span className="mb-ponto">%</span>
+            </p>
+            <div className="mb-medida__barra" aria-hidden="true"><i /></div>
+            <p className="mb-medida__txt">
+              dos recebimentos conciliados no período medido. O financeiro confirma as baixas.
+            </p>
           </div>
         </div>
       </section>
