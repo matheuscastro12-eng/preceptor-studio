@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { AppPreview } from "./AppPreview";
+import { HeroIcone } from "./HeroIcone";
 import { CountUp } from "./CountUp";
 import { CTA_MICROCOPY, CTA_TEXTO } from "./CtaLink";
 import { LeadForm } from "./LeadForm";
@@ -14,14 +15,6 @@ import { ProvaGrade } from "./ProvaGrade";
  * cinza com o produto, texto em dois tons, carrossel e grade de blocos),
  * com as cores da PRECEPTOR!: navy #00033D e teal #3BCACE.
  */
-
-function Bloco({ icone, tom }: { icone: string; tom: string }) {
-  return (
-    <span className="mb-bloco" style={{ "--tom": tom } as React.CSSProperties} aria-hidden="true">
-      <Image src={`/3d/${icone}.png`} alt="" width={64} height={64} />
-    </span>
-  );
-}
 
 const WHATS =
   "https://wa.me/5535999191919?text=Ol%C3%A1!%20Quero%20falar%20sobre%20a%20opera%C3%A7%C3%A3o%20da%20minha%20empresa.";
@@ -81,27 +74,50 @@ export function MbHome() {
       {/* Hero */}
       <section className="mb-hero">
         <div className="mb-wrap">
-          <h1 className="mb-h1 mb-in">
-            O documento <Bloco icone="documento" tom="#00033D" /> chega. A conferência{" "}
-            <Bloco icone="lupa" tom="#3BCACE" /> fica pronta. Sua equipe{" "}
-            <Bloco icone="check" tom="#0A1A8C" /> só aprova.
+          <h1 className="mb-h1">
+            <span className="mb-linha" style={{ animationDelay: "400ms" }}>
+              O documento
+              <HeroIcone atraso={1400} intervalo={2600} icones={[
+                { nome: "documento", tom: "#00033D" }, { nome: "recibo", tom: "#0A1A8C" },
+                { nome: "arquivo", tom: "#12888E" }, { nome: "mensagem", tom: "#3BCACE" },
+              ]} />
+              chega.
+            </span>{" "}
+            <span className="mb-linha" style={{ animationDelay: "500ms" }}>
+              A conferência
+              <HeroIcone atraso={1550} intervalo={3100} icones={[
+                { nome: "lupa", tom: "#3BCACE" }, { nome: "robo", tom: "#00033D" },
+                { nome: "ampulheta", tom: "#0A1A8C" }, { nome: "grafico", tom: "#E9F7F8" },
+              ]} />
+              fica pronta.
+            </span>{" "}
+            <span className="mb-linha" style={{ animationDelay: "600ms" }}>
+              Sua equipe
+              <HeroIcone atraso={1700} intervalo={3600} icones={[
+                { nome: "check", tom: "#0A1A8C" }, { nome: "dinheiro", tom: "#12888E" },
+                { nome: "pacote", tom: "#00033D" }, { nome: "caminhao", tom: "#3BCACE" },
+              ]} />
+              só aprova.
+            </span>
           </h1>
-          <p className="mb-sub mb-in" style={{ animationDelay: "120ms" }}>
+          <p className="mb-sub mb-sobe">
             Agentes de IA para a parte repetitiva da operação: documentos, conferências e mensagens.
             Primeiro o processo, depois a IA.
           </p>
-          <div className="mb-ctas mb-in" style={{ animationDelay: "200ms" }}>
+          <div className="mb-ctas mb-sobe">
             <a href="#contato" className="mb-pilula mb-pilula--navy">{CTA_TEXTO}</a>
             <a href="#como" className="mb-pilula mb-pilula--cinza">
               Como funciona <span aria-hidden="true">→</span>
             </a>
           </div>
-          <p className="mb-micro mb-in" style={{ animationDelay: "240ms" }}>{CTA_MICROCOPY}</p>
+          <p className="mb-micro mb-sobe">{CTA_MICROCOPY}</p>
         </div>
 
-        <div className="mb-wrap mb-in" style={{ animationDelay: "320ms" }}>
-          <div className="mb-caixa mb-caixa--produto">
-            <AppPreview />
+        <div className="mb-wrap">
+          <div className="mb-caixa mb-caixa--produto mb-superficie">
+            <div className="mb-video">
+              <AppPreview />
+            </div>
           </div>
         </div>
 
