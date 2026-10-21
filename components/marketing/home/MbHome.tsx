@@ -1,16 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Glifo } from "./Glifo";
-import { MarcaFundo } from "./MarcaFundo";
-import { Segmentos } from "./Segmentos";
+import { HeroProduto } from "./HeroProduto";
+import { Setores } from "./Setores";
 import { CountUp } from "./CountUp";
 import { CTA_MICROCOPY, CTA_TEXTO } from "./CtaLink";
 import { LeadForm } from "./LeadForm";
 
 /*
- * Home no molde da Mobbin (hero centralizado com ícones no título, caixa
- * cinza com o produto, texto em dois tons, carrossel e grade de blocos),
- * com as cores da PRECEPTOR!: navy #00033D e teal #3BCACE.
+ * Home com a estrutura da referência Xenora (docs/design/audit-lp.md): hero
+ * de borda a borda com a tela do produto sobreposta, título à esquerda em 2
+ * linhas, uma ação; setores em cards com o fluxo do agente no lugar de ícone.
+ * Identidade da PRECEPTOR!: navy #00033D, teal #3BCACE e Geist.
  */
 
 const WHATS =
@@ -42,9 +43,9 @@ const MOTIVOS = [
 ];
 
 const TAREFAS = [
-  { titulo: "Lê documentos", antes: "NF-e, CT-e, boleto", texto: "Tira os dados da nota e do e-mail e preenche o sistema.", icone: "documento" },
-  { titulo: "Confere", antes: "Extrato × ERP", texto: "Cruza extrato, romaneio e pedido e aponta só o que diverge.", icone: "lupa" },
-  { titulo: "Responde", antes: "WhatsApp", texto: "Responde as perguntas de sempre e passa o resto para a equipe.", icone: "mensagem" },
+  { titulo: "Lê documentos", antes: "NF-e, CT-e, boleto", texto: "Tira os dados da nota e do e-mail e preenche o sistema." },
+  { titulo: "Confere", antes: "Extrato × ERP", texto: "Cruza extrato, romaneio e pedido e aponta só o que diverge." },
+  { titulo: "Responde", antes: "WhatsApp", texto: "Responde as perguntas de sempre e passa o resto para a equipe." },
 ];
 
 const PERGUNTAS = [
@@ -115,62 +116,40 @@ export function MbNav() {
 export function MbHome() {
   return (
     <main id="conteudo">
-      {/* Hero: palco navy com o P! desenhado e a central subindo de dentro */}
-      <section className="mb-hero">
-        <div className="mb-wrap">
-          <div className="mb-palco">
-            <MarcaFundo />
-            <h1 className="mb-h1">Agentes de IA que sua equipe aprova</h1>
-            <p className="mb-sub mb-sobe">
-              O documento chega e a conferência fica pronta. O agente faz a parte repetitiva e uma pessoa da sua
-              equipe decide.
-            </p>
-            <div className="mb-ctas mb-sobe">
-              <a href="#contato" className="mb-pilula mb-pilula--teal">{CTA_TEXTO}</a>
-              <a href="#como" className="mb-pilula mb-pilula--vazada">
-                Como funciona <span aria-hidden="true">→</span>
-              </a>
-            </div>
-            <p className="mb-micro mb-sobe">{CTA_MICROCOPY}</p>
-            <div className="mb-palco__tela mb-superficie">
-              <div className="mb-video mb-janela" data-ui>
-                <div className="mb-janela__barra" aria-hidden="true">
-                  <i /><i /><i />
-                  <span>preceptor · torre de expedição</span>
-                  <b>Demonstração</b>
-                </div>
-                <Image
-                  src="/telas/hero-torre.jpg"
-                  alt="Torre de expedição de uma transportadora: a IA rodou os passos do dia e separou 11 itens para uma pessoa validar. Dados de exemplo."
-                  width={2000}
-                  height={1194}
-                  priority
-                  sizes="(min-width: 1024px) 1000px, 100vw"
-                />
-              </div>
-            </div>
+      {/* Hero: campo de borda a borda (a foto entra aqui; por ora navy chapado) e a tela do produto subindo dele */}
+      <section className="mb-hx" aria-labelledby="mb-hx-t">
+        {/* Foto do hero pendente: public/fotos/hero-ceu.jpg (céu sobre a operação), ver docs/design/audit-lp.md */}
+        <div className="mb-hx__foto" data-foto="pendente" aria-hidden="true" />
+        <div className="mb-wrap mb-hx__wrap">
+          <h1 id="mb-hx-t" className="mb-hx__h1">Agentes de IA que sua equipe aprova</h1>
+          <p className="mb-hx__sub mb-sobe">
+            O agente faz a parte repetitiva. <br className="mb-hx__br" />
+            Uma pessoa da sua equipe decide.
+          </p>
+          <div className="mb-hx__acao mb-sobe">
+            <a href="#contato" className="mb-pilula mb-pilula--teal">{CTA_TEXTO}</a>
+            <p className="mb-hx__micro">{CTA_MICROCOPY}</p>
+          </div>
+          <div className="mb-hx__tela mb-superficie">
+            <HeroProduto />
           </div>
         </div>
       </section>
 
-      {/* Segmentos: falar como em reunião de vendas */}
-      <section id="segmentos" className="mb-sec mb-sec--colado">
+      {/* Setores: título à esquerda, texto à direita, um card com o fluxo de cada setor */}
+      <section id="segmentos" className="mb-sec mb-sec--colado" aria-labelledby="mb-setores-t">
         <div className="mb-wrap">
-          <div className="mb-seg__cab" data-rv>
-            <h2 className="mb-h2">
-              Seja qual for o seu sistema,
-              <br />
-              <span className="mb-seg__destaque">o agente trabalha nele</span>
-              <span className="mb-ponto">.</span>
-            </h2>
+          <div className="mb-cab" data-rv>
+            <h2 id="mb-setores-t" className="mb-h2">Um agente para cada setor</h2>
             <p>
-              Nada de pacote pronto: cada agente é feito sob medida para a sua operação, ligado ao seu sistema por API,
-              pela tela ou pelo e-mail. Veja como fica em cada setor:
+              Cada agente é feito sob medida e ligado ao sistema que você já usa, por API, pela tela ou pelo e-mail. O
+              último passo é sempre de uma pessoa da sua equipe.
             </p>
           </div>
-          <div data-rv>
-            <Segmentos />
-          </div>
+          <Setores />
+          <p className="mb-setores__nota">
+            Exemplos com dados fictícios. O seu agente é desenhado a partir do seu processo e das suas regras.
+          </p>
         </div>
       </section>
 
@@ -242,7 +221,6 @@ export function MbHome() {
           </div>
           {TAREFAS.map((t, i) => (
             <article key={t.titulo} className={`mb-tarefa mb-tarefa--${i + 1}`} data-rv>
-              <span className="mb-tarefa__ic"><Glifo nome={t.icone} /></span>
               <p className="mb-tarefa__antes">{t.antes}</p>
               <Cena tipo={i} />
               <div>
@@ -257,9 +235,12 @@ export function MbHome() {
       {/* Como funciona: 1-2-3 */}
       <section id="como" className="mb-sec">
         <div className="mb-wrap">
-          <h2 className="mb-h2 mb-h2--m" data-rv>
-            Começar é simples como 1, 2, 3<span className="mb-ponto">.</span>
-          </h2>
+          <div className="mb-cab" data-rv>
+            <h2 className="mb-h2">
+              Começar é simples como{"\u00a0"}1,{"\u00a0"}2,{"\u00a0"}3<span className="mb-ponto">.</span>
+            </h2>
+            <p>Um diagnóstico de 30 minutos e um piloto de 2 a 4 semanas, medido no fim contra a linha de base.</p>
+          </div>
           <ol className="mb-passos">
             {PASSOS.map((p) => (
               <li key={p.titulo} data-rv>
@@ -295,9 +276,12 @@ export function MbHome() {
       {/* FAQ */}
       <section id="faq" className="mb-sec">
         <div className="mb-wrap mb-faq">
-          <h2 className="mb-h2 mb-centro" data-rv>
-            O que costumam perguntar<span className="mb-ponto">.</span>
-          </h2>
+          <div className="mb-faq__cab" data-rv>
+            <h2 className="mb-h2">
+              O que costumam perguntar<span className="mb-ponto">.</span>
+            </h2>
+            <p>A sua não está aqui? Pergunte na conversa de diagnóstico ou pelo WhatsApp.</p>
+          </div>
           <div className="mb-faq__lista" data-rv>
             {PERGUNTAS.map((p) => (
               <details key={p.q} className="mb-faq__item">
@@ -316,10 +300,9 @@ export function MbHome() {
       <section id="contato" className="mb-sec">
         <div className="mb-wrap">
           <div className="mb-caixa mb-contato">
-            <MarcaFundo variante="contato" />
             <div className="mb-contato__txt" data-rv>
               <h2 className="mb-h2">
-                Qual processo come o dia da sua equipe<span className="mb-ponto">?</span>
+                Onde a sua equipe perde o dia<span className="mb-ponto">?</span>
               </h2>
               <p className="mb-sub mb-sub--esq">
                 Em 30 minutos de conversa, você sai sabendo se dá para automatizar e por onde começar.

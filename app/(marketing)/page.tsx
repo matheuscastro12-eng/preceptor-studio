@@ -4,6 +4,7 @@ import { MbHome, MbNav } from "@/components/marketing/home/MbHome";
 import { HomeFooter } from "@/components/marketing/home/HomeFooter";
 import "../../components/marketing/home/home.css";
 import "../../components/marketing/home/mobbin.css";
+import "../../components/marketing/home/xenora.css";
 
 const SITE_URL = "https://preceptorstudio.com";
 const TITLE = "PRECEPTOR! Studio | Agentes de IA que sua equipe aprova";
