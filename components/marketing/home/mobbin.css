@@ -161,13 +161,10 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
 .mb-porque { display: grid; gap: 40px; align-items: center; }
 @media (min-width: 900px) { .mb-porque { grid-template-columns: 1.1fr 1fr; gap: 72px; } }
 .mb-porque__txt { max-width: 46ch; margin: 18px 0 0; font-size: 16px; line-height: 1.6; color: var(--mb-texto); }
-.mb-motivos { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
-.mb-motivo { display: flex; gap: 18px; align-items: center; padding: 16px 22px 16px 16px; border-radius: 22px; background: var(--mb-ardosia); color: #fff; transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1); }
-.mb-motivo:hover { transform: translateX(-6px); }
-.mb-motivo__ic { display: grid; place-items: center; flex-shrink: 0; width: 72px; height: 72px; border-radius: 16px; background: #fff; color: var(--mb-navy); }
-.mb-motivo__ic svg { width: 40px; }
-.mb-motivo h3 { margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
-.mb-motivo p { margin: 4px 0 0; font-size: 14px; line-height: 1.45; color: rgba(255, 255, 255, 0.82); }
+.mb-motivos { display: grid; gap: 28px; margin: 0; padding: 40px; border-radius: 28px; list-style: none; background: var(--mb-ardosia); color: #fff; }
+@media (max-width: 720px) { .mb-motivos { padding: 28px 22px; border-radius: 24px; } }
+.mb-motivo h3 { margin: 0; font-family: var(--f-display); font-size: 24px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.2; }
+.mb-motivo p { margin: 6px 0 0; font-size: 17px; line-height: 1.5; color: #fff; }
 
 /* Baia azulada com as frentes */
 .mb-baia { padding: 48px; border-radius: 32px; background: var(--mb-baia); }
@@ -190,22 +187,18 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
 .mb-tarefa--2 { background: #0D6E73; }
 .mb-tarefa__ic { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 999px; background: rgba(255, 255, 255, 0.16); }
 .mb-tarefa__ic svg { width: 26px; }
-.mb-tarefa__antes { align-self: flex-start; margin: -6px 0 auto !important; padding: 4px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.14); font-family: var(--f-mono, ui-monospace, monospace); font-size: 11px; }
+.mb-tarefa__antes { align-self: flex-start; margin: -6px 0 auto !important; padding: 4px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.14); font-size: 14px; }
 .mb-tarefa h3 { margin: 0; font-family: var(--f-display); font-size: 22px; font-weight: 600; letter-spacing: -0.02em; }
 .mb-tarefa p { margin: 6px 0 0; font-size: 14px; line-height: 1.5; color: rgba(255, 255, 255, 0.82); }
 
 /* 1-2-3 */
 .mb-passos { display: grid; gap: 28px; margin: 36px 0 0; padding: 0; list-style: none; counter-reset: p; }
 @media (min-width: 900px) { .mb-passos { grid-template-columns: repeat(3, 1fr); gap: 40px; } }
-.mb-passos li { position: relative; padding-left: 64px; }
-.mb-passos__n { position: absolute; left: 0; top: -4px; display: grid; place-items: center; width: 46px; height: 46px; font-family: var(--f-display); font-size: 18px; font-weight: 600; color: var(--mb-navy); }
-.mb-passos__n::before, .mb-passos__n::after { content: ""; position: absolute; top: 0; bottom: 0; width: 12px; border: 2px solid var(--mb-teal); }
-.mb-passos__n::before { left: 0; border-right: 0; border-radius: 12px 0 0 12px; }
-.mb-passos__n::after { right: 0; border-left: 0; border-radius: 0 12px 12px 0; }
+.mb-passos li { position: relative; }
 .mb-passos h3 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.02em; }
 .mb-passos__quando { margin: 4px 0 8px !important; font-size: 13px !important; font-weight: 600; color: var(--mb-teal-ink) !important; }
 .mb-passos p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--mb-texto); }
-@media (prefers-reduced-motion: reduce) { .mb-motivo, .mb-tarefa { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .mb-tarefa { transition: none; } }
 
 #como .mb-h2--m { max-width: none; }
 @media (max-width: 899px) { .mb-tarefa, .mb-bento__grande { min-height: 220px; } }
@@ -227,7 +220,7 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
 
 /* ===== Prova como medida, sem cartão ===== */
 .mb-medida { max-width: 760px; margin: 0 auto; text-align: center; }
-.mb-medida__rot { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mb-teal-ink); }
+.mb-medida__rot { margin: 0; font-size: 14px; font-weight: 600; color: var(--mb-texto); }
 .mb-medida__num { display: flex; align-items: baseline; justify-content: center; gap: 10px; margin: 12px 0 0; font-family: var(--f-display); font-size: clamp(6rem, 16vw, 11rem); font-weight: 600; line-height: 0.95; letter-spacing: -0.06em; color: var(--mb-navy); }
 .mb-medida__pre { font-size: 18px; font-weight: 500; letter-spacing: 0; color: var(--mb-texto); }
 .mb-medida__barra { position: relative; height: 10px; margin: 28px auto 0; border-radius: 999px; background: var(--mb-cinza-2); overflow: hidden; }
@@ -244,7 +237,7 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
 .mb-trilha li:nth-child(1)::before { transition-delay: 0.3s; } .mb-trilha li:nth-child(2)::before { transition-delay: 0.8s; } .mb-trilha li:nth-child(3)::before { transition-delay: 1.3s; }
 .is-in .mb-trilha::before, .lp2:not(.js-ready) .mb-trilha::before { transform: scaleX(1); }
 .is-in .mb-trilha li::before, .lp2:not(.js-ready) .mb-trilha li::before { transform: scale(1); }
-.mb-trilha__quando { font-family: var(--f-mono, ui-monospace, monospace); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--mb-teal-ink); }
+.mb-trilha__quando { font-size: 14px; font-weight: 600; color: var(--mb-texto); }
 .mb-trilha b { font-family: var(--f-display); font-size: 22px; font-weight: 600; letter-spacing: -0.03em; color: var(--mb-tinta); }
 .mb-trilha__rot { font-size: 13px; color: var(--mb-texto); }
 @media (max-width: 520px) { .mb-trilha b { font-size: 18px; } }
@@ -261,7 +254,7 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
 @keyframes mb-cena-scan { 0% { translate: 0 -30px; } 45% { translate: 0 110px; } 100% { translate: 0 110px; opacity: 0; } }
 @keyframes mb-cena-linha { 0%, 8% { background: transparent; } 15%, 80% { background: rgba(59, 202, 206, 0.18); } 95%, 100% { background: transparent; } }
 @keyframes mb-cena-surge { 0%, 10% { opacity: 0; translate: 0 6px; } 20%, 80% { opacity: 1; translate: 0 0; } 95%, 100% { opacity: 0; } }
-.mb-cena--conf p { display: grid; grid-template-columns: 1fr 1fr 22px; align-items: center; gap: 6px; padding: 6px 8px; border-radius: 8px; background: rgba(255, 255, 255, 0.08); font-family: var(--f-mono, ui-monospace, monospace); }
+.mb-cena--conf p { display: grid; grid-template-columns: 1fr 1fr 22px; align-items: center; gap: 6px; padding: 6px 8px; border-radius: 8px; background: rgba(255, 255, 255, 0.08); font-variant-numeric: tabular-nums; }
 .mb-cena--conf b { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 999px; background: #fff; color: var(--mb-teal-ink); font-size: 11px; opacity: 0; scale: 0.4; animation: mb-cena-tick 4.5s cubic-bezier(0.34, 1.56, 0.64, 1) infinite; }
 .mb-cena--conf p:nth-child(2) b { animation-delay: 0.6s; } .mb-cena--conf p:nth-child(3) b { animation-delay: 1.2s; background: #FFD66B; color: #5A3B00; }
 .mb-cena--conf p.is-exc { animation: mb-cena-exc 4.5s ease infinite 1.2s; }
@@ -286,11 +279,6 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
     @keyframes mb-rol-tela { from { rotate: x 14deg; scale: 0.94; } to { rotate: x 0deg; scale: 1; } }
     .mb-hero .mb-h1 { animation-timeline: auto; }
 
-    .mb-motivo { animation: mb-rol-dir linear both; animation-timeline: view(); }
-    .mb-motivo:nth-child(1) { animation-range: entry 0% entry 70%; }
-    .mb-motivo:nth-child(2) { animation-range: entry 15% entry 85%; }
-    .mb-motivo:nth-child(3) { animation-range: entry 30% entry 100%; }
-    @keyframes mb-rol-dir { from { translate: 120px 0; opacity: 0; } to { translate: 0 0; opacity: 1; } }
 
     @keyframes mb-rol-sobe { from { translate: 0 90px; scale: 0.94; } to { translate: 0 0; scale: 1; } }
 
@@ -337,20 +325,18 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
 .mb-seg__texto { max-width: 44ch; margin: 12px 0 0; font-size: 16px; line-height: 1.55; color: rgba(255, 255, 255, 0.75); }
 .mb-seg__sistemas { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
 @media (min-width: 900px) { .mb-seg__sistemas { justify-content: flex-end; } }
-.mb-seg__sistemas li { padding: 8px 14px; border-radius: 999px; background: rgba(255, 255, 255, 0.1); font-family: var(--f-mono, ui-monospace, monospace); font-size: 13px; color: var(--mb-teal); animation: mb-seg-chip 450ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.mb-seg__sistemas li { padding: 8px 14px; border-radius: 999px; background: rgba(255, 255, 255, 0.1); font-size: 14px; color: var(--mb-teal); animation: mb-seg-chip 450ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
 @keyframes mb-seg-chip { from { opacity: 0; scale: 0.7; } to { opacity: 1; scale: 1; } }
 .mb-seg__compara { display: grid; gap: 14px; margin-top: 32px; }
 @media (min-width: 900px) { .mb-seg__compara { grid-template-columns: 1fr auto 1fr; align-items: stretch; } }
 .mb-seg__col { padding: 22px; border-radius: 22px; }
 .mb-seg__col--hoje { background: rgba(255, 255, 255, 0.06); }
 .mb-seg__col--agente { background: rgba(59, 202, 206, 0.16); }
-.mb-seg__rot { margin: 0 0 14px; font-family: var(--f-mono, ui-monospace, monospace); font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; color: rgba(255, 255, 255, 0.6); }
+.mb-seg__rot { margin: 0 0 14px; font-size: 14px; font-weight: 600; color: rgba(255, 255, 255, 0.72); }
 .mb-seg__col--agente .mb-seg__rot { color: var(--mb-teal); }
-.mb-seg__col ol { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; counter-reset: s; }
-.mb-seg__col li { counter-increment: s; display: flex; gap: 12px; align-items: baseline; font-size: 15px; line-height: 1.4; animation: mb-seg-in 450ms cubic-bezier(0.16, 1, 0.3, 1) both; }
-.mb-seg__col li::before { content: counter(s, decimal-leading-zero); flex-shrink: 0; font-family: var(--f-mono, ui-monospace, monospace); font-size: 11px; color: rgba(255, 255, 255, 0.4); }
+.mb-seg__col ol { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.mb-seg__col li { display: flex; gap: 12px; align-items: baseline; font-size: 15px; line-height: 1.4; animation: mb-seg-in 450ms cubic-bezier(0.16, 1, 0.3, 1) both; }
 .mb-seg__col--hoje li { color: rgba(255, 255, 255, 0.6); text-decoration: line-through; text-decoration-color: rgba(255, 255, 255, 0.25); }
-.mb-seg__col--agente li::before { color: var(--mb-teal); }
 .mb-seg__seta { display: grid; place-items: center; font-size: 26px; color: var(--mb-teal); }
 @media (max-width: 899px) { .mb-seg__seta { rotate: 90deg; } }
 @media (max-width: 720px) { .mb-seg__painel { padding: 22px 16px; border-radius: 24px; } }
@@ -373,7 +359,7 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
 .mb-tela--fone .mb-tela__moldura { max-height: 470px; display: grid; place-items: start center; padding: 18px 18px 0; background: var(--mb-navy); }
 .mb-tela--fone .mb-tela__moldura img { width: 78%; height: auto; border: 6px solid #10153F; border-bottom: 0; border-radius: 32px 32px 0 0; }
 .mb-tela--larga .mb-tela__moldura { max-height: 470px; }
-.mb-tela__selo { position: absolute; top: 10px; right: 10px; padding: 4px 10px; border-radius: 999px; background: rgba(0, 3, 61, 0.78); color: #fff; font-family: var(--f-mono, ui-monospace, monospace); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; }
+.mb-tela__selo { position: absolute; top: 10px; right: 10px; padding: 4px 10px; border-radius: 999px; background: rgba(0, 3, 61, 0.78); color: #fff; font-size: 14px; font-weight: 500; }
 .mb-tela figcaption { display: grid; gap: 2px; padding: 16px 8px 4px; }
 .mb-tela figcaption b { font-size: 17px; font-weight: 600; letter-spacing: -0.02em; color: var(--mb-tinta); }
 .mb-tela figcaption span { font-size: 14px; color: var(--mb-texto); }
@@ -403,12 +389,9 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
     .mb-tela--fone .mb-tela__moldura img { animation: mb-p-fone linear both; animation-timeline: view(); animation-range: entry 20% cover 60%; }
     @keyframes mb-p-fone { from { translate: 0 45%; rotate: -6deg; } to { translate: 0 0; rotate: 0deg; } }
 
-    /* Por que: cartões começam empilhados e se abrem em leque */
-    .mb-motivo { transform-origin: 0 50%; animation: mb-p-leque linear both; animation-timeline: view(); }
-    .mb-motivo:nth-child(1) { --dy: 110%; animation-range: entry 0% cover 40%; }
-    .mb-motivo:nth-child(2) { --dy: 0%; animation-range: entry 0% cover 40%; }
-    .mb-motivo:nth-child(3) { --dy: -110%; animation-range: entry 0% cover 40%; }
-    @keyframes mb-p-leque { from { translate: 60px var(--dy); rotate: y -35deg; scale: 0.9; opacity: 0.2; } to { translate: 0 0; rotate: y 0deg; scale: 1; opacity: 1; } }
+    /* Por que: cada item sobe de leve com a rolagem */
+    .mb-motivo { animation: mb-rol-sobe-leve linear both; animation-timeline: view(); animation-range: entry 0% cover 35%; }
+    @keyframes mb-rol-sobe-leve { from { translate: 0 24px; opacity: 0.2; } to { translate: 0 0; opacity: 1; } }
 
     /* Bento: as três cartas saem de trás do bloco grande, como um baralho */
     .mb-tarefa { transform-origin: 50% 100%; animation: mb-p-carta linear both; animation-timeline: view(); }
@@ -427,16 +410,15 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
   }
   @media (max-width: 899px) {
     .mb-tarefa--1, .mb-tarefa--2, .mb-tarefa--3 { --dx: 0%; --rz: -6deg; }
-    .mb-motivo:nth-child(n) { --dy: 0%; }
   }
 }
 
 /* Hero com a tela real da torre */
 .mb-janela { overflow: hidden; border-radius: 14px; background: #fff; }
-.mb-janela__barra { display: flex; align-items: center; gap: 6px; padding: 10px 14px; border-bottom: 1px solid #ECEEF2; background: #F7F8FA; }
+.mb-janela[data-ui] .mb-janela__barra { display: flex; align-items: center; gap: 6px; padding: 10px 14px; border-bottom: 1px solid #ECEEF2; background: #F7F8FA; }
 .mb-janela__barra i { width: 10px; height: 10px; border-radius: 999px; background: #DADDE4; }
-.mb-janela__barra span { margin-left: 10px; font-family: var(--f-mono, ui-monospace, monospace); font-size: 12px; color: #6B7080; }
-.mb-janela__barra b { margin-left: auto; font-family: var(--f-mono, ui-monospace, monospace); font-size: 10.5px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #9AA0AE; }
+.mb-janela__barra span { margin-left: 10px; font-size: 13px; color: #5B6072; }
+.mb-janela__barra b { margin-left: auto; font-size: 13px; font-weight: 500; color: #5B6072; }
 .mb-janela img { display: block; width: 100%; height: auto; }
 @media (max-width: 720px) { .mb-janela__barra span { display: none; } }
 
@@ -450,7 +432,7 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
 
 /* Mini cenas do bento no mesmo formato das telas reais: janela branca */
 .mb-cena { padding: 30px 10px 10px; background: #fff; box-shadow: none; }
-.mb-cena::after { content: "Demonstração"; position: absolute; top: 7px; right: 10px; font-family: var(--f-mono, ui-monospace, monospace); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: #9AA0AE; }
+.mb-cena::after { content: "Demonstração"; position: absolute; top: 8px; right: 10px; font-size: 12px; font-weight: 500; color: #5B6072; }
 .mb-cena p { color: var(--mb-tinta) !important; }
 .mb-cena--doc p span { opacity: 1; color: #8A8FA0; }
 .mb-cena--doc .mb-cena__ok { color: var(--mb-teal-ink) !important; }
@@ -486,12 +468,6 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
 
     /* 99%: número sobe de trás de uma régua, sem blur */
     @keyframes mb-p-num { from { scale: 0.7; translate: 0 40%; clip-path: inset(0 0 100% 0); opacity: 0.4; } to { scale: 1; translate: 0 0; clip-path: inset(0 0 0 0); opacity: 1; } }
-
-    /* Passos 1-2-3: colchetes abrem e o número entra girando */
-    .mb-passos__n::before { animation: mb-colchete-e linear both; animation-timeline: view(); animation-range: entry 10% cover 35%; }
-    .mb-passos__n::after { animation: mb-colchete-d linear both; animation-timeline: view(); animation-range: entry 10% cover 35%; }
-    @keyframes mb-colchete-e { from { translate: 16px 0; opacity: 0; } to { translate: 0 0; opacity: 1; } }
-    @keyframes mb-colchete-d { from { translate: -16px 0; opacity: 0; } to { translate: 0 0; opacity: 1; } }
 
     /* FAQ: itens entram em leque, um atrás do outro */
     .mb-faq__item { animation: mb-faq linear both; animation-timeline: view(); animation-range: entry 0% entry 90%; transform-origin: 50% 0; }

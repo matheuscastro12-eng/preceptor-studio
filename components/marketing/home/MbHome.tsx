@@ -24,9 +24,9 @@ const TELAS = [
 ];
 
 const PASSOS = [
-  { n: "01", titulo: "Diagnóstico", quando: "30 min", texto: "Você sai com o passo a passo de hoje e o ponto onde o tempo se perde.", icone: "lupa", tom: "#E3F1FF" },
-  { n: "02", titulo: "IA aplicada", quando: "Piloto de 2 a 4 semanas", texto: "O agente trabalha junto com a sua equipe, e cada saída é aprovada ou corrigida por uma pessoa.", icone: "check", tom: "#E6F8F8" },
-  { n: "03", titulo: "Medição", quando: "Última semana do piloto", texto: "Você recebe a comparação com a linha de base e decide se o agente segue rodando.", icone: "grafico", tom: "#EEF0FF" },
+  { titulo: "Diagnóstico", quando: "30 min", texto: "Você sai com o passo a passo de hoje e o ponto onde o tempo se perde." },
+  { titulo: "IA aplicada", quando: "Piloto de 2 a 4 semanas", texto: "O agente trabalha junto com a sua equipe, e cada saída é aprovada ou corrigida por uma pessoa." },
+  { titulo: "Medição", quando: "Última semana do piloto", texto: "Você recebe a comparação com a linha de base e decide se o agente segue rodando." },
 ];
 
 const FATOS = [
@@ -36,9 +36,9 @@ const FATOS = [
 ];
 
 const MOTIVOS = [
-  { titulo: "Primeiro o processo", texto: "Mapeamos o passo a passo de hoje antes de pôr IA em qualquer coisa.", icone: "arquivo" },
-  { titulo: "Uma pessoa aprova", texto: "O agente só segue sozinho onde a regra é fechada e você autorizou.", icone: "check" },
-  { titulo: "Medido de verdade", texto: "No fim do piloto, a comparação com a linha de base decide se ele fica.", icone: "grafico" },
+  { titulo: "Primeiro o processo", texto: "Mapeamos o passo a passo de hoje antes de pôr IA em qualquer coisa." },
+  { titulo: "Uma pessoa aprova", texto: "O agente só segue sozinho onde a regra é fechada e você autorizou." },
+  { titulo: "Medido de verdade", texto: "No fim do piloto, a comparação com a linha de base decide se ele fica." },
 ];
 
 const TAREFAS = [
@@ -66,7 +66,7 @@ const PERGUNTAS = [
 function Cena({ tipo }: { tipo: number }) {
   if (tipo === 0)
     return (
-      <div className="mb-cena mb-cena--doc" aria-hidden="true">
+      <div className="mb-cena mb-cena--doc" aria-hidden="true" data-ui>
         <i className="mb-cena__scan" />
         <p><span>Emitente</span><b>Transportes Sul</b></p>
         <p><span>Valor</span><b>R$ 4.380,00</b></p>
@@ -76,14 +76,14 @@ function Cena({ tipo }: { tipo: number }) {
     );
   if (tipo === 1)
     return (
-      <div className="mb-cena mb-cena--conf" aria-hidden="true">
+      <div className="mb-cena mb-cena--conf" aria-hidden="true" data-ui>
         <p><span>2.350,00</span><span>2.350,00</span><b>✓</b></p>
         <p><span>1.180,00</span><span>1.180,00</span><b>✓</b></p>
         <p className="is-exc"><span>780,00</span><span>870,00</span><b>!</b></p>
       </div>
     );
   return (
-    <div className="mb-cena mb-cena--chat" aria-hidden="true">
+    <div className="mb-cena mb-cena--chat" aria-hidden="true" data-ui>
       <p className="in">Tem horário no sábado?</p>
       <p className="out">Tem sim: 9h ou 10h30. Qual prefere?</p>
       <p className="in">9h</p>
@@ -133,7 +133,7 @@ export function MbHome() {
             </div>
             <p className="mb-micro mb-sobe">{CTA_MICROCOPY}</p>
             <div className="mb-palco__tela mb-superficie">
-              <div className="mb-video mb-janela">
+              <div className="mb-video mb-janela" data-ui>
                 <div className="mb-janela__barra" aria-hidden="true">
                   <i /><i /><i />
                   <span>preceptor · torre de expedição</span>
@@ -174,7 +174,7 @@ export function MbHome() {
         </div>
       </section>
 
-      {/* Por que: texto à esquerda, três cartões à direita */}
+      {/* Por que: texto à esquerda, os três motivos em tipo grande à direita */}
       <section className="mb-sec">
         <div className="mb-wrap mb-porque">
           <div data-rv>
@@ -198,11 +198,8 @@ export function MbHome() {
           <ul className="mb-motivos" data-rv>
             {MOTIVOS.map((m) => (
               <li key={m.titulo} className="mb-motivo">
-                <span className="mb-motivo__ic"><Glifo nome={m.icone} /></span>
-                <div>
-                  <h3>{m.titulo}</h3>
-                  <p>{m.texto}</p>
-                </div>
+                <h3>{m.titulo}</h3>
+                <p>{m.texto}</p>
               </li>
             ))}
           </ul>
@@ -266,8 +263,7 @@ export function MbHome() {
           </h2>
           <ol className="mb-passos">
             {PASSOS.map((p) => (
-              <li key={p.n} data-rv>
-                <span className="mb-passos__n">{p.n}</span>
+              <li key={p.titulo} data-rv>
                 <h3>{p.titulo}</h3>
                 <p className="mb-passos__quando">{p.quando}</p>
                 <p>{p.texto}</p>

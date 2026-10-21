@@ -1,5 +1,5 @@
 /* Design system da landing: branco + navy da marca (#00033D) + teal (#3BCACE).
-   Tipografia: Geist (títulos e texto) e Geist Mono (técnico).
+   Tipografia: Geist (títulos e texto).
    Escopado a .marketing-shell para nao vazar pro /dashboard e /diagnostico. */
 
 .marketing-shell {
@@ -17,7 +17,6 @@
 
   --font-display: var(--font-geist-sans);
   --font-body: var(--font-geist-sans);
-  --font-mono-lp: var(--font-geist-mono);
   --font-sans: var(--font-body), system-ui, sans-serif;
   --font-head: var(--font-display), system-ui, sans-serif;
 

@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
-import { GeistMono } from "geist/font/mono";
 import { FunnelTracker } from "@/components/FunnelTracker";
 import "./marketing.css";
 
 /* Geist em títulos e corpo (as variáveis --font-display/--font-body apontam
-   para ela em marketing.css); Geist Mono nos rótulos técnicos. */
+   para ela em marketing.css). Sem monoespaçada na landing. */
 
 const SITE_URL = "https://preceptorstudio.com";
 
@@ -60,7 +59,7 @@ export default function MarketingLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`marketing-shell ${GeistSans.variable} ${GeistMono.variable}`}>
+    <div className={`marketing-shell ${GeistSans.variable}`}>
       <FunnelTracker />
       {children}
     </div>
