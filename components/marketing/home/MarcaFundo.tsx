@@ -1,6 +1,6 @@
 /*
- * P! da marca em contorno, gigante, atrás do hero: o traço se desenha,
- * o ponto cai em teal e depois a marca flutua devagar. Decorativo.
+ * P! da marca em contorno, gigante, atrás do hero: o traço se desenha uma
+ * vez, o ponto acende em teal e a marca fica parada. Decorativo.
  */
 export function MarcaFundo({ variante }: { variante?: "contato" }) {
   return (

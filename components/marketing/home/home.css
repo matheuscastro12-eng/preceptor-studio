@@ -15,7 +15,7 @@
   --line: #E4E7F0;
   --bg: #FFFFFF;
   --bg-soft: #F4F6FA;
-  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --dur-fast: 160ms;
   --dur-base: 320ms;
   --dur-slow: 700ms;

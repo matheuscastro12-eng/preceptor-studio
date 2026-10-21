@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Glifo } from "./Glifo";
-import { HeroIcone } from "./HeroIcone";
 import { MarcaFundo } from "./MarcaFundo";
 import { Segmentos } from "./Segmentos";
 import { CountUp } from "./CountUp";
@@ -121,35 +120,10 @@ export function MbHome() {
         <div className="mb-wrap">
           <div className="mb-palco">
             <MarcaFundo />
-            <p className="mb-palco__selo mb-sobe">Agentes de IA para operações</p>
-            <h1 className="mb-h1">
-              <span className="mb-linha" style={{ animationDelay: "400ms" }}>
-                O documento
-                <HeroIcone atraso={1400} intervalo={2600} icones={[
-                  { nome: "documento", tom: "#3BCACE" }, { nome: "recibo", tom: "#2B3BB0" },
-                  { nome: "arquivo", tom: "#3BCACE" }, { nome: "mensagem", tom: "#2B3BB0" },
-                ]} />
-                chega<span className="mb-ponto">.</span>
-              </span>{" "}
-              <span className="mb-linha" style={{ animationDelay: "500ms" }}>
-                A conferência
-                <HeroIcone atraso={1550} intervalo={3100} icones={[
-                  { nome: "lupa", tom: "#2B3BB0" }, { nome: "recibo", tom: "#3BCACE" },
-                  { nome: "ampulheta", tom: "#2B3BB0" }, { nome: "grafico", tom: "#3BCACE" },
-                ]} />
-                fica pronta<span className="mb-ponto">.</span>
-              </span>{" "}
-              <span className="mb-linha" style={{ animationDelay: "600ms" }}>
-                Sua equipe
-                <HeroIcone atraso={1700} intervalo={3600} icones={[
-                  { nome: "check", tom: "#3BCACE" }, { nome: "dinheiro", tom: "#2B3BB0" },
-                  { nome: "pacote", tom: "#3BCACE" }, { nome: "caminhao", tom: "#2B3BB0" },
-                ]} />
-                só aprova<span className="mb-ponto">.</span>
-              </span>
-            </h1>
+            <h1 className="mb-h1">Agentes de IA que sua equipe aprova</h1>
             <p className="mb-sub mb-sobe">
-              Documentos, conferências e mensagens: o agente faz a parte repetitiva e uma pessoa da sua equipe decide.
+              O documento chega e a conferência fica pronta. O agente faz a parte repetitiva e uma pessoa da sua
+              equipe decide.
             </p>
             <div className="mb-ctas mb-sobe">
               <a href="#contato" className="mb-pilula mb-pilula--teal">{CTA_TEXTO}</a>
