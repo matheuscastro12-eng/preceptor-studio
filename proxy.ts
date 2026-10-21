@@ -38,7 +38,11 @@ const ADMIN_API_PATTERNS = [
 ];
 
 // Rotas cujo acesso (incluindo GET) exige autenticação, não só mutações.
+// /api/leads entra aqui: o GET devolvia a tabela inteira (nome, e-mail,
+// telefone, IP, respostas do diagnóstico) sem login — LGPD. O único endpoint
+// público de leads (request-contact) já saiu antes, em isPublicApi.
 const FULLY_GATED_API_PREFIXES = [
+  "/api/leads",
   "/api/studies",
   "/api/leads", // leitura expõe dados pessoais; /request-contact segue público via isPublicApi
   "/api/upload-pdf",
