@@ -530,3 +530,6 @@
 @media (max-width: 560px) {
   .marketing-shell .mkt-footer-grid { grid-template-columns: 1fr !important; }
 }
+
+/* Banner de cookies (fica fora do .marketing-shell): na landing, em Geist. */
+body:has(.marketing-shell) .consent-banner { font-family: var(--font-geist-sans), system-ui, sans-serif; }
