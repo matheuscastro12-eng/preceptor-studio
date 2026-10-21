@@ -476,7 +476,6 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
   .mb-telas--tres { grid-template-columns: repeat(3, 1fr); }
   .mb-telas--tres .mb-tela { grid-column: auto; }
 }
-.mb-telas--tres .mb-tela__moldura { aspect-ratio: 4 / 3; }
 .mb-baia__nota { margin: 0; font-size: var(--t-peq); color: var(--mb-texto); }
 .mb-muda { display: grid; gap: 32px; margin: 40px 0 0; padding: 0; list-style: none; }
 @media (min-width: 900px) { .mb-muda { grid-template-columns: repeat(3, 1fr); gap: 40px; } }
@@ -491,3 +490,12 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
 .mb-conversa__fala { max-width: 80%; margin: 0; padding: 10px 14px; border-radius: 16px; font-size: var(--t-peq); line-height: 1.35; }
 .mb-conversa__fala--cliente { justify-self: start; background: #fff; color: var(--mb-tinta); border-bottom-left-radius: 4px; }
 .mb-conversa__fala--agente { justify-self: end; background: var(--mb-teal); color: var(--mb-navy); border-bottom-right-radius: 4px; }
+/* Com a conversa: ela ocupa a linha de cima e as duas telas a de baixo. */
+@media (min-width: 900px) {
+  .mb-telas--conversa { grid-template-columns: 1fr 1fr; }
+  .mb-telas--conversa .mb-tela--conversa { grid-column: 1 / -1; }
+  .mb-telas.mb-telas--conversa .mb-tela.mb-tela--conversa .mb-tela__moldura.mb-conversa { aspect-ratio: auto; min-height: 260px; padding: 44px 32px 24px; }
+  .mb-conversa__fala { max-width: 60%; }
+}
+/* A conversa é HTML: não passa pela máscara de "abrir a moldura" das imagens. */
+.mb-tela__moldura.mb-conversa { animation: none; clip-path: none; }

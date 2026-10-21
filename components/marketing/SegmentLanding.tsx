@@ -113,9 +113,9 @@ export function SegmentLanding({ content }: { content: SegmentContent }) {
                   </li>
                 ))}
               </ul>
-              <div className="mb-telas mb-telas--tres">
+              <div className={`mb-telas mb-telas--tres${content.conversa ? " mb-telas--conversa" : ""}`}>
                 {content.conversa && (
-                  <figure className="mb-tela">
+                  <figure className="mb-tela mb-tela--conversa">
                     <div className="mb-tela__moldura mb-conversa" data-ui>
                       {content.conversa.falas.map((f) => (
                         <p key={f.texto} className={`mb-conversa__fala mb-conversa__fala--${f.de}`}>{f.texto}</p>
