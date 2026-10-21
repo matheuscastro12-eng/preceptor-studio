@@ -1,5 +1,5 @@
 // Tracking de funil client-side (interno, alimenta o CRM).
-// Captura UTMs no primeiro acesso (persiste na sessao) e dispara eventos de topo
+// Captura UTMs, gclid e fbclid (guarda 90 dias) e dispara eventos de topo
 // para /api/public/track. Fire-and-forget, nunca quebra a UI.
 
 const SS_UTM = "ps_utm";
@@ -45,41 +45,73 @@ function getSessionId(): string {
   return sid;
 }
 
-// Captura UTMs da URL no primeiro acesso e persiste. Depois reusa os guardados.
-function captureUtms(): Utms {
-  const ss = safeSession();
-  const keys: (keyof Utms)[] = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"];
-  if (typeof window !== "undefined") {
-    const p = new URLSearchParams(window.location.search);
-    const fromUrl: Utms = {};
-    let has = false;
-    for (const k of keys) {
-      const v = p.get(k);
-      if (v) { fromUrl[k] = v; has = true; }
-    }
-    if (has) {
-      try { ss?.setItem(SS_UTM, JSON.stringify(fromUrl)); } catch {}
-      return fromUrl;
-    }
+const LS_ATTR = "ps_attr";
+const ATTR_TTL_MS = 90 * 24 * 60 * 60 * 1000;
+const UTM_KEYS: (keyof Utms)[] = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"];
+const CLICK_KEYS = ["gclid", "fbclid"] as const;
+
+export type Attribution = Utms & { gclid?: string; fbclid?: string; landing_page?: string; referrer?: string };
+
+function safeLocal(): Storage | null {
+  try {
+    return typeof window !== "undefined" ? window.localStorage : null;
+  } catch {
+    return null;
+  }
+}
+
+// Le UTMs, gclid e fbclid da URL. Se vierem, guarda por 90 dias (com a pagina
+// de entrada e o referrer daquele acesso). Sem parametros na URL, reusa o guardado.
+function captureAttribution(): Attribution {
+  if (typeof window === "undefined") return {};
+  const ls = safeLocal();
+  const p = new URLSearchParams(window.location.search);
+  const fromUrl: Attribution = {};
+  let has = false;
+  for (const k of [...UTM_KEYS, ...CLICK_KEYS]) {
+    const v = p.get(k);
+    if (v) { fromUrl[k] = v.slice(0, 300); has = true; }
+  }
+  if (has) {
+    fromUrl.landing_page = window.location.pathname;
+    fromUrl.referrer = document.referrer || undefined;
+    try { ls?.setItem(LS_ATTR, JSON.stringify({ at: Date.now(), v: fromUrl })); } catch {}
+    try { safeSession()?.setItem(SS_UTM, JSON.stringify(fromUrl)); } catch {}
+    return fromUrl;
   }
   try {
-    return ss ? (JSON.parse(ss.getItem(SS_UTM) || "{}") as Utms) : {};
+    const raw = ls?.getItem(LS_ATTR);
+    if (raw) {
+      const { at, v } = JSON.parse(raw) as { at: number; v: Attribution };
+      if (Date.now() - at < ATTR_TTL_MS) return v;
+      ls?.removeItem(LS_ATTR);
+    }
+  } catch {}
+  try {
+    return JSON.parse(safeSession()?.getItem(SS_UTM) || "{}") as Attribution;
   } catch {
     return {};
   }
+}
+
+function captureUtms(): Utms {
+  const a = captureAttribution();
+  const out: Utms = {};
+  for (const k of UTM_KEYS) if (a[k]) out[k] = a[k];
+  return out;
 }
 
 export function getStoredUtms(): Utms {
   return captureUtms();
 }
 
-export function getAttribution(): Utms & { landing_page?: string; referrer?: string } {
-  const utms = captureUtms();
-  if (typeof window === "undefined") return utms;
+export function getAttribution(): Attribution {
+  const a = captureAttribution();
+  if (typeof window === "undefined") return a;
   return {
-    ...utms,
-    landing_page: window.location.pathname,
-    referrer: document.referrer || undefined,
+    ...a,
+    landing_page: a.landing_page ?? window.location.pathname,
+    referrer: a.referrer ?? (document.referrer || undefined),
   };
 }
 

@@ -33,6 +33,8 @@ interface Payload {
     utm_term?: string;
     landing_page?: string;
     referrer?: string;
+    gclid?: string;
+    fbclid?: string;
   };
 }
 
@@ -135,6 +137,8 @@ export async function POST(req: NextRequest) {
       utm_term: attr.utm_term ?? null,
       landing_page: attr.landing_page ?? null,
       referrer: attr.referrer ?? null,
+      gclid: attr.gclid ? String(attr.gclid).slice(0, 300) : null,
+      fbclid: attr.fbclid ? String(attr.fbclid).slice(0, 300) : null,
     })
     .select("id")
     .single();
