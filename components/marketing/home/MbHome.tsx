@@ -77,8 +77,8 @@ function Cena({ tipo }: { tipo: number }) {
   if (tipo === 1)
     return (
       <div className="mb-cena mb-cena--conf" aria-hidden="true" data-ui>
-        <p><span>2.350,00</span><span>2.350,00</span><b>✓</b></p>
-        <p><span>1.180,00</span><span>1.180,00</span><b>✓</b></p>
+        <p><span>2.350,00</span><span>2.350,00</span><b><Glifo nome="certo" /></b></p>
+        <p><span>1.180,00</span><span>1.180,00</span><b><Glifo nome="certo" /></b></p>
         <p className="is-exc"><span>780,00</span><span>870,00</span><b>!</b></p>
       </div>
     );
@@ -232,7 +232,7 @@ export function MbHome() {
         </div>
       </section>
 
-      {/* O que o agente faz: bento com bloco grande e três cartões altos */}
+      {/* O que o agente faz: bloco do título em cima, três tarefas embaixo */}
       <section className="mb-sec">
         <div className="mb-wrap mb-bento">
           <div className="mb-bento__grande" data-rv>
