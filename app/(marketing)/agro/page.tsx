@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SegmentLanding, type SegmentContent } from "@/components/marketing/SegmentLanding";
+import { SegmentLanding, TELAS, type SegmentContent } from "@/components/marketing/SegmentLanding";
 
 export const metadata: Metadata = {
   title: "Agro",
@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 };
 
 const CONTENT: SegmentContent = {
-  eyebrow: "Agro",
-  title: ["Da fazenda ao escritório", "sem redigitar nada"],
-  lead: "Laudo, romaneio, controle de insumo, relatório de cooperativa: o campo produz dado o dia inteiro. A automação faz esse dado chegar no padrão certo, na hora certa.",
+  title: "Da fazenda ao escritório",
+  lead: "Agentes de IA para o agro, sem redigitar nada. Laudo, romaneio, controle de insumo, relatório de cooperativa: o campo produz dado o dia inteiro, e a automação faz esse dado chegar no padrão certo, na hora certa.",
+  hero: TELAS.compras,
   pains: [
     {
       title: "O laudo que leva dias",
@@ -48,13 +48,13 @@ const CONTENT: SegmentContent = {
       body: "Custo por talhão e produtividade atualizados durante a safra, enquanto a decisão ainda vale.",
     },
   ],
+  telas: [TELAS.caixa, TELAS.clima, TELAS.torre],
   results: [
     { v: "De dias pra minutos", l: "no ciclo entre o registro no campo e o laudo entregue." },
     { v: "Zero redigitação", l: "o mesmo dado deixa de ser digitado três vezes em três lugares." },
     { v: "Número na mão", l: "decisão de safra com custo e produtividade em tempo real." },
   ],
-  ctaLine:
-    "Conta pra gente como o dado sai do campo hoje. A gente mostra onde a automação se paga primeiro.",
+  ctaLine: "Conta pra gente como o dado sai do campo hoje. Em 30 minutos de conversa, você sai sabendo por onde começar.",
 };
 
 export default function AgroPage() {

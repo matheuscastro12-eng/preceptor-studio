@@ -466,3 +466,28 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
   .lp2.js-ready .mb-sec [data-rv]:not(.is-in) { transform: none; opacity: 1; }
   .lp2.js-ready .mb-sec [data-rv].is-in { animation-name: none; }
 }
+
+/* ===== Páginas de segmento (mesmo molde da home) ===== */
+.mb-entregas { display: grid; gap: 28px 48px; margin: 0 0 40px; padding: 0; list-style: none; }
+@media (min-width: 720px) { .mb-entregas { grid-template-columns: 1fr 1fr; } }
+.mb-entregas h3 { margin: 0; font-family: var(--f-display); font-size: var(--t-apoio); font-weight: 600; letter-spacing: -0.025em; line-height: 1.2; color: var(--mb-tinta); }
+.mb-entregas p { margin: 6px 0 0; font-size: var(--t-corpo); line-height: 1.55; color: var(--mb-tinta); }
+@media (min-width: 900px) {
+  .mb-telas--tres { grid-template-columns: repeat(3, 1fr); }
+  .mb-telas--tres .mb-tela { grid-column: auto; }
+}
+.mb-telas--tres .mb-tela__moldura { aspect-ratio: 4 / 3; }
+.mb-baia__nota { margin: 0; font-size: var(--t-peq); color: var(--mb-texto); }
+.mb-muda { display: grid; gap: 32px; margin: 40px 0 0; padding: 0; list-style: none; }
+@media (min-width: 900px) { .mb-muda { grid-template-columns: repeat(3, 1fr); gap: 40px; } }
+.mb-muda b { display: block; font-family: var(--f-display); font-size: var(--t-secao); font-weight: 600; line-height: 1.05; letter-spacing: -0.04em; color: var(--mb-navy); }
+.mb-muda p { margin: 12px 0 0; font-size: var(--t-corpo); line-height: 1.55; color: var(--mb-tinta); }
+.mb-fecho { display: grid; gap: 24px; align-items: end; padding: 48px; border-radius: 32px; background: var(--mb-navy); color: #fff; }
+@media (min-width: 900px) { .mb-fecho { grid-template-columns: 1fr 1fr; gap: 48px; padding: 56px; } }
+@media (max-width: 720px) { .mb-fecho { padding: 32px 22px; border-radius: 24px; } }
+.mb-fecho .mb-h2 { color: #fff; }
+.mb-fecho p { margin: 0 0 24px; font-size: var(--t-corpo); line-height: 1.55; color: #fff; }
+.mb-conversa { display: grid; align-content: center; gap: 10px; padding: 44px 20px 20px; }
+.mb-conversa__fala { max-width: 80%; margin: 0; padding: 10px 14px; border-radius: 16px; font-size: var(--t-peq); line-height: 1.35; }
+.mb-conversa__fala--cliente { justify-self: start; background: #fff; color: var(--mb-tinta); border-bottom-left-radius: 4px; }
+.mb-conversa__fala--agente { justify-self: end; background: var(--mb-teal); color: var(--mb-navy); border-bottom-right-radius: 4px; }
