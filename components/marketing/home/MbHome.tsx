@@ -239,7 +239,6 @@ export function MbHome() {
             <h2 className="mb-h2 mb-h2--m">O que o agente faz no dia a dia</h2>
             <p>Ele trabalha no ERP, na planilha e no WhatsApp que você já usa. Sem trocar de sistema.</p>
             <a href="#contato" className="mb-pilula mb-pilula--navy mb-pilula--p">Ver na minha operação</a>
-            <span className="mb-bento__p" aria-hidden="true">P!</span>
           </div>
           {TAREFAS.map((t, i) => (
             <article key={t.titulo} className={`mb-tarefa mb-tarefa--${i + 1}`} data-rv>
