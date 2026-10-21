@@ -616,7 +616,3 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
   .lp2.js-ready .mb-sec [data-rv].is-in { animation-name: none; }
 }
 
-/* Ganhos logo abaixo do CTA do hero */
-.mb-ganhos { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 28px; margin: 22px auto 0; padding: 0; max-width: 920px; list-style: none; font-size: 14px; line-height: 1.45; color: rgba(255, 255, 255, 0.72); }
-.mb-ganhos li { max-width: 270px; text-align: left; }
-.mb-ganhos b { color: #fff; font-weight: 600; }

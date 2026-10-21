@@ -30,12 +30,6 @@ const PASSOS = [
   { n: "03", titulo: "Medição", quando: "Última semana do piloto", texto: "Você recebe a comparação com a linha de base e decide se o agente segue rodando.", icone: "grafico", tom: "#EEF0FF" },
 ];
 
-const GANHOS = [
-  { titulo: "Mais rápido", texto: "O documento entra no sistema no dia em que chega." },
-  { titulo: "Menos erro", texto: "A divergência aparece na hora, não no fechamento." },
-  { titulo: "Equipe no que importa", texto: "Quem digitava passa a aprovar e a cuidar do cliente." },
-];
-
 /* Dores que os clientes mais contam no diagnóstico: o visitante se reconhece antes de ler o "como". */
 const DORES = [
   { titulo: "Os documentos são uma bagunça", texto: "Nota, CT-e e boleto chegam por e-mail, WhatsApp e papel, e alguém digita tudo no sistema.", icone: "documento" },
@@ -133,22 +127,23 @@ export function MbHome() {
             <p className="mb-palco__selo mb-sobe">Agentes de IA sob medida para a sua operação</p>
             <h1 className="mb-h1">
               <span className="mb-linha" style={{ animationDelay: "400ms" }}>
-                Sua equipe para de digitar nota
+                Menos nota digitada
                 <HeroIcone atraso={1400} intervalo={2600} icones={[
                   { nome: "documento", tom: "#3BCACE" }, { nome: "recibo", tom: "#2B3BB0" },
                   { nome: "arquivo", tom: "#3BCACE" }, { nome: "mensagem", tom: "#2B3BB0" },
                 ]} />
-                ,
+                <span className="mb-ponto">.</span>
               </span>{" "}
               <span className="mb-linha" style={{ animationDelay: "500ms" }}>
-                de conferir extrato na mão
+                Menos conferência na mão
                 <HeroIcone atraso={1550} intervalo={3100} icones={[
                   { nome: "lupa", tom: "#2B3BB0" }, { nome: "recibo", tom: "#3BCACE" },
                   { nome: "ampulheta", tom: "#2B3BB0" }, { nome: "grafico", tom: "#3BCACE" },
                 ]} />
+                <span className="mb-ponto">.</span>
               </span>{" "}
               <span className="mb-linha" style={{ animationDelay: "600ms" }}>
-                e de responder a mesma pergunta o dia todo
+                Mais tempo para a equipe
                 <HeroIcone atraso={1700} intervalo={3600} icones={[
                   { nome: "check", tom: "#3BCACE" }, { nome: "dinheiro", tom: "#2B3BB0" },
                   { nome: "pacote", tom: "#3BCACE" }, { nome: "caminhao", tom: "#2B3BB0" },
@@ -167,13 +162,6 @@ export function MbHome() {
               </a>
             </div>
             <p className="mb-micro mb-sobe">{CTA_MICROCOPY}</p>
-            <ul className="mb-ganhos mb-sobe">
-              {GANHOS.map((g) => (
-                <li key={g.titulo}>
-                  <b>{g.titulo}.</b> {g.texto}
-                </li>
-              ))}
-            </ul>
             <div className="mb-palco__tela mb-superficie">
               <div className="mb-video mb-janela">
                 <div className="mb-janela__barra" aria-hidden="true">
