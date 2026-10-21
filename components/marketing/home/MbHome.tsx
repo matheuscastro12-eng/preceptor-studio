@@ -127,23 +127,23 @@ export function MbHome() {
             <p className="mb-palco__selo mb-sobe">Agentes de IA sob medida para a sua operação</p>
             <h1 className="mb-h1">
               <span className="mb-linha" style={{ animationDelay: "400ms" }}>
-                Menos nota digitada
+                Um agente de IA
                 <HeroIcone atraso={1400} intervalo={2600} icones={[
                   { nome: "documento", tom: "#3BCACE" }, { nome: "recibo", tom: "#2B3BB0" },
                   { nome: "arquivo", tom: "#3BCACE" }, { nome: "mensagem", tom: "#2B3BB0" },
                 ]} />
-                <span className="mb-ponto">.</span>
+                
               </span>{" "}
               <span className="mb-linha" style={{ animationDelay: "500ms" }}>
-                Menos conferência na mão
+                desenhado para o seu processo
                 <HeroIcone atraso={1550} intervalo={3100} icones={[
                   { nome: "lupa", tom: "#2B3BB0" }, { nome: "recibo", tom: "#3BCACE" },
                   { nome: "ampulheta", tom: "#2B3BB0" }, { nome: "grafico", tom: "#3BCACE" },
                 ]} />
-                <span className="mb-ponto">.</span>
+                ,
               </span>{" "}
               <span className="mb-linha" style={{ animationDelay: "600ms" }}>
-                Mais tempo para a equipe
+                não um produto de prateleira
                 <HeroIcone atraso={1700} intervalo={3600} icones={[
                   { nome: "check", tom: "#3BCACE" }, { nome: "dinheiro", tom: "#2B3BB0" },
                   { nome: "pacote", tom: "#3BCACE" }, { nome: "caminhao", tom: "#2B3BB0" },
@@ -152,8 +152,7 @@ export function MbHome() {
               </span>
             </h1>
             <p className="mb-sub mb-sobe">
-              Um agente de IA desenhado para o processo da sua empresa, não um produto de prateleira. Ele faz a parte
-              repetitiva no sistema que você já usa. Sua equipe só aprova.
+              Ele faz a parte repetitiva no sistema que você já usa. Sua equipe só aprova.
             </p>
             <div className="mb-ctas mb-sobe">
               <a href="#contato" className="mb-pilula mb-pilula--teal">{CTA_TEXTO}</a>
