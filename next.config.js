@@ -38,6 +38,10 @@ const nextConfig = {
     "@sparticuz/chromium-min",
   ],
   // Painel de construcao do OPERA: /painel/<venture> serve o HTML publicado pela venture.
+  // Páginas de segmento antigas saíram do site: manda para a home.
+  async redirects() {
+    return ["/agro", "/medicina", "/clinicas"].map((source) => ({ source, destination: "/", permanent: true }));
+  },
   async rewrites() {
     return { beforeFiles: [{ source: "/painel/oasis-cte", destination: "/api/public/painel/oasis-cte" }, { source: "/painel/mtor", destination: "/api/public/painel/mtor" }] };
   },

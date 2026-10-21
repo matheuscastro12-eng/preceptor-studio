@@ -39,7 +39,6 @@ const FRENTES: Frente[] = [
     frente: "CLÍNICAS",
     exemplo: "WhatsApp da recepção em dia",
     mock: MockClinica,
-    link: { href: "/medicina", texto: "Ver como funciona em clínicas" },
   },
 ];
 
