@@ -26,20 +26,21 @@ const TELAS = [
 
 const PASSOS = [
   { n: "01", titulo: "Diagnóstico", quando: "30 min", texto: "Você sai com o passo a passo de hoje e o ponto onde o tempo se perde.", icone: "lupa", tom: "#E3F1FF" },
-  { n: "02", titulo: "IA aplicada", quando: "Piloto de 2 a 4 semanas", texto: "O agente trabalha junto com a sua equipe, e cada saída é aprovada ou corrigida por uma pessoa.", icone: "check", tom: "#E6F8F8" },
+  { n: "02", titulo: "Piloto junto com a equipe", quando: "Piloto de 2 a 4 semanas", texto: "O agente trabalha junto com a sua equipe, e cada saída é aprovada ou corrigida por uma pessoa.", icone: "check", tom: "#E6F8F8" },
   { n: "03", titulo: "Medição", quando: "Última semana do piloto", texto: "Você recebe a comparação com a linha de base e decide se o agente segue rodando.", icone: "grafico", tom: "#EEF0FF" },
 ];
 
-const FATOS = [
-  { quando: "Dia 1", valor: "30 min", rot: "de diagnóstico" },
-  { quando: "Semanas 1 a 4", valor: "Piloto", rot: "junto com a equipe" },
-  { quando: "Toda saída", valor: "1 pessoa", rot: "aprova antes de valer" },
+const GANHOS = [
+  { titulo: "Mais rápido", texto: "O documento entra no sistema no dia em que chega." },
+  { titulo: "Menos erro", texto: "A divergência aparece na hora, não no fechamento." },
+  { titulo: "Equipe no que importa", texto: "Quem digitava passa a aprovar e a cuidar do cliente." },
 ];
 
-const MOTIVOS = [
-  { titulo: "Primeiro o processo", texto: "Mapeamos o passo a passo de hoje antes de pôr IA em qualquer coisa.", icone: "arquivo" },
-  { titulo: "Uma pessoa aprova", texto: "O agente só segue sozinho onde a regra é fechada e você autorizou.", icone: "check" },
-  { titulo: "Medido de verdade", texto: "No fim do piloto, a comparação com a linha de base decide se ele fica.", icone: "grafico" },
+/* Dores que os clientes mais contam no diagnóstico: o visitante se reconhece antes de ler o "como". */
+const DORES = [
+  { titulo: "Os documentos são uma bagunça", texto: "Nota, CT-e e boleto chegam por e-mail, WhatsApp e papel, e alguém digita tudo no sistema.", icone: "documento" },
+  { titulo: "A conferência leva a tarde inteira", texto: "Extrato contra ERP, romaneio contra pedido, linha por linha, e o erro só aparece no fechamento.", icone: "lupa" },
+  { titulo: "O WhatsApp não para", texto: "A mesma pergunta o dia todo: horário, preço, status da entrega. E quem responde deixa o resto parado.", icone: "mensagem" },
 ];
 
 const TAREFAS = [
@@ -60,6 +61,14 @@ const PERGUNTAS = [
   {
     q: "E se a IA errar?",
     a: "Ela só segue sozinha onde a regra é fechada e você autorizou. O resto passa por uma pessoa da sua equipe antes de virar documento, baixa ou resposta.",
+  },
+  {
+    q: "Por que não um software pronto ou o ChatGPT?",
+    a: "Porque o seu processo não é o do vizinho. Um produto pronto obriga a equipe a se adaptar a ele. O agente é montado sobre as suas regras, os seus documentos e os sistemas que vocês já usam.",
+  },
+  {
+    q: "Quanto tempo leva e quanto custa?",
+    a: "O piloto roda de 2 a 4 semanas. O valor depende do processo e é definido no diagnóstico, antes de você assumir qualquer compromisso.",
   },
 ];
 
@@ -102,7 +111,7 @@ export function MbNav() {
         </Link>
         <nav className="mb-nav__links" aria-label="Seções da página">
           <Link href="/#como">Como funciona</Link>
-          <Link href="/#exemplo">Exemplo</Link>
+          <Link href="/#segmentos">Por setor</Link>
           <Link href="/#faq">FAQ</Link>
         </nav>
         <div className="mb-nav__acoes">
@@ -121,43 +130,50 @@ export function MbHome() {
         <div className="mb-wrap">
           <div className="mb-palco">
             <MarcaFundo />
-            <p className="mb-palco__selo mb-sobe">Agentes de IA para operações</p>
+            <p className="mb-palco__selo mb-sobe">Agentes de IA sob medida para a sua operação</p>
             <h1 className="mb-h1">
               <span className="mb-linha" style={{ animationDelay: "400ms" }}>
-                O documento
+                Sua equipe para de digitar nota
                 <HeroIcone atraso={1400} intervalo={2600} icones={[
                   { nome: "documento", tom: "#3BCACE" }, { nome: "recibo", tom: "#2B3BB0" },
                   { nome: "arquivo", tom: "#3BCACE" }, { nome: "mensagem", tom: "#2B3BB0" },
                 ]} />
-                chega<span className="mb-ponto">.</span>
+                ,
               </span>{" "}
               <span className="mb-linha" style={{ animationDelay: "500ms" }}>
-                A conferência
+                de conferir extrato na mão
                 <HeroIcone atraso={1550} intervalo={3100} icones={[
                   { nome: "lupa", tom: "#2B3BB0" }, { nome: "recibo", tom: "#3BCACE" },
                   { nome: "ampulheta", tom: "#2B3BB0" }, { nome: "grafico", tom: "#3BCACE" },
                 ]} />
-                fica pronta<span className="mb-ponto">.</span>
               </span>{" "}
               <span className="mb-linha" style={{ animationDelay: "600ms" }}>
-                Sua equipe
+                e de responder a mesma pergunta o dia todo
                 <HeroIcone atraso={1700} intervalo={3600} icones={[
                   { nome: "check", tom: "#3BCACE" }, { nome: "dinheiro", tom: "#2B3BB0" },
                   { nome: "pacote", tom: "#3BCACE" }, { nome: "caminhao", tom: "#2B3BB0" },
                 ]} />
-                só aprova<span className="mb-ponto">.</span>
+                <span className="mb-ponto">.</span>
               </span>
             </h1>
             <p className="mb-sub mb-sobe">
-              Documentos, conferências e mensagens: o agente faz a parte repetitiva e uma pessoa da sua equipe decide.
+              Um agente de IA desenhado para o processo da sua empresa, não um produto de prateleira. Ele faz a parte
+              repetitiva no sistema que você já usa. Sua equipe só aprova.
             </p>
             <div className="mb-ctas mb-sobe">
               <a href="#contato" className="mb-pilula mb-pilula--teal">{CTA_TEXTO}</a>
-              <a href="#como" className="mb-pilula mb-pilula--vazada">
-                Como funciona <span aria-hidden="true">→</span>
+              <a href="#segmentos" className="mb-pilula mb-pilula--vazada">
+                Ver por setor <span aria-hidden="true">→</span>
               </a>
             </div>
             <p className="mb-micro mb-sobe">{CTA_MICROCOPY}</p>
+            <ul className="mb-ganhos mb-sobe">
+              {GANHOS.map((g) => (
+                <li key={g.titulo}>
+                  <b>{g.titulo}.</b> {g.texto}
+                </li>
+              ))}
+            </ul>
             <div className="mb-palco__tela mb-superficie">
               <div className="mb-video mb-janela">
                 <div className="mb-janela__barra" aria-hidden="true">
@@ -179,50 +195,21 @@ export function MbHome() {
         </div>
       </section>
 
-      {/* Segmentos: falar como em reunião de vendas */}
-      <section id="segmentos" className="mb-sec mb-sec--colado">
-        <div className="mb-wrap">
-          <div className="mb-seg__cab" data-rv>
-            <h2 className="mb-h2">
-              Seja qual for o seu sistema,
-              <br />
-              <span className="mb-seg__destaque">o agente trabalha nele</span>
-              <span className="mb-ponto">.</span>
-            </h2>
-            <p>
-              Nada de pacote pronto: cada agente é feito sob medida para a sua operação, ligado ao seu sistema por API,
-              pela tela ou pelo e-mail. Veja como fica em cada setor:
-            </p>
-          </div>
-          <div data-rv>
-            <Segmentos />
-          </div>
-        </div>
-      </section>
-
-      {/* Por que: texto à esquerda, três cartões à direita */}
+      {/* Dores: o visitante se reconhece antes do "como" */}
       <section className="mb-sec">
         <div className="mb-wrap mb-porque">
           <div data-rv>
             <h2 className="mb-h2 mb-h2--m">
-              A parte repetitiva sai da mesa da sua equipe<span className="mb-ponto">.</span>
+              Se alguma destas acontece aí, dá para tirar da mesa da sua equipe<span className="mb-ponto">.</span>
             </h2>
             <p className="mb-porque__txt">
-              Nota digitada à mão, extrato conferido linha por linha, a mesma pergunta no WhatsApp o dia todo. O agente
-              assume essa parte e entrega pronto para alguém aprovar.
+              É o que os clientes mais contam no diagnóstico. Cada empresa tem o seu jeito, mas a dor costuma ser uma
+              destas.
             </p>
-            <ol className="mb-trilha">
-              {FATOS.map((f) => (
-                <li key={f.rot}>
-                  <span className="mb-trilha__quando">{f.quando}</span>
-                  <b>{f.valor}</b>
-                  <span className="mb-trilha__rot">{f.rot}</span>
-                </li>
-              ))}
-            </ol>
+            <a href="#contato" className="mb-pilula mb-pilula--navy mb-pilula--p">{CTA_TEXTO}</a>
           </div>
           <ul className="mb-motivos" data-rv>
-            {MOTIVOS.map((m) => (
+            {DORES.map((m) => (
               <li key={m.titulo} className="mb-motivo">
                 <span className="mb-motivo__ic"><Glifo nome={m.icone} /></span>
                 <div>
@@ -235,38 +222,12 @@ export function MbHome() {
         </div>
       </section>
 
-      {/* Frentes numa caixa azulada */}
-      <section className="mb-sec" aria-labelledby="mb-frentes-t">
-        <div className="mb-wrap">
-          <div className="mb-baia" data-rv>
-            <div className="mb-baia__topo">
-              <h2 id="mb-frentes-t" className="mb-h2 mb-h2--m">Onde o agente já trabalha</h2>
-              <p>Telas de sistemas que já construímos, com dados de exemplo. Cada uma foi desenhada para o processo de um cliente.</p>
-            </div>
-            <div className="mb-telas">
-              {TELAS.map((t) => (
-                <figure key={t.titulo} className={`mb-tela ${t.classe}`}>
-                  <div className="mb-tela__moldura">
-                    <Image src={t.src} alt={`${t.titulo}: tela de demonstração com dados de exemplo`} width={t.w} height={t.h} sizes="(min-width: 900px) 700px, 100vw" />
-                    <span className="mb-tela__selo">Demonstração</span>
-                  </div>
-                  <figcaption>
-                    <b>{t.titulo}</b>
-                    <span>{t.sub}</span>
-                  </figcaption>
-                </figure>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* O que o agente faz: bento com bloco grande e três cartões altos */}
       <section className="mb-sec">
         <div className="mb-wrap mb-bento">
           <div className="mb-bento__grande" data-rv>
-            <h2 className="mb-h2 mb-h2--m">O que o agente faz no dia a dia</h2>
-            <p>Ele trabalha no ERP, na planilha e no WhatsApp que você já usa. Sem trocar de sistema.</p>
+            <h2 className="mb-h2 mb-h2--m">O documento chega. A conferência fica pronta. Sua equipe só aprova.</h2>
+            <p>O agente assume a parte repetitiva no ERP, na planilha e no WhatsApp que você já usa. Sem trocar de sistema.</p>
             <a href="#contato" className="mb-pilula mb-pilula--navy mb-pilula--p">Ver na minha operação</a>
             <span className="mb-bento__p" aria-hidden="true">P!</span>
           </div>
@@ -284,22 +245,50 @@ export function MbHome() {
         </div>
       </section>
 
-      {/* Como funciona: 1-2-3 */}
-      <section id="como" className="mb-sec">
+      {/* Segmentos: falar como em reunião de vendas */}
+      <section id="segmentos" className="mb-sec mb-sec--colado">
         <div className="mb-wrap">
-          <h2 className="mb-h2 mb-h2--m" data-rv>
-            Começar é simples como 1, 2, 3<span className="mb-ponto">.</span>
-          </h2>
-          <ol className="mb-passos">
-            {PASSOS.map((p) => (
-              <li key={p.n} data-rv>
-                <span className="mb-passos__n">{p.n}</span>
-                <h3>{p.titulo}</h3>
-                <p className="mb-passos__quando">{p.quando}</p>
-                <p>{p.texto}</p>
-              </li>
-            ))}
-          </ol>
+          <div className="mb-seg__cab" data-rv>
+            <h2 className="mb-h2">
+              Nada de pacote pronto.
+              <br />
+              <span className="mb-seg__destaque">Cada agente é feito para o seu processo</span>
+              <span className="mb-ponto">.</span>
+            </h2>
+            <p>
+              Montado em cima do sistema que vocês já usam, por API, pela tela ou pelo e-mail. Veja a mesma tarefa hoje
+              e com o agente, setor por setor:
+            </p>
+          </div>
+          <div data-rv>
+            <Segmentos />
+          </div>
+        </div>
+      </section>
+
+      {/* Frentes numa caixa azulada */}
+      <section className="mb-sec" aria-labelledby="mb-frentes-t">
+        <div className="mb-wrap">
+          <div className="mb-baia" data-rv>
+            <div className="mb-baia__topo">
+              <h2 id="mb-frentes-t" className="mb-h2 mb-h2--m">Feito para clientes de verdade</h2>
+              <p>Telas de sistemas que construímos para o processo de cada cliente, com dados de exemplo.</p>
+            </div>
+            <div className="mb-telas">
+              {TELAS.map((t) => (
+                <figure key={t.titulo} className={`mb-tela ${t.classe}`}>
+                  <div className="mb-tela__moldura">
+                    <Image src={t.src} alt={`${t.titulo}: tela de demonstração com dados de exemplo`} width={t.w} height={t.h} sizes="(min-width: 900px) 700px, 100vw" />
+                    <span className="mb-tela__selo">Demonstração</span>
+                  </div>
+                  <figcaption>
+                    <b>{t.titulo}</b>
+                    <span>{t.sub}</span>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -320,6 +309,25 @@ export function MbHome() {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Como funciona: 1-2-3 */}
+      <section id="como" className="mb-sec">
+        <div className="mb-wrap">
+          <h2 className="mb-h2 mb-h2--m" data-rv>
+            Começa com uma conversa, não com um contrato<span className="mb-ponto">.</span>
+          </h2>
+          <ol className="mb-passos">
+            {PASSOS.map((p) => (
+              <li key={p.n} data-rv>
+                <span className="mb-passos__n">{p.n}</span>
+                <h3>{p.titulo}</h3>
+                <p className="mb-passos__quando">{p.quando}</p>
+                <p>{p.texto}</p>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
