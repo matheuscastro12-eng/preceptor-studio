@@ -616,3 +616,8 @@ html:has(.lp2), body:has(.lp2), .marketing-shell:has(.lp2) { background: #fff !i
   .lp2.js-ready .mb-sec [data-rv].is-in { animation-name: none; }
 }
 
+
+/* Hero: linhas largas, sem quebra no desktop, para o título se espalhar em vez de virar um bloco quadrado */
+.mb-hero .mb-h1 { font-size: clamp(2.4rem, 5vw, 4.3rem); }
+.mb-hero .mb-sub { max-width: 62ch; }
+@media (min-width: 721px) { .mb-hero .mb-linha { white-space: nowrap; } }

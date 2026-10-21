@@ -127,7 +127,7 @@ export function MbHome() {
             <p className="mb-palco__selo mb-sobe">Agentes de IA sob medida para a sua operação</p>
             <h1 className="mb-h1">
               <span className="mb-linha" style={{ animationDelay: "400ms" }}>
-                Um agente de IA
+                Um agente de IA desenhado
                 <HeroIcone atraso={1400} intervalo={2600} icones={[
                   { nome: "documento", tom: "#3BCACE" }, { nome: "recibo", tom: "#2B3BB0" },
                   { nome: "arquivo", tom: "#3BCACE" }, { nome: "mensagem", tom: "#2B3BB0" },
@@ -135,7 +135,7 @@ export function MbHome() {
                 
               </span>{" "}
               <span className="mb-linha" style={{ animationDelay: "500ms" }}>
-                desenhado para o seu processo
+                para o seu processo
                 <HeroIcone atraso={1550} intervalo={3100} icones={[
                   { nome: "lupa", tom: "#2B3BB0" }, { nome: "recibo", tom: "#3BCACE" },
                   { nome: "ampulheta", tom: "#2B3BB0" }, { nome: "grafico", tom: "#3BCACE" },
