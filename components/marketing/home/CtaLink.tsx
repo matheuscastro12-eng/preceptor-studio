@@ -1,4 +1,4 @@
-const CTA_TEXTO = "Quero meu diagnóstico de 30 min";
+const CTA_TEXTO = "Agendar diagnóstico";
 
 /* CTA único da página: pílula com a seta num círculo próprio, que anda no
    hover e afunda no clique. Sempre leva ao formulário. */

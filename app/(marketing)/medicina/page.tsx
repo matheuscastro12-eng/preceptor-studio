@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SegmentLanding, type SegmentContent } from "@/components/marketing/SegmentLanding";
+import { SegmentLanding, TELAS, type SegmentContent } from "@/components/marketing/SegmentLanding";
 
 export const metadata: Metadata = {
   title: "Medicina",
@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 };
 
 const CONTENT: SegmentContent = {
-  eyebrow: "Medicina",
-  title: ["Agenda cheia, recepção tranquila,", "glosa em queda"],
-  lead: "Agendamento, guia de convênio, cadastro, laudo: a rotina da clínica é feita de regra e repetição. A automação tira isso das costas da equipe e devolve atenção ao paciente.",
+  title: "Agenda cheia, recepção tranquila",
+  lead: "Agentes de IA para clínicas, com glosa em queda. Agendamento, guia de convênio, cadastro, laudo: a rotina da clínica é feita de regra e repetição, e a automação tira isso das costas da equipe.",
+  hero: TELAS.caixa,
   pains: [
     {
       title: "A agenda com furo",
@@ -48,13 +48,22 @@ const CONTENT: SegmentContent = {
       body: "O registro do atendimento vira minuta de laudo no padrão da clínica, pronta pra revisão do médico.",
     },
   ],
+  telas: [TELAS.clima, TELAS.compras],
+  conversa: {
+    titulo: "Agendamento pelo WhatsApp",
+    sub: "O agente consulta a agenda e oferece horários",
+    falas: [
+      { de: "cliente", texto: "Tem horário no sábado?" },
+      { de: "agente", texto: "Tem sim: 9h ou 10h30. Qual prefere?" },
+      { de: "cliente", texto: "9h" },
+    ],
+  },
   results: [
     { v: "Menos glosa", l: "guia conferida antes do envio, retrabalho de faturamento em queda." },
     { v: "Menos furo", l: "confirmação automática e lista de espera preenchendo a agenda." },
     { v: "Mais paciente", l: "recepção e equipe com tempo pra quem está na frente da mesa." },
   ],
-  ctaLine:
-    "Conta pra gente como a rotina da clínica roda hoje. A gente mostra onde a automação se paga primeiro.",
+  ctaLine: "Conta pra gente como a rotina da clínica roda hoje. Em 30 minutos de conversa, você sai sabendo por onde começar.",
 };
 
 export default function MedicinaPage() {

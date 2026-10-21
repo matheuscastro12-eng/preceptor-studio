@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { GeistSans } from "geist/font/sans";
 import { ConsentManager } from "@/components/ConsentManager";
 import "./globals.css";
 
@@ -22,9 +23,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" className={GeistSans.variable}>
       <body className="bg-slate-50 text-ink">
-        {/* GA4 e Meta Pixel só carregam após consentimento (LGPD). */}
+        {/* GA4 e Meta Pixel só carregam após consentimento (LGPD). A variável da
+            Geist fica no <html> para o banner usar a fonte da landing. */}
         <ConsentManager />
         {children}
       </body>

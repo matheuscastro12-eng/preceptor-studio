@@ -5,7 +5,7 @@ export function HomeFooter() {
   const ano = new Date().getFullYear();
   return (
     <footer className="lp2-footer">
-      <div className="lp2-container">
+      <div className="mb-wrap">
         <Link href="/" className="lp2-footer__logo" aria-label="PRECEPTOR! Studio, página inicial">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/brand/logo-horizontal.png" alt="PRECEPTOR!" width={480} height={120} />

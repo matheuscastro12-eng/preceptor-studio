@@ -88,7 +88,7 @@ fbq('track', 'PageView');`}
           role="dialog"
           aria-live="polite"
           aria-label="Preferências de cookies"
-          className="fixed inset-x-4 bottom-4 z-[100] mx-auto max-w-xl rounded-2xl border border-slate-200 bg-white p-5 text-slate-700 shadow-[0_12px_40px_-12px_rgba(0,3,61,0.35)] sm:inset-x-6"
+          className="consent-banner fixed inset-x-4 bottom-4 z-[100] mx-auto max-w-xl rounded-2xl border border-slate-200 bg-white p-5 text-slate-700 shadow-[0_12px_40px_-12px_rgba(0,3,61,0.35)] sm:inset-x-6"
         >
           <p className="m-0 text-sm leading-relaxed">
             Usamos cookies de análise e anúncios (Google Analytics e Meta) para

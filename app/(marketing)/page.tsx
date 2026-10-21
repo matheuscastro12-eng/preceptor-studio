@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
-import { mao } from "@/components/marketing/home/fonte-mao";
 import { RevealObserver } from "@/components/marketing/home/RevealObserver";
 import { MbHome, MbNav } from "@/components/marketing/home/MbHome";
 import { HomeFooter } from "@/components/marketing/home/HomeFooter";
 import "../../components/marketing/home/home.css";
-import "../../components/marketing/home/visuais-problema-prova.css";
-import "../../components/marketing/home/visuais-mockups.css";
-import "../../components/marketing/home/app-preview.css";
 import "../../components/marketing/home/mobbin.css";
+import "../../components/marketing/home/xenora.css";
 
 const SITE_URL = "https://preceptorstudio.com";
 const TITLE = "PRECEPTOR! Studio | Agentes de IA que sua equipe aprova";
@@ -74,7 +71,7 @@ const ORG_JSONLD = {
 
 export default function MarketingHome() {
   return (
-    <div className={`lp2 ${mao.variable}`}>
+    <div className="lp2">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_JSONLD) }}

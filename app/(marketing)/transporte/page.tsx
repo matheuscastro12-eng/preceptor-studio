@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SegmentLanding, type SegmentContent } from "@/components/marketing/SegmentLanding";
+import { SegmentLanding, TELAS, type SegmentContent } from "@/components/marketing/SegmentLanding";
 
 export const metadata: Metadata = {
   title: "Logística e Transportes",
@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 };
 
 const CONTENT: SegmentContent = {
-  eyebrow: "Logística e Transportes",
-  title: ["Menos papel, menos telefone,", "menos madrugada no faturamento"],
-  lead: "Canhoto, CT-e, ocorrência, motorista no WhatsApp: a sua operação roda em cima de regra e volume. É exatamente onde a automação devolve mais horas por mês.",
+  title: "Menos papel, menos madrugada",
+  lead: "Agentes de IA para logística e transportes. Canhoto, CT-e, ocorrência, motorista no WhatsApp: a sua operação roda em cima de regra e volume, e é aí que a automação devolve mais horas por mês.",
+  hero: TELAS.torre,
   pains: [
     {
       title: "O comprovante que some",
@@ -48,13 +48,13 @@ const CONTENT: SegmentContent = {
       body: "Resposta imediata para as perguntas com regra: comprovante, agenda de carga, adiantamento. O que exige critério vai pra uma pessoa.",
     },
   ],
+  telas: [TELAS.motorista, TELAS.caixa, TELAS.compras],
   results: [
     { v: "60h por mês", l: "devolvidas ao time só na conferência de documentação." },
     { v: "No prazo", l: "faturamento fechando no horário, sem mutirão de fim de mês." },
     { v: "Antes do cliente", l: "a ocorrência chega pelo seu painel enquanto ainda dá tempo de agir." },
   ],
-  ctaLine:
-    "Conta pra gente como a sua operação roda hoje. A gente mostra onde a automação se paga primeiro.",
+  ctaLine: "Conta pra gente como a sua operação roda hoje. Em 30 minutos de conversa, você sai sabendo por onde começar.",
 };
 
 export default function TransportePage() {
