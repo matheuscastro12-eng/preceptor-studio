@@ -13,6 +13,6 @@ export function CtaLink({ onNavy = false }: { onNavy?: boolean }) {
   );
 }
 
-export const CTA_MICROCOPY = "30 minutos, sem compromisso de piloto.";
+export const CTA_MICROCOPY = "Conversa de 30 min, sem compromisso. Você sai sabendo por onde começar.";
 
 export { CTA_TEXTO };

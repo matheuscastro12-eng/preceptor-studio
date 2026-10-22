@@ -10,9 +10,9 @@ import "../../components/marketing/home/app-preview.css";
 import "../../components/marketing/home/mobbin.css";
 
 const SITE_URL = "https://preceptorstudio.com";
-const TITLE = "PRECEPTOR! Studio | Agentes de IA que sua equipe aprova";
+const TITLE = "Agentes de IA sob medida para operações | PRECEPTOR! Studio";
 const DESCRIPTION =
-  "Documentos, conferências e mensagens prontos para sua equipe aprovar. Primeiro o processo, depois um agente de IA. Comece com um diagnóstico de 30 min.";
+  "Agente de IA feito para o seu processo: lê documentos, confere e responde no sistema que você já usa. Sua equipe só aprova. Diagnóstico de 30 min.";
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },
