@@ -14,7 +14,7 @@ create policy "authenticated read nda signatures"
 on public.nda_signatures
 for select
 to authenticated
-using (true);
+using (public.is_active_member());
 
 -- client_portal_tokens: estava sem RLS. Contém client_email (PII).
 -- Geração/leitura passa pela rota server-side (service-role). Bloqueia acesso
@@ -26,7 +26,7 @@ create policy "authenticated read portal tokens"
 on public.client_portal_tokens
 for select
 to authenticated
-using (true);
+using (public.is_active_member());
 
 -- LGPD: registra o momento do consentimento ativo do lead no diagnóstico público.
 alter table public.leads add column if not exists consent_given_at timestamptz;

@@ -59,8 +59,8 @@ create policy "authenticated can manage pricing installments"
 on public.pricing_installments
 for all
 to authenticated
-using (true)
-with check (true);
+using (public.is_active_member())
+with check (public.is_active_member());
 
 -- Backfill: pricings sem parcelas ganham 1 parcela única ---------------------
 

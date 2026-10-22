@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { updateSession } from "./lib/supabase/middleware";
+import { isActiveMember } from "./lib/memberRole";
 
 const PUBLIC_PATHS = [
   "/",
@@ -42,7 +43,6 @@ const ADMIN_API_PATTERNS = [
 // telefone, IP, respostas do diagnóstico) sem login — LGPD. O único endpoint
 // público de leads (request-contact) já saiu antes, em isPublicApi.
 const FULLY_GATED_API_PREFIXES = [
-  "/api/leads",
   "/api/studies",
   "/api/leads", // leitura expõe dados pessoais; /request-contact segue público via isPublicApi
   "/api/upload-pdf",
@@ -52,6 +52,19 @@ const FULLY_GATED_API_PREFIXES = [
   "/api/invites",
   "/api/profiles",
 ];
+
+// Conta logada mas sem papel ativo (ex.: 'pending', cadastro sem convite).
+// Resposta própria em vez de redirect para /login, que mandaria de volta ao
+// /dashboard (a página de login redireciona quem tem sessão) e criaria um loop.
+function pendingAccountResponse(isApi: boolean) {
+  if (isApi) {
+    return NextResponse.json({ error: "Conta sem acesso" }, { status: 403 });
+  }
+  return new NextResponse(
+    "<!doctype html><meta charset=utf-8><title>Acesso pendente</title><p style=\"font-family:sans-serif;padding:2rem\">Sua conta ainda não tem acesso ao Studio. Peça um convite ao owner do workspace.</p>",
+    { status: 403, headers: { "content-type": "text/html; charset=utf-8" } }
+  );
+}
 
 const MUTATION_METHODS = new Set(["POST", "PATCH", "PUT", "DELETE"]);
 
@@ -80,6 +93,7 @@ export async function proxy(req: NextRequest) {
       url.searchParams.set("redirect", pathname);
       return NextResponse.redirect(url);
     }
+    if (!(await isActiveMember(user.id))) return pendingAccountResponse(false);
     return response;
   }
 
@@ -96,6 +110,9 @@ export async function proxy(req: NextRequest) {
         { error: "Não autenticado" },
         { status: 401 }
       );
+    }
+    if (requiresAuth && !(await isActiveMember(user!.id))) {
+      return pendingAccountResponse(true);
     }
     return response;
   }

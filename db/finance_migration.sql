@@ -118,24 +118,24 @@ create policy "authenticated can manage finance categories"
 on public.finance_categories
 for all
 to authenticated
-using (true)
-with check (true);
+using (public.is_active_member())
+with check (public.is_active_member());
 
 drop policy if exists "authenticated can manage study pricing" on public.study_pricing;
 create policy "authenticated can manage study pricing"
 on public.study_pricing
 for all
 to authenticated
-using (true)
-with check (true);
+using (public.is_active_member())
+with check (public.is_active_member());
 
 drop policy if exists "authenticated can manage transactions" on public.transactions;
 create policy "authenticated can manage transactions"
 on public.transactions
 for all
 to authenticated
-using (true)
-with check (true);
+using (public.is_active_member())
+with check (public.is_active_member());
 
 -- Seed default categories (only on first run) --------------------------------
 
