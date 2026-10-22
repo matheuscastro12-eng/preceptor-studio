@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSupabase } from "@/lib/supabase/server";
+import { isActiveMember } from "@/lib/memberRole";
 
 export interface AuthedUser {
   id: string;
@@ -7,7 +8,8 @@ export interface AuthedUser {
 }
 
 // Defesa em profundidade: além do middleware, cada rota sensível confirma a sessão.
-// Retorna o usuário autenticado ou null.
+// Retorna o usuário autenticado e provisionado (papel owner/admin/member) ou null.
+// Contas 'pending' (cadastro sem convite resgatado) são tratadas como não autenticadas.
 export async function getAuthedUser(): Promise<AuthedUser | null> {
   try {
     const supabase = await getServerSupabase();
@@ -15,6 +17,7 @@ export async function getAuthedUser(): Promise<AuthedUser | null> {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) return null;
+    if (!(await isActiveMember(user.id))) return null;
     return { id: user.id, email: user.email ?? null };
   } catch {
     return null;

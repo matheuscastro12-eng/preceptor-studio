@@ -410,7 +410,11 @@ to authenticated
 using (auth.uid() = id)
 with check (auth.uid() = id);
 
-grant select, insert, update on public.profiles to authenticated;
+grant select, insert on public.profiles to authenticated;
+-- Só o nome é editável pelo próprio usuário; papel/time mudam via service role
+-- (senão uma conta 'pending' se promovia a owner pela chave anon).
+revoke update on public.profiles from authenticated;
+grant update (name) on public.profiles to authenticated;
 
 -- Invite tokens (signup gated) -------------------------------------------
 
@@ -630,7 +634,7 @@ create table if not exists public.finance_categories (
 alter table public.finance_categories enable row level security;
 drop policy if exists "authenticated manage finance categories" on public.finance_categories;
 create policy "authenticated manage finance categories" on public.finance_categories
-for all to authenticated using (true) with check (true);
+for all to authenticated using (public.is_active_member()) with check (public.is_active_member());
 grant select, insert, update, delete on public.finance_categories to authenticated;
 
 -- ─── Finance: pricing por estudo ─────────────────────────────────────────────
@@ -661,7 +665,7 @@ for each row execute function public.set_updated_at();
 alter table public.study_pricing enable row level security;
 drop policy if exists "authenticated manage study pricing" on public.study_pricing;
 create policy "authenticated manage study pricing" on public.study_pricing
-for all to authenticated using (true) with check (true);
+for all to authenticated using (public.is_active_member()) with check (public.is_active_member());
 grant select, insert, update, delete on public.study_pricing to authenticated;
 
 -- ─── Finance: transações ─────────────────────────────────────────────────────
@@ -692,7 +696,7 @@ for each row execute function public.set_updated_at();
 alter table public.transactions enable row level security;
 drop policy if exists "authenticated manage transactions" on public.transactions;
 create policy "authenticated manage transactions" on public.transactions
-for all to authenticated using (true) with check (true);
+for all to authenticated using (public.is_active_member()) with check (public.is_active_member());
 grant select, insert, update, delete on public.transactions to authenticated;
 
 -- ─── Finance: parcelas do pricing ────────────────────────────────────────────
@@ -720,7 +724,7 @@ for each row execute function public.set_updated_at();
 alter table public.pricing_installments enable row level security;
 drop policy if exists "authenticated manage pricing installments" on public.pricing_installments;
 create policy "authenticated manage pricing installments" on public.pricing_installments
-for all to authenticated using (true) with check (true);
+for all to authenticated using (public.is_active_member()) with check (public.is_active_member());
 grant select, insert, update, delete on public.pricing_installments to authenticated;
 
 commit;

@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "test:opera": "tsx --test tests/opera.test.ts tests/opera.integration.test.ts tests/opera.conexao.test.ts tests/opera.reuniao.test.ts",
     "opera:publicar": "node scripts/opera-publicar.mjs",
-    "test:onboarding": "tsx --test tests/onboarding.test.ts"
+    "test:onboarding": "tsx --test tests/onboarding.test.ts",
+    "test:seguranca": "tsx --test tests/seguranca.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.0",
