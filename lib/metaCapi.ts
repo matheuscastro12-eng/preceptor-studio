@@ -3,7 +3,7 @@
 // Deduplicado com o evento do browser pelo mesmo event_id.
 //
 // Requer as variaveis de ambiente:
-//   META_PIXEL_ID    (opcional, default 4342291746023127)
+//   META_PIXEL_ID    (opcional, default 1771459363933282)
 //   META_CAPI_TOKEN  (token de System User no Business Manager)
 // Sem o token, vira no-op silencioso (nao quebra nada).
 
@@ -35,7 +35,7 @@ export interface MetaCapiResult {
 }
 
 export async function sendMetaLeadEvent(input: MetaLeadInput): Promise<MetaCapiResult> {
-  const pixelId = process.env.META_PIXEL_ID || "4342291746023127";
+  const pixelId = process.env.META_PIXEL_ID || "1771459363933282";
   const token = process.env.META_CAPI_TOKEN;
   if (!token) return { ok: false, skipped: true, error: "META_CAPI_TOKEN ausente" };
 
@@ -125,7 +125,7 @@ export function buildMetaEvent(input: MetaEventInput, now = Date.now()): Record<
 }
 
 export async function sendMetaEvent(input: MetaEventInput): Promise<MetaCapiResult> {
-  const pixelId = process.env.META_PIXEL_ID || "4342291746023127";
+  const pixelId = process.env.META_PIXEL_ID || "1771459363933282";
   const token = process.env.META_CAPI_TOKEN;
   if (!token) return { ok: false, skipped: true, error: "META_CAPI_TOKEN ausente" };
   try {
