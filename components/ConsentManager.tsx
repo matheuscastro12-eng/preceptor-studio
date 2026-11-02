@@ -12,7 +12,7 @@ import { consentModeState } from "@/lib/consent";
  * window.dispatchEvent(new Event("preceptor:consent-open")).
  */
 
-const META_PIXEL_ID = "4342291746023127";
+const META_PIXEL_ID = "1771459363933282";
 const GA_ID = "G-1B7CCZ2YYK";
 const KEY = "preceptor_consent";
 
