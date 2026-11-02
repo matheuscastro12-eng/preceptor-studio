@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getAttribution } from "@/lib/funnelTrack";
 import { fbqTrack } from "@/lib/metaEvents";
+import { prepareLeadMeta } from "@/lib/leadEvent";
 import { CTA_TEXTO } from "./CtaLink";
 
 const SEGMENTOS = [
@@ -125,6 +126,7 @@ export function LeadForm() {
           category: segmento,
           consent: true,
           attribution: getAttribution(),
+          meta: prepareLeadMeta(),
         }),
       });
       // 429 (limite de envios) e qualquer outra falha mostram a mesma mensagem da copy.

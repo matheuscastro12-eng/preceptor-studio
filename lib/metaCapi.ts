@@ -91,6 +91,8 @@ export async function sendMetaLeadEvent(input: MetaLeadInput): Promise<MetaCapiR
 export interface MetaEventInput {
   eventName: string;
   eventId?: string | null;
+  email?: string | null;
+  phone?: string | null;
   ip?: string | null;
   userAgent?: string | null;
   fbp?: string | null;
@@ -101,6 +103,11 @@ export interface MetaEventInput {
 
 export function buildMetaEvent(input: MetaEventInput, now = Date.now()): Record<string, unknown> {
   const userData: Record<string, unknown> = {};
+  if (input.email) userData.em = [sha256(input.email)];
+  if (input.phone) {
+    const digits = input.phone.replace(/\D/g, "");
+    if (digits) userData.ph = [sha256(digits)];
+  }
   if (input.ip) userData.client_ip_address = input.ip;
   if (input.userAgent) userData.client_user_agent = input.userAgent;
   if (input.fbp) userData.fbp = input.fbp;

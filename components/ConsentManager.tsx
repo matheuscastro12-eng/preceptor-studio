@@ -3,10 +3,11 @@
 import Script from "next/script";
 import { useEffect, useState } from "react";
 import { ContactClickTracker } from "@/components/ContactClickTracker";
+import { consentModeState } from "@/lib/consent";
 
 /*
- * Consentimento de cookies (LGPD): GA4 e Meta Pixel só carregam depois do
- * "Aceitar". A escolha fica no localStorage; sem escolha, o banner aparece.
+ * Consentimento de cookies (LGPD): o Meta Pixel só carrega depois do "Aceitar".
+ * O GA4 carrega sempre em Consent Mode v2 (tudo "denied" até o aceite, sem cookie). A escolha fica no localStorage; sem escolha, o banner aparece.
  * Para reabrir o banner (ex.: link no rodapé), dispare
  * window.dispatchEvent(new Event("preceptor:consent-open")).
  */
@@ -51,24 +52,32 @@ export function ConsentManager() {
     saveChoice(c);
     setOpen(false);
     // Revogar exige recarregar para descarregar os scripts já injetados.
+    const w = window as unknown as { gtag?: (...args: unknown[]) => void };
+    try {
+      w.gtag?.("consent", "update", consentModeState(c === "granted"));
+    } catch {
+      // ignora
+    }
     if (choice === "granted" && c === "denied") window.location.reload();
     setChoice(c);
   }
 
   return (
     <>
-      {choice === "granted" && (
-        <>
-          <Script
-            src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-            strategy="afterInteractive"
-          />
-          <Script id="ga-gtag" strategy="afterInteractive">
-            {`window.dataLayer = window.dataLayer || [];
+      {/* Google Consent Mode v2: gtag sempre carrega, tudo "denied" até o aceite.
+          Antes do aceite o Google recebe só pings sem cookie (sem _ga). */}
+      <Script id="ga-consent-default" strategy="afterInteractive">
+        {`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
+gtag('consent', 'default', {ad_storage:'denied',analytics_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',wait_for_update:500});
+try{if(localStorage.getItem('preceptor_consent')==='granted'){gtag('consent','update',{ad_storage:'granted',analytics_storage:'granted',ad_user_data:'granted',ad_personalization:'granted'});}}catch(e){}
 gtag('js', new Date());
 gtag('config', '${GA_ID}');`}
-          </Script>
+      </Script>
+      <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
+      <ContactClickTracker granted={choice === "granted"} />
+      {choice === "granted" && (
+        <>
           <Script id="meta-pixel" strategy="afterInteractive">
             {`!function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -81,7 +90,6 @@ s.parentNode.insertBefore(t,s)}(window, document,'script',
 fbq('init', '${META_PIXEL_ID}');
 fbq('track', 'PageView');`}
           </Script>
-          <ContactClickTracker />
         </>
       )}
 
