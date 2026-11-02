@@ -148,8 +148,9 @@ export default function PrivacidadePage() {
                   <strong>Envio de e-mails:</strong> Resend.
                 </>,
                 <>
-                  <strong>Medição de visitas:</strong> Google (Google Analytics),
-                  só com o seu consentimento.
+                  <strong>Medição de visitas:</strong> Google (Google Analytics,
+                  em Consent Mode). Sem o seu consentimento, recebe só sinais
+                  sem cookie; com consentimento, a medição completa.
                 </>,
                 <>
                   <strong>Medição de anúncios:</strong> Meta (Pixel e Conversions
@@ -170,12 +171,22 @@ export default function PrivacidadePage() {
               escolha sobre cookies, para não perguntar de novo a cada visita.
             </P>
             <P>
-              <strong>Análise e anúncios (opcionais):</strong> o Google Analytics e o
-              Pixel da Meta só são carregados depois que você clica em
-              &ldquo;Aceitar cookies&rdquo;. Se você aceitou e envia o diagnóstico,
+              <strong>Medição sem cookies (antes da escolha):</strong> contamos
+              acessos e cliques nos botões de contato no nosso próprio servidor,
+              sem cookie, sem IP e sem identificador pessoal. O Google Analytics
+              também é chamado, em modo de consentimento negado: o Google recebe
+              sinais sem cookie (como página visitada e dados técnicos do
+              navegador, incluindo o endereço IP na conexão), sem gravar nada no
+              seu aparelho.
+            </P>
+            <P>
+              <strong>Análise e anúncios (opcionais):</strong> os cookies do Google
+              Analytics e o Pixel da Meta só são ativados depois que você clica em
+              &ldquo;Aceitar cookies&rdquo;. Se você aceitou e envia o diagnóstico
+              ou o formulário de contato, ou clica em WhatsApp/Instagram,
               também avisamos a Meta pelo servidor (Conversions API), com e-mail e
               telefone embaralhados por hash, para medir o anúncio. Se você recusar,
-              nada disso é carregado nem enviado.
+              nada é enviado à Meta e o Google fica só com os sinais sem cookie.
             </P>
             <P>
               A base legal é o seu consentimento (art. 7º, I). Você pode mudar a

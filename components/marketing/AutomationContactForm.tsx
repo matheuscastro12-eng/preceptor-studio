@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getAttribution } from "@/lib/funnelTrack";
 import { fbqTrack } from "@/lib/metaEvents";
+import { prepareLeadMeta } from "@/lib/leadEvent";
 
 const SETORES = [
   { value: "", label: "Selecione (opcional)" },
@@ -92,6 +93,7 @@ export function AutomationContactForm() {
           category: setor || undefined,
           consent: true,
           attribution: getAttribution(),
+          meta: prepareLeadMeta(),
         }),
       });
       const data = (await res.json()) as { ok?: boolean; error?: string };

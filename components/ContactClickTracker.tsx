@@ -3,15 +3,17 @@
 import { useEffect } from "react";
 import { classifyContactHref, ctaLabel } from "@/lib/contactLinks";
 import { fbqTrack, newEventId, readFbCookies } from "@/lib/metaEvents";
+import { trackFunnel } from "@/lib/funnelTrack";
 
 /*
  * Mede cliques nos links de WhatsApp (wa.me) e Instagram do site.
- * Só é montado pelo ConsentManager depois do "Aceitar" (LGPD).
+ * Sempre: contagem própria sem cookie/ID (/api/public/track) e GA4 em Consent Mode.
+ * Só após o "Aceitar" (LGPD): Meta Pixel e CAPI.
  * Dispara: Meta Pixel "Contact" (com eventID), GA4 "contact_click" e o mesmo
  * evento via CAPI (/api/public/contact-event), deduplicado pelo eventID.
  * Para rotular um CTA, use data-cta="hero_whatsapp" no <a>.
  */
-export function ContactClickTracker() {
+export function ContactClickTracker({ granted }: { granted: boolean }) {
   useEffect(() => {
     function onClick(e: MouseEvent) {
       const a = (e.target as Element | null)?.closest?.("a[href]") as HTMLAnchorElement | null;
@@ -19,10 +21,11 @@ export function ContactClickTracker() {
       const destino = classifyContactHref(a.getAttribute("href"));
       if (!destino) return;
       const label = ctaLabel(a.dataset.cta, a.textContent);
+      trackFunnel("contact_click", { cta_label: label, destination: destino });
       const eventId = newEventId();
       const params = { content_name: label, content_category: destino };
 
-      fbqTrack("Contact", params, eventId);
+      if (granted) fbqTrack("Contact", params, eventId);
 
       const w = window as unknown as { gtag?: (...args: unknown[]) => void };
       try {
@@ -36,6 +39,7 @@ export function ContactClickTracker() {
         // GA nunca derruba a UI.
       }
 
+      if (!granted) return;
       try {
         const { fbp, fbc } = readFbCookies();
         const body = JSON.stringify({
@@ -57,6 +61,6 @@ export function ContactClickTracker() {
     }
     document.addEventListener("click", onClick, true);
     return () => document.removeEventListener("click", onClick, true);
-  }, []);
+  }, [granted]);
   return null;
 }

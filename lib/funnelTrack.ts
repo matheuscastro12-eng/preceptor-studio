@@ -2,6 +2,8 @@
 // Captura UTMs, gclid e fbclid (guarda 90 dias) e dispara eventos de topo
 // para /api/public/track. Fire-and-forget, nunca quebra a UI.
 
+import { hasAdsConsent } from "@/lib/consent";
+
 const SS_UTM = "ps_utm";
 const SS_SID = "ps_sid";
 
@@ -13,7 +15,7 @@ export interface Utms {
   utm_term?: string;
 }
 
-type FunnelEvent = "page_view" | "diagnostic_view" | "diagnostic_start";
+type FunnelEvent = "page_view" | "diagnostic_view" | "diagnostic_start" | "contact_click";
 
 function safeSession(): Storage | null {
   try {
@@ -115,12 +117,16 @@ export function getAttribution(): Attribution {
   };
 }
 
-export function trackFunnel(eventType: FunnelEvent): void {
+// Antes do aceite: sem session_id e com consent=false (o servidor não grava IP/UA).
+export function trackFunnel(eventType: FunnelEvent, extra?: { cta_label?: string; destination?: string }): void {
   if (typeof window === "undefined") return;
   try {
     const utms = captureUtms();
+    const consent = hasAdsConsent();
     const body = JSON.stringify({
-      session_id: getSessionId(),
+      consent,
+      ...(consent ? { session_id: getSessionId() } : {}),
+      ...(extra || {}),
       event_type: eventType,
       path: window.location.pathname,
       referrer: document.referrer || null,

@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createSupabaseServiceClient } from "@/lib/supabase";
 import type { LeadCategory } from "@/lib/leads";
 import { computeScoreFields, generateLeadSummary } from "@/lib/leadEnrich";
+import { sendMetaEvent } from "@/lib/metaCapi";
 
 // Formulário público de automação: insere lead no CRM (tabela leads).
 export const maxDuration = 30;
@@ -25,6 +26,13 @@ interface Payload {
   mensagem?: string;
   category?: string;
   consent?: boolean;
+  meta?: {
+    event_id?: string;
+    fbp?: string;
+    fbc?: string;
+    event_source_url?: string;
+    ads_consent?: boolean;
+  };
   attribution?: {
     utm_source?: string;
     utm_medium?: string;
@@ -170,6 +178,26 @@ export async function POST(req: NextRequest) {
     await supabase.from("leads").update({ ...scoreFields, summary_line }).eq("id", data.id);
   } catch {
     // Silencioso: enriquecimento é opcional.
+  }
+
+  // ─── Meta CAPI: Lead server-side, mesmo event_id do Pixel em /obrigado/automacao.
+  // Só com aceite de cookies de anúncio. Sem META_CAPI_TOKEN é no-op.
+  if (payload.meta?.ads_consent === true && payload.meta.event_id) try {
+    const s = (v: unknown, n = 300) => (typeof v === "string" && v ? v.slice(0, n) : null);
+    await sendMetaEvent({
+      eventName: "Lead",
+      eventId: s(payload.meta.event_id, 80),
+      email,
+      phone,
+      ip: ip !== "unknown" ? ip : null,
+      userAgent,
+      fbp: s(payload.meta.fbp),
+      fbc: s(payload.meta.fbc),
+      eventSourceUrl: s(payload.meta.event_source_url, 500),
+      customData: { content_name: "automacao", content_category: category || "geral" },
+    });
+  } catch {
+    // best-effort
   }
 
   return NextResponse.json({ ok: true });
