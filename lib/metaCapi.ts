@@ -86,3 +86,54 @@ export async function sendMetaLeadEvent(input: MetaLeadInput): Promise<MetaCapiR
     return { ok: false, error: e instanceof Error ? e.message : "erro desconhecido" };
   }
 }
+
+// ─── Evento genérico (ex.: Contact) ─────────────────────────────────────
+export interface MetaEventInput {
+  eventName: string;
+  eventId?: string | null;
+  ip?: string | null;
+  userAgent?: string | null;
+  fbp?: string | null;
+  fbc?: string | null;
+  eventSourceUrl?: string | null;
+  customData?: Record<string, unknown>;
+}
+
+export function buildMetaEvent(input: MetaEventInput, now = Date.now()): Record<string, unknown> {
+  const userData: Record<string, unknown> = {};
+  if (input.ip) userData.client_ip_address = input.ip;
+  if (input.userAgent) userData.client_user_agent = input.userAgent;
+  if (input.fbp) userData.fbp = input.fbp;
+  if (input.fbc) userData.fbc = input.fbc;
+  const event: Record<string, unknown> = {
+    event_name: input.eventName,
+    event_time: Math.floor(now / 1000),
+    action_source: "website",
+    user_data: userData,
+    custom_data: input.customData || {},
+  };
+  if (input.eventId) event.event_id = input.eventId;
+  if (input.eventSourceUrl) event.event_source_url = input.eventSourceUrl;
+  return event;
+}
+
+export async function sendMetaEvent(input: MetaEventInput): Promise<MetaCapiResult> {
+  const pixelId = process.env.META_PIXEL_ID || "4342291746023127";
+  const token = process.env.META_CAPI_TOKEN;
+  if (!token) return { ok: false, skipped: true, error: "META_CAPI_TOKEN ausente" };
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 6000);
+    const res = await fetch(GRAPH + "/" + pixelId + "/events?access_token=" + encodeURIComponent(token), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ data: [buildMetaEvent(input)] }),
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+    if (!res.ok) return { ok: false, error: "CAPI " + res.status };
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "erro desconhecido" };
+  }
+}

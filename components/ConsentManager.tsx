@@ -2,6 +2,7 @@
 
 import Script from "next/script";
 import { useEffect, useState } from "react";
+import { ContactClickTracker } from "@/components/ContactClickTracker";
 
 /*
  * Consentimento de cookies (LGPD): GA4 e Meta Pixel só carregam depois do
@@ -80,6 +81,7 @@ s.parentNode.insertBefore(t,s)}(window, document,'script',
 fbq('init', '${META_PIXEL_ID}');
 fbq('track', 'PageView');`}
           </Script>
+          <ContactClickTracker />
         </>
       )}
 
